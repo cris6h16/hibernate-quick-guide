@@ -29,7 +29,6 @@ public class HibernateUtil {
 
             } catch (Exception e) {
                 handleException(e);
-            } finally {
                 closeRegistry();
             }
         }
@@ -37,12 +36,20 @@ public class HibernateUtil {
         return sessionFactory;
     }
 
+
+    /**
+     * Shutdown the SessionFactory
+     */
+    public static void shutdown() {
+        closeRegistry();
+    }
+
     /**
      * Handle the exceptions during the creation of the SessionFactory.
      *
      * @param e exception to handle
      */
-    public static void handleException(Exception e) {
+    private static void handleException(Exception e) {
         e.printStackTrace();
         // Do something with the Exception
     }
