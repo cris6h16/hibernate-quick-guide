@@ -16,6 +16,6 @@
 <!--    <property name="hibernate.hbm2ddl.import_files">import.sql, init.sql</property>-->
 
     <!-- DB schema will be updated if needed -->
-    <!-- <property name="hibernate.hbm2ddl.auto">update</property> -->
+     <property name="hibernate.hbm2ddl.auto">create</property>
   </session-factory>
 </hibernate-configuration>

@@ -71,18 +71,18 @@ database tables.
 </hibernate-configuration>
 ```
 
- PROPERTY                        | DESCRIPTION                                                                                              
----------------------------------|----------------------------------------------------------------------------------------------------------
- `connection.url`                | The JDBC URL of the database.                                                                            
- `connection.driver_class`       | The JDBC driver class.                                                                                   
- `connection.username`           | The database username.                                                                                   
- `connection.password`           | The database password.                                                                                   
- `dialect`                       | The SQL dialect of the database.                                                                         
- `hibernate.hbm2ddl.auto`        | Automatically validates or exports schema DDL to the database when the SessionFactory is created.        
- `show_sql`                      | Prints all SQL statements to the console.                                                                
- `format_sql`                    | Pretty print the SQL statements.                                                                         
- `current_session_context_class` | The context of the current session. Default is `thread`, which is the recommended option, see java docs. 
-`hibernate.hbm2ddl.import_files` | The files to import when the SessionFactory is created. (sql queries)
+ PROPERTY                         | DESCRIPTION                                                                                              
+----------------------------------|----------------------------------------------------------------------------------------------------------
+ `connection.url`                 | The JDBC URL of the database.                                                                            
+ `connection.driver_class`        | The JDBC driver class.                                                                                   
+ `connection.username`            | The database username.                                                                                   
+ `connection.password`            | The database password.                                                                                   
+ `dialect`                        | The SQL dialect of the database.                                                                         
+ `hibernate.hbm2ddl.auto`         | Automatically validates or exports schema DDL to the database when the SessionFactory is created.        
+ `show_sql`                       | Prints all SQL statements to the console.                                                                
+ `format_sql`                     | Pretty print the SQL statements.                                                                         
+ `current_session_context_class`  | The context of the current session. Default is `thread`, which is the recommended option, see java docs. 
+ `hibernate.hbm2ddl.import_files` | The files to import when the SessionFactory is created. (sql queries)                                    
 
 #### Values
 
@@ -90,13 +90,13 @@ database tables.
     - MySQL: `jdbc:mysql://localhost:3306/DB_NAME`
     - PostgreSQL: `jdbc:postgresql://localhost:5432/DB_NAME`
     - etc_
-  
+
 
 - `connection.driver_class`:
     - MySQL: `com.mysql.cj.jdbc.Driver`
     - PostgreSQL: `org.postgresql.Driver`
     - etc
-  
+
 
 - `dialect`:
     - MySQL: `org.hibernate.dialect.MySQL8Dialect`, or other version (example is using 8).
@@ -174,16 +174,77 @@ database tables.
     }  
   // Hibernate automatically closes the session at the end of the try-with-resources block
     ```
-    - `org.example.<MyCustomSessionContext.java>`: The `Session` is managed by a custom implementation of the `org.hibernate.context.spi.CurrentSessionContext`
+    - `org.example.<MyCustomSessionContext.java>`: The `Session` is managed by a custom implementation of
+      the `org.hibernate.context.spi.CurrentSessionContext`
       interface, you can implement your own `CurrentSessionContext` and use it with this option.
 
 
-
 - `hibernate.hbm2ddl.import_files`:
-  - `import.sql`: The default file name for import script.
-  - `<filename1>.sql, <filename2>.sql, etc`: Execute the multiple SQL scripts.(in order)
-  
+    - `import.sql`: The default file name for import script.
+    - `<filename1>.sql, <filename2>.sql, etc`: Execute the multiple SQL scripts.(in order)
+
 ### Access to environment variables
 
 You can access to environment variables in the `hibernate.cfg.xml` file using the `${ENV_VAR}` syntax.
+
+## 3. Hibernate SessionFactory
+
+You need to create a class for obtain the `SessionFactory` object.
+I'll create `org.example.Util.HibernateUtil.java`
+
+```java
+
+public class HibernateUtil {
+    
+    private static StandardServiceRegistry registry;
+    private static SessionFactory sessionFactory;
+    
+    /**
+     * Get the Hibernate SessionFactory
+     * 
+     * @return SessionFactory object
+    */
+    public static SessionFactory getSessionFactory() {
+        if (sessionFactory == null) {
+            try {
+                // Create registry
+                registry = new StandardServiceRegistryBuilder().configure().build();
+                // Create MetadataSources
+                MetadataSources sources = new MetadataSources(registry);
+                // Create Metadata
+                Metadata metadata = sources.getMetadataBuilder().build();
+                // Create SessionFactory
+                sessionFactory = metadata.getSessionFactoryBuilder().build();
+
+            } catch (Exception e) {
+                handleException(e);
+            } finally {
+                closeRegistry();
+            }
+        }
+
+        return sessionFactory;
+    }
+
+  /**
+   * Handle the exceptions during the creation of the SessionFactory.
+   *
+   * @param e exception to handle
+   */
+    public static void handleException(Exception e) {
+        e.printStackTrace();
+    }
+    
+    /**
+    * Close the registry
+    */
+    private static void closeRegistry() {
+        if (registry != null) {
+            StandardServiceRegistryBuilder.destroy(registry);
+        }
+    }
+}
+```
+
+
 
