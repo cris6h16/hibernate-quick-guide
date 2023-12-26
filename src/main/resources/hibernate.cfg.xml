@@ -1,21 +1,26 @@
 <?xml version='1.0' encoding='utf-8'?>
 <!DOCTYPE hibernate-configuration PUBLIC
-    "-//Hibernate/Hibernate Configuration DTD//EN"
-    "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+        "-//Hibernate/Hibernate Configuration DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
-  <session-factory>
-    <property name="connection.url">jdbc:postgresql://localhost:5432/hibernate</property>
-    <property name="connection.driver_class">org.postgresql.Driver</property>
-     <property name="connection.username">${PSQL_USER}</property>
-     <property name="connection.password">${PSQL_PASS}</property>
-    <property name="dialect">org.hibernate.dialect.PostgreSQLDialect</property>
-    <property name="show_sql">true</property>
-    <property name="format_sql">true</property>
-    <property name="hbm2ddl.auto">create</property>
-    <property name="current_session_context_class">thread</property>
-<!--    <property name="hibernate.hbm2ddl.import_files">import.sql, init.sql</property>-->
+    <session-factory>
+        <property name="connection.url">jdbc:postgresql://localhost:5432/hibernate</property>
+        <property name="default_schema">tienda</property>
+        <property name="connection.driver_class">org.postgresql.Driver</property>
+        <property name="connection.username">postgres</property>
+        <property name="connection.password">12345678</property>
+        <property name="dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+        <property name="show_sql">true</property>
+        <property name="format_sql">true</property>
+        <property name="hbm2ddl.auto">create</property>
+        <property name="current_session_context_class">thread</property>
+        <!--    <property name="hibernate.hbm2ddl.import_files">import.sql, init.sql</property>-->
 
-    <!-- DB schema will be updated if needed -->
-     <property name="hibernate.hbm2ddl.auto">create</property>
-  </session-factory>
+        <property name="hibernate.hbm2ddl.import_files">import_categories.sql</property>
+        <!-- DB schema will be updated if needed -->
+        <property name="hibernate.hbm2ddl.auto">create</property>
+
+        <mapping class="org.example.Entities.CategoryEntity"/>
+        <mapping class="org.example.Entities.ProductEntity"/>
+    </session-factory>
 </hibernate-configuration>

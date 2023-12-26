@@ -5,8 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="33d4e801-1be6-4c5e-99fe-37449cf74e6d" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/DAOs/CategoryDAO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Entities/ProductEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/import_categories.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Util/HibernateUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Util/HibernateUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Hibernate.iml" beforeDir="false" afterPath="$PROJECT_DIR$/Hibernate.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/hibernate.cfg.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/hibernate.cfg.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,10 +23,15 @@
   <component name="CompilerWorkspaceConfiguration">
     <option name="MAKE_PROJECT_ON_SAVE" value="true" />
   </component>
+  <component name="ExportToHTMLSettings">
+    <option name="OUTPUT_DIRECTORY" value="$PROJECT_DIR$/exportToHTML" />
+  </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Class" />
+        <option value="package-info" />
+        <option value="JUnit5 Test Class" />
       </list>
     </option>
   </component>
@@ -27,7 +39,12 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="jar://$USER_HOME$/personal/JDK/jdk-21.0.1/lib/src.zip!/java.base/java/io/PrintStream.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$PROJECT_DIR$/../../../JDK/jdk-21.0.1/lib/src.zip!/java.base/java/io/PrintStream.java" root0="SKIP_INSPECTION" />
+  </component>
+  <component name="JavaAutoRunManager">
+    <enabled-run-configurations>
+      <run-configuration type="JUnit" name="CategoryDAOTest.saveNullName" />
+    </enabled-run-configurations>
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -43,10 +60,34 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Application.Main.executor": "Run",
+    "JUnit.CategoryDAOTest.DeleteByValidId.executor": "Run",
+    "JUnit.CategoryDAOTest.deleteByNullId.executor": "Run",
+    "JUnit.CategoryDAOTest.executor": "Run",
+    "JUnit.CategoryDAOTest.findById.executor": "Debug",
+    "JUnit.CategoryDAOTest.findByIdInvalid.executor": "Run",
+    "JUnit.CategoryDAOTest.findByIdMaxValue.executor": "Run",
+    "JUnit.CategoryDAOTest.findByIdMinValue.executor": "Run",
+    "JUnit.CategoryDAOTest.findByIdNull.executor": "Run",
+    "JUnit.CategoryDAOTest.findByIdValid.executor": "Debug",
+    "JUnit.CategoryDAOTest.findByNonExistentName.executor": "Run",
+    "JUnit.CategoryDAOTest.findByValidName.executor": "Run",
+    "JUnit.CategoryDAOTest.listAllNoCategory.executor": "Debug",
+    "JUnit.CategoryDAOTest.saveEmptyName.executor": "Debug",
+    "JUnit.CategoryDAOTest.saveNullName.executor": "Run",
+    "JUnit.CategoryDAOTest.saveValidName.executor": "Run",
+    "JUnit.CategoryDAOTest.saveValidNameAndProducts.executor": "Run",
+    "JUnit.CategoryDAOTest.saveValidNameAndProductsCascadePersist.executor": "Run",
+    "JUnit.CategoryDAOTest.updateValidName.executor": "Run",
+    "JUnit.CategoryDAOTest.updateValidNameAndProductsCascadePersist.executor": "Run",
+    "JUnit.General.createTablesDB.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/home/cristian/personal/intellij/IdeaProjects/hibernate-quick-guide",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -55,11 +96,118 @@
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "settings.editor.splitter.proportion": "0.26198748",
+    "settings.editor.selected.configurable": "preferences.sourceCode.General",
+    "settings.editor.splitter.proportion": "0.18576598",
     "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql"
+    ]
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="org.example.Entities" />
+    </key>
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="org.example.DAOs" />
+      <recent name="org.example.Entities" />
+    </key>
+  </component>
+  <component name="RunManager" selected="JUnit.CategoryDAOTest.DeleteByValidId">
+    <configuration name="CategoryDAOTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Hibernate" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.DAOs.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.DAOs" />
+      <option name="MAIN_CLASS_NAME" value="org.example.DAOs.CategoryDAOTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="CategoryDAOTest.DeleteByValidId" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Hibernate" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.DAOs.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.DAOs" />
+      <option name="MAIN_CLASS_NAME" value="org.example.DAOs.CategoryDAOTest" />
+      <option name="METHOD_NAME" value="DeleteByValidId" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="CategoryDAOTest.deleteByNullId" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Hibernate" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.DAOs.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.DAOs" />
+      <option name="MAIN_CLASS_NAME" value="org.example.DAOs.CategoryDAOTest" />
+      <option name="METHOD_NAME" value="deleteByNullId" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="CategoryDAOTest.updateValidName" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Hibernate" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.DAOs.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.DAOs" />
+      <option name="MAIN_CLASS_NAME" value="org.example.DAOs.CategoryDAOTest" />
+      <option name="METHOD_NAME" value="updateValidName" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="CategoryDAOTest.updateValidNameAndProductsCascadePersist" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Hibernate" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.DAOs.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.DAOs" />
+      <option name="MAIN_CLASS_NAME" value="org.example.DAOs.CategoryDAOTest" />
+      <option name="METHOD_NAME" value="updateValidNameAndProductsCascadePersist" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.CategoryDAOTest.DeleteByValidId" />
+        <item itemvalue="JUnit.CategoryDAOTest.deleteByNullId" />
+        <item itemvalue="JUnit.CategoryDAOTest" />
+        <item itemvalue="JUnit.CategoryDAOTest.updateValidNameAndProductsCascadePersist" />
+        <item itemvalue="JUnit.CategoryDAOTest.updateValidName" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -86,6 +234,9 @@
       <workItem from="1703308410915" duration="1877000" />
       <workItem from="1703314861710" duration="3393000" />
       <workItem from="1703340997352" duration="10176000" />
+      <workItem from="1703437064490" duration="3748000" />
+      <workItem from="1703452769365" duration="14161000" />
+      <workItem from="1703518602574" duration="25791000" />
     </task>
     <servers />
   </component>
@@ -95,10 +246,10 @@
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint enabled="true" log-message="true" suspend="NONE" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/example/Util/HibernateUtil.java</url>
-          <line>8</line>
-          <option name="timeStamp" value="1" />
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/example/Entities/CategoryEntity.java</url>
+          <line>11</line>
+          <option name="timeStamp" value="6" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

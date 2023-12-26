@@ -195,64 +195,113 @@ I'll create `org.example.Util.HibernateUtil.java`
 ```java
 
 public class HibernateUtil {
-    
-  private static StandardServiceRegistry registry;
-  private static SessionFactory sessionFactory;
 
-  /**
-   * Get the Hibernate SessionFactory
-   *
-   * @return SessionFactory object
-   */
-  public static SessionFactory getSessionFactory() {
-    if (sessionFactory == null) {
-      try {
-        // Create registry
-        registry = new StandardServiceRegistryBuilder().configure().build();
-        // Create MetadataSources
-        MetadataSources sources = new MetadataSources(registry);
-        // Create Metadata
-        Metadata metadata = sources.getMetadataBuilder().build();
-        // Create SessionFactory
-        sessionFactory = metadata.getSessionFactoryBuilder().build();
+    private static StandardServiceRegistry registry;
+    private static SessionFactory sessionFactory;
 
-      } catch (Exception e) {
-        handleException(e);
+    /**
+     * Get the Hibernate SessionFactory
+     *
+     * @return SessionFactory object
+     */
+    public static SessionFactory getSessionFactory() {
+        if (sessionFactory == null) {
+            try {
+                // Create registry
+                registry = new StandardServiceRegistryBuilder().configure().build();
+                // Create MetadataSources
+                MetadataSources sources = new MetadataSources(registry);
+                // Create Metadata
+                Metadata metadata = sources.getMetadataBuilder().build();
+                // Create SessionFactory
+                sessionFactory = metadata.getSessionFactoryBuilder().build();
+
+            } catch (Exception e) {
+                handleException(e);
+                closeRegistry();
+            }
+        }
+
+        return sessionFactory;
+    }
+
+
+    /**
+     * Shutdown the SessionFactory
+     */
+    public static void shutdown() {
         closeRegistry();
-      }
     }
 
-    return sessionFactory;
-  }
-
-
-  /**
-   * Shutdown the SessionFactory
-   */
-  public static void shutdown() {
-    closeRegistry();
-  }
-
-  /**
-   * Handle the exceptions during the creation of the SessionFactory.
-   *
-   * @param e exception to handle
-   */
-  private static void handleException(Exception e) {
-    e.printStackTrace();
-    // Do something with the Exception
-  }
-
-  /**
-   * Close the registry
-   */
-  private static void closeRegistry() {
-    if (registry != null) {
-      StandardServiceRegistryBuilder.destroy(registry);
+    /**
+     * Handle the exceptions during the creation of the SessionFactory.
+     *
+     * @param e exception to handle
+     */
+    private static void handleException(Exception e) {
+        e.printStackTrace();
+        // Do something with the Exception
     }
-  }
+
+    /**
+     * Close the registry
+     */
+    private static void closeRegistry() {
+        if (registry != null) {
+            StandardServiceRegistryBuilder.destroy(registry);
+        }
+    }
 }
 ```
 
+## 4. Hibernate Mapping
+
+### 4.1 Annotations
+
+#### 4.1.1 Entity
+
+The `@Entity` annotation marks the class as an entity. This annotation is applied to the entity class.
+
+```java
+
+@Entity
+public class User {
+    // ...
+}
+```
+
+#### 4.1.2 Table
+
+The `@Table` annotation specifies the table name associated with the entity. This annotation is applied to the entity
+class.
+
+```java
+
+@Entity
+@Table(name = "users")
+public class User {
+    // ...
+}
+```
+
+#### 4.1.3 Id
+
+The `@Id` annotation specifies the primary key of an entity. This annotation is applied to the primary key field or
+
+
+
+#### 4.1.4 Column
+
+
+#### 4.1.5 GeneratedValue
+
+CascadeType | Description
+------------|------------
+`ALL`       | Apply all operations (persist, remove, refresh, merge, detach) to the child entity.
+`DETACH`    | Detach the child entity when the parent entity is detached.
+`MERGE`     | Merge the child entity when the parent entity is merged.
+`PERSIST`   | Persist the child entity when the parent entity is persisted.
+`REFRESH`   | Refresh the child entity when the parent entity is refreshed.
+`REMOVE`    | Remove the child entity when the parent entity is removed.
 
 
