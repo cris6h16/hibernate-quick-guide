@@ -186,6 +186,7 @@ database tables.
 ### Access to environment variables
 
 You can access to environment variables in the `hibernate.cfg.xml` file using the `${ENV_VAR}` syntax.
+Take care the access to environment variables in linux are a common problem, a related problem happened to me.
 
 ## 3. Hibernate SessionFactory
 
@@ -288,20 +289,22 @@ public class User {
 
 The `@Id` annotation specifies the primary key of an entity. This annotation is applied to the primary key field or
 
-
-
 #### 4.1.4 Column
-
 
 #### 4.1.5 GeneratedValue
 
-CascadeType | Description
-------------|------------
-`ALL`       | Apply all operations (persist, remove, refresh, merge, detach) to the child entity.
-`DETACH`    | Detach the child entity when the parent entity is detached.
-`MERGE`     | Merge the child entity when the parent entity is merged.
-`PERSIST`   | Persist the child entity when the parent entity is persisted.
-`REFRESH`   | Refresh the child entity when the parent entity is refreshed.
-`REMOVE`    | Remove the child entity when the parent entity is removed.
+ CascadeType | Description                                                                         
+-------------|-------------------------------------------------------------------------------------
+ `ALL`       | Apply all operations (persist, remove, refresh, merge, detach) to the child entity. 
+ `DETACH`    | Detach the child entity when the parent entity is detached.                         
+ `MERGE`     | Merge the child entity when the parent entity is merged.                            
+ `PERSIST`   | Persist the child entity when the parent entity is persisted.                       
+ `REFRESH`   | Refresh the child entity when the parent entity is refreshed.                       
+ `REMOVE`    | Remove the child entity when the parent entity is removed.                          
 
+- session.merge(): If there is a persistent instance with the same identifier currently associated with the session,
+  copy the state of the given object onto the persistent instance. If there is no persistent instance currently
+  associated with the session, try to load it from the database, or create a new persistent instance. The persistent
+  instance is returned. The given instance does not become associated with the session. This operation cascades to
+  associated instances if the association is mapped with `cascade="merge"`. 
 

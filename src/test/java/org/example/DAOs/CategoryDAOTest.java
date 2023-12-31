@@ -3,6 +3,7 @@ package org.example.DAOs;
 import org.example.Entities.CategoryEntity;
 import org.example.Entities.ProductEntity;
 import org.example.Util.HibernateUtil;
+import org.hibernate.LazyInitializationException;
 import org.hibernate.Session;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -15,16 +16,19 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 class CategoryDAOTest {
-    private static CategoryDAO categoryDAO;
+    protected static CategoryDAO categoryDAO;
 
     // Attributes for testing
-    private static Long categoryId;
-    private static String categoryName;
-
-    @BeforeAll
-    static void beforeAllSetDAO() {
-        categoryDAO = new CategoryDAO();
+    protected static Long categoryId;
+    protected static String categoryName;
+    public CategoryDAOTest() {
+        categoryDAO = new CategoryDAOImpl();
     }
+
+    //    @BeforeAll
+//    static void beforeAllSetDAO() {
+//        categoryDAO = new CategoryDAOImpl();
+//    }
 
     @BeforeAll
     public static void setUpTestData() {
@@ -52,6 +56,14 @@ class CategoryDAOTest {
     }
 
     //=============================== categoryDAO.findById(Long id) ===============================\\
+    @Test
+    @DisplayName("findById by valid Id NO EAGER FETCHING")
+    void getByIdNoEagerValidId() {
+        Long id = categoryId;
+        Optional<CategoryEntity> category = categoryDAO.findById(id);
+        assertTrue(category.isPresent(), "Category with Id " + id + " should be present");
+        assertThrows(LazyInitializationException.class, () -> category.get().getProducts().isEmpty(), "Products of Category with Id " + id + " shouldn't be null");
+    }
     @Test
     @DisplayName("Find category by valid ID")
     void findByIdValid() {
@@ -165,6 +177,7 @@ class CategoryDAOTest {
     @Test
     @DisplayName("Save category with valid name and products")
     void saveValidNameAndProductsCascadePersist() {
+
         ProductEntity product = new ProductEntity(null, "Hp Victus 15", "Laptop gamer, Model: fb-0028nr", null, null);
         ProductEntity product2 = new ProductEntity(null, "Generic Mechanical keyboard", "Laptop gamer, Model: Logitech", null, null);
 
@@ -204,14 +217,33 @@ class CategoryDAOTest {
     @Test
     @DisplayName("Update category with valid name")
     void updateValid() {
-        CategoryEntity category = categoryDAO.findByName(categoryName).get();
-        category.setName("UpdatedName");
-        boolean updated = categoryDAO.update(category);
+        Optional<CategoryEntity> categoryOp = categoryDAO.getByIdEager(categoryId);
+        assertTrue(categoryOp.isPresent(), "Category valid id must be present");
+
+        CategoryEntity categoryEager = categoryOp.get();
+        categoryEager.setName("UpdatedName");
+        boolean updated = categoryDAO.update(categoryEager);
         assertTrue(updated, "Category with valid name should be updated");
 
-        category.setName(categoryName);
-        categoryDAO.update(category);
-        boolean updated2 = categoryDAO.update(category);
+        categoryEager.setName(categoryName);
+        categoryDAO.update(categoryEager);
+        boolean updated2 = categoryDAO.update(categoryEager);
+        assertTrue(updated2, "Category with valid name should be updated Again");
+    }
+    @Test
+    @DisplayName("Update category with valid name and Lazy Products")
+    void updateValidNameLazyProducts() {
+        Optional<CategoryEntity> categoryOp = categoryDAO.findById(categoryId);
+        assertTrue(categoryOp.isPresent(), "Category valid id must be present");
+
+        CategoryEntity categoryEager = categoryOp.get();
+        categoryEager.setName("UpdatedName");
+        boolean updated = categoryDAO.update(categoryEager);
+        assertTrue(updated, "Category with valid name should be updated");
+
+        categoryEager.setName(categoryName);
+        categoryDAO.update(categoryEager);
+        boolean updated2 = categoryDAO.update(categoryEager);
         assertTrue(updated2, "Category with valid name should be updated Again");
     }
 
@@ -272,4 +304,42 @@ class CategoryDAOTest {
 
         setUpTestData();
     }
+
+    //=============================== categoryDAO.getByIdEager(Long id) ===============================\\
+    @Test
+    @DisplayName("Get by valid Id Eager")
+    void getByIdEagerValidId() {
+        Long id = categoryId;
+        Optional<CategoryEntity> category = categoryDAO.getByIdEager(id);
+        assertTrue(category.isPresent(), "Category with Id " + id + " should be present");
+        assertNotNull(category.get().getProducts(), "Products of Category with Id " + id + " shouldn't be null");
+    }
+
+    @Test
+    @DisplayName("Get by null Id Eager")
+    void getByIdEagerNullId() {
+        Long id = null;
+        Optional<CategoryEntity> category = categoryDAO.getByIdEager(id);
+        assertTrue(category.isEmpty(), "Category with Id " + id + " shouldn't be present");
+    }
+
+    @Test
+    @DisplayName("Get by Long.MAX_VALUE Id Eager")
+    void getByIdEagerMaxValueId() {
+        Long id = Long.MAX_VALUE;
+        Optional<CategoryEntity> category = categoryDAO.getByIdEager(id);
+        assertTrue(category.isEmpty(), "Category with Id " + id + " shouldn't be present");
+    }
+
+    @Test
+    @DisplayName("Get by Long.MIN_VALUE Id Eager")
+    void getByIdEagerMinValueId() {
+        Long id = Long.MIN_VALUE;
+        Optional<CategoryEntity> category = categoryDAO.getByIdEager(id);
+        assertTrue(category.isEmpty(), "Category with Id " + id + " shouldn't be present");
+    }
+
+
+
+
 }

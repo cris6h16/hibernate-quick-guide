@@ -2,12 +2,13 @@ package org.example.Entities;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "categories")
-public class CategoryEntity {
+public class CategoryEntity implements Serializable {
     @Id
 //    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "categories_id_seq")
 //    @SequenceGenerator(name = "categories_id_seq", sequenceName = "categories_id_seq", allocationSize = 50)
@@ -20,6 +21,9 @@ public class CategoryEntity {
     @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "category", fetch = FetchType.LAZY)
     private List<ProductEntity> products = new ArrayList<>();
 
+
+    //=============================== Constructors ==================================\\
+
     public CategoryEntity() {
     }
 
@@ -29,6 +33,8 @@ public class CategoryEntity {
         this.products = products;
     }
 
+
+    //=============================== Getters and Setters ==================================\\
     public Long getId() {
         return id;
     }
@@ -51,5 +57,14 @@ public class CategoryEntity {
 
     public void setProducts(List<ProductEntity> products) {
         this.products = products;
+    }
+
+    @Override
+    public String toString() {
+        return "CategoryEntity{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", products=" + products +
+                '}';
     }
 }
