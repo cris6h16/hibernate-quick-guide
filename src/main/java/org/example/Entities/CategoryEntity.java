@@ -13,12 +13,13 @@ public class CategoryEntity implements Serializable {
 //    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "categories_id_seq")
 //    @SequenceGenerator(name = "categories_id_seq", sequenceName = "categories_id_seq", allocationSize = 50)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="id")
     private Long id;
 
     @Column(length = 100, nullable = false, unique = true)
     private String name;
 
-    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "category", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "category", cascade = CascadeType.PERSIST)
     private List<ProductEntity> products = new ArrayList<>();
 
 

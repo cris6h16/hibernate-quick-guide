@@ -201,7 +201,7 @@ public class CategoryDAOImpl implements CategoryDAO {
     }
 
     /**
-     * Use for update {@link Session#refresh(Object)}
+     * Update the category, saving the products not persisted and updating the existing products
      *
      * @param category if update is manually(Hibernate Criteria) must be Eagerly
      * @return true if category was updated
@@ -218,8 +218,14 @@ public class CategoryDAOImpl implements CategoryDAO {
         try (Session session = sessionFactory.openSession()) {
             try {
                 session.beginTransaction();
+                category.getProducts().forEach(productEntity -> {
+                    if (productEntity.getId() == null) {
+                        session.persist(productEntity);
+                    } else {
+                        session.merge(productEntity);
+                    }
+                });
                 session.refresh(category);
-                session.getTransaction().commit();
             } catch (Exception e) {
                 session.getTransaction().rollback();
                 throw e;

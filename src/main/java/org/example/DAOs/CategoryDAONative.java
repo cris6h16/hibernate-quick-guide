@@ -6,6 +6,7 @@ import org.example.Util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.query.MutationQuery;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -179,6 +180,6 @@ public class CategoryDAONative implements CategoryDAO {
     }
 
     private void handleException(Exception e, String method, String... params) {
-        ExceptionHandler.handleException(this.getClass().getName(), e, method, params);
+        ExceptionHandler.handleException(this.getClass().getName(), e, method, Arrays.toString(params));
     }
 }

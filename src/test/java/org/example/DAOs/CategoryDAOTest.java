@@ -192,13 +192,19 @@ class CategoryDAOTest {
     void saveValidNameAndProductsCascadePersist() {
 
         ProductEntity product = new ProductEntity(null, "Hp Victus 15", "Laptop gamer, Model: fb-0028nr", null, null);
-        ProductEntity product2 = new ProductEntity(null, "Generic Mechanical keyboard", "Laptop gamer, Model: Logitech", null, null);
+        ProductEntity product2 = new ProductEntity( null,"Generic Mechanical keyboard", "Laptop gamer, Model: Logitech", null, null);
 
         CategoryEntity category = new CategoryEntity(null, "Laptops", null);
         category.setProducts(List.of(product, product2));
         categoryDAO.save(category);
 
+        Optional<CategoryEntity> categoryOp = categoryDAO.getByIdEager(category.getId());
+        assertTrue(categoryOp.isPresent(), "Category with valid name and products should be saved");
+
+        category = categoryOp.get();
         assertNotNull(category.getId(), "Category with valid name and products should be saved");
+        assertEquals(2, category.getProducts().size(), "Category should have 2 products");
+        assertNotNull(category.getProducts().get(0).getId(), "Product with valid name and products should be saved");
     }
 
 
@@ -297,6 +303,7 @@ class CategoryDAOTest {
         boolean updated = categoryDAO.update(category);
         assertTrue(updated, "Category with valid name and products should be updated");
 
+        ////
         Optional<CategoryEntity> categoryUpdate = categoryDAO.getByIdEager(category.getId());
         assertTrue(categoryUpdate.isPresent(), "Category valid id must be present");
         assertTrue(categoryUpdate.get().getProducts().size() == 2, "We added and updated 2 products, Category should have 2 products");

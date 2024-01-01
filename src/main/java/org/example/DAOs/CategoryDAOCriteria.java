@@ -345,7 +345,7 @@ public class CategoryDAOCriteria implements CategoryDAO {
                 CriteriaQuery<ProductEntity> pQuery = criteriaBuilder.createQuery(ProductEntity.class);
                 Root<ProductEntity> pRoot = pQuery.from(ProductEntity.class);
 
-                pQuery = pQuery.where(criteriaBuilder.equvfdval(pRoot.get("category"), category.get()));
+                pQuery = pQuery.where(criteriaBuilder.equal(pRoot.get("category"), category.get()));
                 Query<ProductEntity> queryProducts = session.createQuery(pQuery);
 
                 products = queryProducts.list();

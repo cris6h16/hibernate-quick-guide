@@ -13,7 +13,8 @@ public class ProductEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "products_id_seq")
     @SequenceGenerator(name = "products_id_seq", sequenceName = "products_id_seq", allocationSize = 50)
-    private Integer id;
+    @Column(name="id")
+    private Long id;
 
     //TODO, test what exception is thrown FOR EACH METHOD
     @Column(length = 100, nullable = false, unique = true)
@@ -26,13 +27,14 @@ public class ProductEntity implements Serializable {
     private BigDecimal price;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name="category_id",  referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_products_categories"))
+
     private CategoryEntity category;
 
     public ProductEntity() {
     }
 
-    public ProductEntity(Integer id, String name, String description, BigDecimal price, CategoryEntity category) {
+    public ProductEntity(Long id, String name, String description, BigDecimal price, CategoryEntity category) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -42,11 +44,11 @@ public class ProductEntity implements Serializable {
 
     //=============================== Getters and Setters ==================================\\
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
