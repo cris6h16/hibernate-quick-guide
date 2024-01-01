@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,6 +22,7 @@ class CategoryDAOTest {
     // Attributes for testing
     protected static Long categoryId;
     protected static String categoryName;
+
     public CategoryDAOTest() {
         categoryDAO = new CategoryDAOImpl();
     }
@@ -64,6 +66,7 @@ class CategoryDAOTest {
         assertTrue(category.isPresent(), "Category with Id " + id + " should be present");
         assertThrows(LazyInitializationException.class, () -> category.get().getProducts().isEmpty(), "Products of Category with Id " + id + " shouldn't be null");
     }
+
     @Test
     @DisplayName("Find category by valid ID")
     void findByIdValid() {
@@ -175,6 +178,16 @@ class CategoryDAOTest {
     }
 
     @Test
+    @DisplayName("Save category with id and valid name")
+    void saveIdAndValidName() {
+        CategoryEntity category = new CategoryEntity(9999999L, "FoodTest", null);
+        categoryDAO.save(category);
+
+        Optional<CategoryEntity> categoryOp = categoryDAO.findById(9999999L);
+        assertTrue(categoryOp.isEmpty(), "Category tried save with id mustn't be saved");
+    }
+
+    @Test
     @DisplayName("Save category with valid name and products")
     void saveValidNameAndProductsCascadePersist() {
 
@@ -230,6 +243,7 @@ class CategoryDAOTest {
         boolean updated2 = categoryDAO.update(categoryEager);
         assertTrue(updated2, "Category with valid name should be updated Again");
     }
+
     @Test
     @DisplayName("Update category with valid name and Lazy Products")
     void updateValidNameLazyProducts() {
@@ -269,6 +283,29 @@ class CategoryDAOTest {
         assertTrue(updated2, "Category with valid name and products should be updated Again");
     }
 
+    @Test
+    @DisplayName("Update products category")
+    void updateProductCategory() {
+        ProductEntity product = new ProductEntity(null, "SSD 2tb", "ssd description", null, null);
+        ProductEntity product2 = new ProductEntity(null, "Motherboard", "motherboard description", null, null);
+        CategoryEntity category = new CategoryEntity(null, "Hardware", null);
+        category.setProducts(List.of(product, product2));
+        categoryDAO.save(category);
+        assertNotNull(category.getId(), "Category with valid name and products should be saved");
+
+        category.getProducts().forEach(productEntity -> productEntity.setName("UpdatedName" + UUID.randomUUID().toString()));
+        boolean updated = categoryDAO.update(category);
+        assertTrue(updated, "Category with valid name and products should be updated");
+
+        Optional<CategoryEntity> categoryUpdate = categoryDAO.getByIdEager(category.getId());
+        assertTrue(categoryUpdate.isPresent(), "Category valid id must be present");
+        assertTrue(categoryUpdate.get().getProducts().size() == 2, "We added and updated 2 products, Category should have 2 products");
+
+        assertTrue(categoryUpdate.get().getProducts().getFirst().getName().contains("UpdatedName"),
+                "First Product name should be updated");
+        assertTrue(categoryUpdate.get().getProducts().getLast().getName().contains("UpdatedName"),
+                "Last Product name should be updated");
+    }
 
     //=============================== categoryDAO.delete(CategoryEntity category) ===============================\\
     @Test
@@ -338,8 +375,6 @@ class CategoryDAOTest {
         Optional<CategoryEntity> category = categoryDAO.getByIdEager(id);
         assertTrue(category.isEmpty(), "Category with Id " + id + " shouldn't be present");
     }
-
-
 
 
 }

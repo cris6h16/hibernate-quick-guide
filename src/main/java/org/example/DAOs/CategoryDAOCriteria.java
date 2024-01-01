@@ -1,10 +1,12 @@
 package org.example.DAOs;
 
+import jakarta.persistence.NonUniqueResultException;
 import jakarta.persistence.criteria.*;
 import org.example.Entities.CategoryEntity;
 import org.example.Entities.ProductEntity;
 import org.example.Exceptions.ExceptionHandler;
 import org.example.Util.HibernateUtil;
+import org.hibernate.HibernateException;
 import org.hibernate.LazyInitializationException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -19,6 +21,7 @@ import java.util.Optional;
 /**
  * Database Access Object of {@link CategoryEntity} using Hibernate Criteria. <br>
  * DAO implementation of {@link CategoryDAO},
+ *
  * @author <a href="https://github.com/cris6h16/" rel="Noopener noreferrer" target="_blank">Cristian</a>
  */
 
@@ -194,6 +197,7 @@ public class CategoryDAOCriteria implements CategoryDAO {
             }
         }
     }
+
     /**
      * <b>For testing purposes.</b>
      * First, delete all rows from CategoryEntity table.
@@ -238,6 +242,7 @@ public class CategoryDAOCriteria implements CategoryDAO {
         }
         return categories;
     }
+
     /**
      * Finds a category by its name.
      *
@@ -269,6 +274,7 @@ public class CategoryDAOCriteria implements CategoryDAO {
         }
         return Optional.ofNullable(entity);
     }
+
     /**
      * Finds a category by its ID.
      *
@@ -339,13 +345,13 @@ public class CategoryDAOCriteria implements CategoryDAO {
                 CriteriaQuery<ProductEntity> pQuery = criteriaBuilder.createQuery(ProductEntity.class);
                 Root<ProductEntity> pRoot = pQuery.from(ProductEntity.class);
 
-                pQuery = pQuery.where(criteriaBuilder.equal(pRoot.get("category"), category.get()));
+                pQuery = pQuery.where(criteriaBuilder.equvfdval(pRoot.get("category"), category.get()));
                 Query<ProductEntity> queryProducts = session.createQuery(pQuery);
 
                 products = queryProducts.list();
             }
-        } catch (Exception e) {
-            handleSevereException(e, "getByIdEager", id.toString());
+        } catch (HibernateException | IllegalStateException | IllegalArgumentException | NonUniqueResultException e) {
+            handleSevereException(e, "getByIdEager", ExceptionHandler.SEVERE, id.toString());
         }
 
         if (category.isEmpty()) return Optional.empty();
@@ -376,8 +382,8 @@ public class CategoryDAOCriteria implements CategoryDAO {
         return id != null && id > 0;
     }
 
-    private void handleSevereException(Exception e, String method, String... params) {
-        ExceptionHandler.handleSevereException(this.getClass().getName(), e, method, params);
+    private void handleSevereException(Exception e, String method, String type, String... params) {
+        ExceptionHandler.handleException(this.getClass().getName(), e, method, type, params);
     }
 
 }

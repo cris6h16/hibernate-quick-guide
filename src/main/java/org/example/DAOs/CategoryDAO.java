@@ -16,6 +16,7 @@ public interface CategoryDAO {
     boolean deleteById(Long id);
 
     /**
+     *
      * @param category if update is manually(Hibernate Criteria) must be Eagerly
      * @return true if category was updated
      */
