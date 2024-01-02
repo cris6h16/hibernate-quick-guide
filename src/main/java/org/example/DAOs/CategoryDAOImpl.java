@@ -182,7 +182,8 @@ public class CategoryDAOImpl implements CategoryDAO {
                 session.getTransaction().rollback();
                 throw e;
             }
-            //RollbackException, HibernateException extends PersistenceException
+            //RollbackException, HibernateException ny(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    @JoinColumn(name = "catextends PersistenceException
         } catch (IllegalStateException | PersistenceException e) {
             handleException(e, "save", ExceptionHandler.SEVERE, category.toString());
         }

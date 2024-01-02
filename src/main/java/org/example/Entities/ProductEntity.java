@@ -26,9 +26,7 @@ public class ProductEntity implements Serializable {
     @Column(precision = 7, scale = 2)
     private BigDecimal price;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name="category_id",  referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_products_categories"))
-
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private CategoryEntity category;
 
     public ProductEntity() {

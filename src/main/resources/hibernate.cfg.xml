@@ -7,8 +7,8 @@
         <property name="connection.url">jdbc:postgresql://localhost:5432/hibernate</property>
         <property name="default_schema">tienda</property>
         <property name="connection.driver_class">org.postgresql.Driver</property>
-        <property name="connection.username">postgres</property>
-        <property name="connection.password">12345678</property>
+        <property name="connection.username">cristian</property>
+        <property name="connection.password">2004</property>
         <property name="dialect">org.hibernate.dialect.PostgreSQLDialect</property>
         <property name="show_sql">true</property>
         <property name="format_sql">true</property>

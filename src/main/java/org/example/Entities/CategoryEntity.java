@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Entity
@@ -18,9 +19,10 @@ public class CategoryEntity implements Serializable {
     @Column(length = 100, nullable = false, unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    // One to many ||| unidirectional
+    @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_products_category_id"))
     private List<ProductEntity> products = new ArrayList<>();
-
 
     //=============================== Constructors ==================================\\
 
