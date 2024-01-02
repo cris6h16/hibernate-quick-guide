@@ -192,10 +192,11 @@ class CategoryDAOTest {
     void saveValidNameAndProductsCascadePersist() {
 
         ProductEntity product = new ProductEntity(null, "Hp Victus 15", "Laptop gamer, Model: fb-0028nr", null, null);
-        ProductEntity product2 = new ProductEntity( null,"Generic Mechanical keyboard", "Laptop gamer, Model: Logitech", null, null);
-
+        ProductEntity product2 = new ProductEntity(null, "Generic Mechanical keyboard", "Laptop gamer, Model: Logitech", null, null);
         CategoryEntity category = new CategoryEntity(null, "Laptops", null);
-        category.setProducts(List.of(product, product2));
+        category.getProducts().add(product2);
+        category.getProducts().add(product);
+
         categoryDAO.save(category);
 
         Optional<CategoryEntity> categoryOp = categoryDAO.getByIdEager(category.getId());

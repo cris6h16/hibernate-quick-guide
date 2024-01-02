@@ -11,9 +11,9 @@ import java.util.List;
 public class ProductEntity implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "products_id_seq")
-    @SequenceGenerator(name = "products_id_seq", sequenceName = "products_id_seq", allocationSize = 50)
-    @Column(name="id")
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "products_id_seq")
+//    @SequenceGenerator(name = "products_id_seq", sequenceName = "products_id_seq", allocationSize = 50)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     //TODO, test what exception is thrown FOR EACH METHOD
@@ -26,7 +26,7 @@ public class ProductEntity implements Serializable {
     @Column(precision = 7, scale = 2)
     private BigDecimal price;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name="category_id",  referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_products_categories"))
 
     private CategoryEntity category;

@@ -13,13 +13,12 @@ public class CategoryEntity implements Serializable {
 //    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "categories_id_seq")
 //    @SequenceGenerator(name = "categories_id_seq", sequenceName = "categories_id_seq", allocationSize = 50)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
     private Long id;
 
     @Column(length = 100, nullable = false, unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<ProductEntity> products = new ArrayList<>();
 
 
@@ -31,7 +30,6 @@ public class CategoryEntity implements Serializable {
     public CategoryEntity(Long id, String name, List<ProductEntity> products) {
         this.id = id;
         this.name = name;
-        this.products = products;
     }
 
 
@@ -56,8 +54,9 @@ public class CategoryEntity implements Serializable {
         return products;
     }
 
+    //TODO: document this
     public void setProducts(List<ProductEntity> products) {
-        this.products = products;
+        this.products.addAll(products);
     }
 
     @Override
@@ -65,7 +64,7 @@ public class CategoryEntity implements Serializable {
         return "CategoryEntity{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", products=" + products +
+//                ", products=" + products +
                 '}';
     }
 }

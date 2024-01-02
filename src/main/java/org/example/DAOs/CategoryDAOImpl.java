@@ -47,9 +47,9 @@ public class CategoryDAOImpl implements CategoryDAO {
         List<CategoryEntity> categories = new ArrayList();
 
         try (Session session = sessionFactory.openSession()) {
-            Query<CategoryEntity> query = session.createQuery
-                    ("from CategoryEntity", CategoryEntity.class);
-            categories = query.list();
+            categories = session
+                    .createQuery("from CategoryEntity", CategoryEntity.class)
+                    .list();
 
         } catch (HibernateException he) {
             handleException(he, "listAll", ExceptionHandler.SEVERE, "n/a");
@@ -67,28 +67,19 @@ public class CategoryDAOImpl implements CategoryDAO {
     public Optional<CategoryEntity> getByIdEager(Long id) {
         if (id == null) return Optional.empty();
 
-        List<ProductEntity> products = new ArrayList<>();
         CategoryEntity category = null;
 
         try (Session session = sessionFactory.openSession()) {
-            //retrieve the category
-            category = session.find(CategoryEntity.class, id);
-            //retrieve products
-            Query<ProductEntity> query = session.createQuery
-                    ("from ProductEntity p WHERE p.category.id = :id", ProductEntity.class);
-            query.setParameter(ID_FIELD, id);
-            products = query.list();
+            category = session
+                    .createQuery("from CategoryEntity ce WHERE ce.id=:id", CategoryEntity.class)
+                    .setParameter("id", id)
+                    .getSingleResultOrNull();
 
-//            Never happens, because method already accepts Longs and verify if isn't null
-//        } catch (IllegalArgumentException ie) {
-//            handleException(ie, "getByIdEager", ExceptionHandler.WARNING, String.valueOf(id));
         } catch (HibernateException e) {
             handleException(e, "getByIdEager", ExceptionHandler.SEVERE, String.valueOf(id));
         }
 
         if (category == null) return Optional.empty();
-
-        category.setProducts(products);
 
         return Optional.of(category);
     }
@@ -127,15 +118,11 @@ public class CategoryDAOImpl implements CategoryDAO {
         CategoryEntity category = null;
 
         try (Session session = sessionFactory.openSession()) {
-            Query<CategoryEntity> query = session.createQuery
-                    ("FROM CategoryEntity ce WHERE ce.name = :name", CategoryEntity.class);
-            query.setParameter(NAME_FIELD, name);
-            //Only one result, CategoryEntity.name is UNIQUE
-            category = query.getSingleResultOrNull();
+            category = session
+                    .createQuery("FROM CategoryEntity ce WHERE ce.name = :name", CategoryEntity.class)
+                    .setParameter(NAME_FIELD, name)
+                    .getSingleResultOrNull();
 
-//        Never happens, because CategoryEntity.name is UNIQUE
-//        } catch (NonUniqueResultException ne) {
-//            handleException(ne, "findByName", ExceptionHandler.SEVERE, name);
         } catch (HibernateException he) {
             handleException(he, "findByName", ExceptionHandler.SEVERE, name);
         }
@@ -158,13 +145,14 @@ public class CategoryDAOImpl implements CategoryDAO {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
             // It deletes rows only if we commit the transaction
-            session.createQuery("delete from CategoryEntity").executeUpdate();
-            Query<CategoryEntity> query = session.createQuery("from CategoryEntity", CategoryEntity.class);
-            categories = query.list();
+            session.createQuery("delete from CategoryEntity")
+                    .executeUpdate();
+            categories = session
+                    .createQuery("from CategoryEntity", CategoryEntity.class)
+                    .list();
 
             session.getTransaction().rollback();
 
-            //HibernateException extends PersistenceException
         } catch (IllegalStateException | PersistenceException e) {
             handleException(e, "listAllWithEmptyRows", ExceptionHandler.SEVERE, "n/a");
         }
@@ -218,14 +206,7 @@ public class CategoryDAOImpl implements CategoryDAO {
         try (Session session = sessionFactory.openSession()) {
             try {
                 session.beginTransaction();
-                category.getProducts().forEach(productEntity -> {
-                    if (productEntity.getId() == null) {
-                        session.persist(productEntity);
-                    } else {
-                        session.merge(productEntity);
-                    }
-                });
-                session.refresh(category);
+                session.merge(category);
             } catch (Exception e) {
                 session.getTransaction().rollback();
                 throw e;
@@ -256,8 +237,10 @@ public class CategoryDAOImpl implements CategoryDAO {
                 Root<CategoryEntity> root = criteriaDelete.from(CategoryEntity.class);
                 criteriaDelete = criteriaDelete.where(builder.equal(root.get(ID_FIELD), id));
 
-                MutationQuery query = session.createMutationQuery(criteriaDelete);
-                affectedRows = query.executeUpdate();
+                affectedRows = session
+                        .createMutationQuery(criteriaDelete)
+                        .executeUpdate();
+
                 session.getTransaction().commit();
             } catch (Exception e) {
                 session.getTransaction().rollback();
