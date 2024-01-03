@@ -194,8 +194,7 @@ class CategoryDAOTest {
         ProductEntity product = new ProductEntity(null, "Hp Victus 15", "Laptop gamer, Model: fb-0028nr", null, null);
         ProductEntity product2 = new ProductEntity(null, "Generic Mechanical keyboard", "Laptop gamer, Model: Logitech", null, null);
         CategoryEntity category = new CategoryEntity(null, "Laptops", null);
-        category.getProducts().add(product2);
-        category.getProducts().add(product);
+        category.addProducts(product2, product);
 
         categoryDAO.save(category);
 
@@ -275,7 +274,7 @@ class CategoryDAOTest {
         ProductEntity product2 = new ProductEntity(null, "Motherboard", "motherboard description", null, null);
 
         CategoryEntity category = new CategoryEntity(null, "Hardware", null);
-        category.setProducts(List.of(product, product2));
+        category.addProducts(product, product2);
         categoryDAO.save(category);
 
         assertNotNull(category.getId(), "Category with valid name and products should be saved");
@@ -296,7 +295,7 @@ class CategoryDAOTest {
         ProductEntity product = new ProductEntity(null, "SSD 2tb", "ssd description", null, null);
         ProductEntity product2 = new ProductEntity(null, "Motherboard", "motherboard description", null, null);
         CategoryEntity category = new CategoryEntity(null, "Hardware", null);
-        category.setProducts(List.of(product, product2));
+        category.addProducts(product, product2);
         categoryDAO.save(category);
         assertNotNull(category.getId(), "Category with valid name and products should be saved");
 
@@ -382,6 +381,16 @@ class CategoryDAOTest {
         Long id = Long.MIN_VALUE;
         Optional<CategoryEntity> category = categoryDAO.getByIdEager(id);
         assertTrue(category.isEmpty(), "Category with Id " + id + " shouldn't be present");
+    }
+
+    @Test
+    @DisplayName("BIDIRECTIONAL association, Get Category from a product(element of List) into Category")
+    void getCategoryFromProduct() {
+        Long id = categoryId;
+        Optional<CategoryEntity> category = categoryDAO.getByIdEager(id);
+        assertTrue(category.isPresent(), "Category with Id " + id + " should be present");
+        assertNotNull(category.get().getProducts(), "Products of Category with Id " + id + " shouldn't be null");
+        assertNotNull(category.get().getProducts().getFirst().getCategory(), "Category of Product with Id " + id + " shouldn't be null");
     }
 
 

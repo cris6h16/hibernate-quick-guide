@@ -337,13 +337,30 @@ public class CategoryDAOCriteria implements CategoryDAO {
         Optional<CategoryEntity> category = Optional.empty();
 
         try (Session session = sessionFactory.openSession()) {
-            category = getCategoryEntityById(session, id);
+//            category = getCategoryEntityById(session, id);
+
+            // Create the criteria builder
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<CategoryEntity> criteriaQuery = builder.createQuery(CategoryEntity.class);
+            Root<CategoryEntity> root = criteriaQuery.from(CategoryEntity.class);
+
+            // Create the 'id' = id restriction
+            Fetch<CategoryEntity, ProductEntity> fetch = root.fetch("products", JoinType.LEFT)...; //Eagerly load the products
+
+//            Predicate predicate = builder.equal(root.get(ID_FIELD), id);
+            Predicate predicate = builder.equal(root.get(ID_FIELD), id);
+            criteriaQuery = criteriaQuery.where(predicate);
+
+            //get the category
+            Query<CategoryEntity> query = session.createQuery(criteriaQuery);
+            category = Optional.ofNullable(query.getSingleResultOrNull());
 
             if (category.isPresent()) {
                 CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
                 //Eagerly load the products
                 CriteriaQuery<ProductEntity> pQuery = criteriaBuilder.createQuery(ProductEntity.class);
                 Root<ProductEntity> pRoot = pQuery.from(ProductEntity.class);
+
 
                 pQuery = pQuery.where(criteriaBuilder.equal(pRoot.get("category"), category.get()));
                 Query<ProductEntity> queryProducts = session.createQuery(pQuery);
@@ -356,7 +373,7 @@ public class CategoryDAOCriteria implements CategoryDAO {
 
         if (category.isEmpty()) return Optional.empty();
 
-        category.get().setProducts(products);
+        category.get().addProducts(products);
 
         return category;
     }

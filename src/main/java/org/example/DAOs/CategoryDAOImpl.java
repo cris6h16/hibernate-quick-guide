@@ -71,8 +71,8 @@ public class CategoryDAOImpl implements CategoryDAO {
 
         try (Session session = sessionFactory.openSession()) {
             category = session
-                    .createQuery("from CategoryEntity ce WHERE ce.id=:id", CategoryEntity.class)
-                    .setParameter("id", id)
+                    .createQuery("FROM CategoryEntity ce LEFT JOIN FETCH ce.products WHERE ce.id = :id", CategoryEntity.class)
+                    .setParameter(ID_FIELD, id)
                     .getSingleResultOrNull();
 
         } catch (HibernateException e) {

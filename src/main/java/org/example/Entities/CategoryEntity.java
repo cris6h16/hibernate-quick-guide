@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Entity
-@Table(name = "categories")
+//@Table(name = "categories")
 public class CategoryEntity implements Serializable {
     @Id
 //    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "categories_id_seq")
@@ -19,10 +19,17 @@ public class CategoryEntity implements Serializable {
     @Column(length = 100, nullable = false, unique = true)
     private String name;
 
-    // One to many ||| unidirectional
-    @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_products_category_id"))
+    //=================== One to many ||| bidirectional ===================\\
+    // - Must set the "One" entity explicitly in the "Many" entity, when it is added.
+    @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "category", orphanRemoval = true)
     private List<ProductEntity> products = new ArrayList<>();
+
+    public void addProducts(ProductEntity... products) {
+        this.products.addAll(Arrays.asList(products));
+        //"One" is set in the "Many" entity
+        Arrays.asList(products).forEach(product -> product.setCategory(this));
+    }
+
 
     //=============================== Constructors ==================================\\
 
@@ -54,11 +61,6 @@ public class CategoryEntity implements Serializable {
 
     public List<ProductEntity> getProducts() {
         return products;
-    }
-
-    //TODO: document this
-    public void setProducts(List<ProductEntity> products) {
-        this.products.addAll(products);
     }
 
     @Override
