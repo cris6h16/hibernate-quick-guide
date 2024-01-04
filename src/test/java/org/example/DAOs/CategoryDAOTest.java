@@ -299,6 +299,7 @@ class CategoryDAOTest {
 
         assertNotNull(category.getId(), "Category with valid name and products should be saved");
 
+        // the name isn't updated
         category.setName("UpdatedName");
         boolean updated = categoryDAO.merge(category);
         assertTrue(updated, "Category with valid name and products should be updated");

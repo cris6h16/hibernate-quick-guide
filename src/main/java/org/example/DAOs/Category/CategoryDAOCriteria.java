@@ -135,6 +135,9 @@ public class CategoryDAOCriteria implements CategoryDAO {
             MutationQuery cQuery = session.createMutationQuery(update);
             affectedRowsCategory = cQuery.executeUpdate();
 
+            //get attach category later to update
+            CategoryEntity attachedCategory = getCategoryEntityById(session, categoryEagerly.getId()).orElse(null);
+
             //If the category doesn't have products, return
             if (categoryEagerly.getProducts() == null || categoryEagerly.getProducts().isEmpty()) {
                 return affectedRowsCategory > 0;
@@ -142,8 +145,8 @@ public class CategoryDAOCriteria implements CategoryDAO {
 
             //Retrieve the products related to the category
             CriteriaQuery<ProductEntity> pQuery = builder.createQuery(ProductEntity.class); //.createCountQuery();
-            Root<ProductEntity> jpaRoot = pQuery.from(ProductEntity.class);
-            pQuery = pQuery.where(builder.equal(jpaRoot.get(CATEGORY_FIELD), categoryEagerly.getId()));
+            Root<ProductEntity> rootProd = pQuery.from(ProductEntity.class);
+            pQuery = pQuery.where(builder.equal(rootProd.get("category").get("id"), categoryEagerly.getId()));
 
             List<ProductEntity> productsFromDB = session
                     .createQuery(pQuery)
@@ -159,7 +162,7 @@ public class CategoryDAOCriteria implements CategoryDAO {
                         .createMutationQuery(delete)
                         .executeUpdate();
 
-                return affectedRowsCategory > 0;
+//                return affectedRowsCategory > 0;
             }
 
 
@@ -190,14 +193,20 @@ public class CategoryDAOCriteria implements CategoryDAO {
                             .set(ProductDAO.NAME_FIELD, productFromParameter.getName())
                             .set(ProductDAO.DESCRIPTION_FIELD, productFromParameter.getDescription())
                             .set(ProductDAO.PRICE_FIELD, productFromParameter.getPrice())
-                            .set(ProductDAO.CATEGORY_FIELD, categoryEagerly.getId());
+                            //TODO: document this in markdown
+//                            .set("category", categoryEagerly); //detached category
+                            .set("category", attachedCategory);
                     MutationQuery queryFor = session.createMutationQuery(updateFor);
                     affectedRowsProduct = affectedRowsProduct + queryFor.executeUpdate();
                 }
 
-                // - if it has an invalid id
+                // - if it has an invalid id and valid name
                 //else save it
-                if (!isIdValid(productFromParameter.getId())) {
+                if (!isIdValid(productFromParameter.getId()) && isNameValid(productFromParameter.getName())) {
+                    //TODO: document this in markdown
+                    //productFromParameter has the category directly from the parameter, it's detached
+                    // because above we update the category in db
+                    productFromParameter.setCategory(attachedCategory);
                     session.persist(productFromParameter);
                 }
 
@@ -208,6 +217,10 @@ public class CategoryDAOCriteria implements CategoryDAO {
             throw e;
         }
         return affectedRowsCategory > 0;
+    }
+
+    private boolean isNameValid(String name) {
+        return name != null && !name.isEmpty();
     }
 
 
