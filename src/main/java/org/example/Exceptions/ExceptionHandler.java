@@ -1,6 +1,6 @@
 package org.example.Exceptions;
 
-import org.example.DAOs.CategoryDAOCriteria;
+import org.example.DAOs.Category.CategoryDAOCriteria;
 
 import java.util.Arrays;
 import java.util.logging.Logger;

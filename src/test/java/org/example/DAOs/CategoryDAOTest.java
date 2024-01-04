@@ -1,5 +1,7 @@
 package org.example.DAOs;
 
+import org.example.DAOs.Category.CategoryDAO;
+import org.example.DAOs.Category.CategoryDAOImpl;
 import org.example.Entities.CategoryEntity;
 import org.example.Entities.ProductEntity;
 import org.example.Util.HibernateUtil;
@@ -9,6 +11,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -34,7 +37,7 @@ class CategoryDAOTest {
 
     @BeforeAll
     public static void setUpTestData() {
-        CategoryEntity categoryForTesting = new CategoryEntity(null, "CategoryForTesting", null);
+        CategoryEntity categoryForTesting = new CategoryEntity(null, "CategoryForTesting");
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
@@ -156,7 +159,7 @@ class CategoryDAOTest {
     @Test
     @DisplayName("Save category with null name")
     void saveNullName() {
-        CategoryEntity category = new CategoryEntity(null, null, null);
+        CategoryEntity category = new CategoryEntity(null, null);
         categoryDAO.save(category);
         assertNull(category.getId(), "Category with null name shouldn't be saved");
     }
@@ -164,7 +167,7 @@ class CategoryDAOTest {
     @Test
     @DisplayName("Save category with empty name")
     void saveEmptyName() {
-        CategoryEntity category = new CategoryEntity(null, "", null);
+        CategoryEntity category = new CategoryEntity(null, "");
         categoryDAO.save(category);
         assertNull(category.getId(), "Category with empty name shouldn't be saved");
     }
@@ -172,7 +175,7 @@ class CategoryDAOTest {
     @Test
     @DisplayName("Save category with valid name")
     void saveValidName() {
-        CategoryEntity category = new CategoryEntity(null, "Food", null);
+        CategoryEntity category = new CategoryEntity(null, "Food");
         categoryDAO.save(category);
         assertNotNull(category.getId(), "Category with valid name should be saved");
     }
@@ -180,7 +183,7 @@ class CategoryDAOTest {
     @Test
     @DisplayName("Save category with id and valid name")
     void saveIdAndValidName() {
-        CategoryEntity category = new CategoryEntity(9999999L, "FoodTest", null);
+        CategoryEntity category = new CategoryEntity(9999999L, "FoodTest");
         categoryDAO.save(category);
 
         Optional<CategoryEntity> categoryOp = categoryDAO.findById(9999999L);
@@ -191,9 +194,9 @@ class CategoryDAOTest {
     @DisplayName("Save category with valid name and products")
     void saveValidNameAndProductsCascadePersist() {
 
-        ProductEntity product = new ProductEntity(null, "Hp Victus 15", "Laptop gamer, Model: fb-0028nr", null, null);
-        ProductEntity product2 = new ProductEntity(null, "Generic Mechanical keyboard", "Laptop gamer, Model: Logitech", null, null);
-        CategoryEntity category = new CategoryEntity(null, "Laptops", null);
+        ProductEntity product = new ProductEntity(null, "Hp Victus 15", "Laptop gamer, Model: fb-0028nr", null);
+        ProductEntity product2 = new ProductEntity(null, "Generic Mechanical keyboard", "Laptop gamer, Model: Logitech", null);
+        CategoryEntity category = new CategoryEntity(null, "Laptops");
         category.addProducts(product2, product);
 
         categoryDAO.save(category);
@@ -212,24 +215,24 @@ class CategoryDAOTest {
     @Test
     @DisplayName("Update category with null name")
     void updateNullName() {
-        CategoryEntity category = new CategoryEntity(categoryId, null, null);
-        boolean updated = categoryDAO.update(category);
+        CategoryEntity category = new CategoryEntity(categoryId, null);
+        boolean updated = categoryDAO.merge(category);
         assertFalse(updated, "Category with null name shouldn't be updated");
     }
 
     @Test
     @DisplayName("Update category with empty name")
     void updateEmptyName() {
-        CategoryEntity category = new CategoryEntity(categoryId, "", null);
-        boolean updated = categoryDAO.update(category);
+        CategoryEntity category = new CategoryEntity(categoryId, "");
+        boolean updated = categoryDAO.merge(category);
         assertFalse(updated, "Category with empty name shouldn't be updated");
     }
 
     @Test
     @DisplayName("Update category with null ID")
     void updateNullId() {
-        CategoryEntity category = new CategoryEntity(null, "UpdatedName", null);
-        boolean updated = categoryDAO.update(category);
+        CategoryEntity category = new CategoryEntity(null, "UpdatedName");
+        boolean updated = categoryDAO.merge(category);
         assertFalse(updated, "Category with null ID shouldn't be updated");
     }
 
@@ -241,12 +244,12 @@ class CategoryDAOTest {
 
         CategoryEntity categoryEager = categoryOp.get();
         categoryEager.setName("UpdatedName");
-        boolean updated = categoryDAO.update(categoryEager);
+        boolean updated = categoryDAO.merge(categoryEager);
         assertTrue(updated, "Category with valid name should be updated");
 
         categoryEager.setName(categoryName);
-        categoryDAO.update(categoryEager);
-        boolean updated2 = categoryDAO.update(categoryEager);
+        categoryDAO.merge(categoryEager);
+        boolean updated2 = categoryDAO.merge(categoryEager);
         assertTrue(updated2, "Category with valid name should be updated Again");
     }
 
@@ -258,49 +261,67 @@ class CategoryDAOTest {
 
         CategoryEntity categoryEager = categoryOp.get();
         categoryEager.setName("UpdatedName");
-        boolean updated = categoryDAO.update(categoryEager);
+        boolean updated = categoryDAO.merge(categoryEager);
         assertTrue(updated, "Category with valid name should be updated");
 
         categoryEager.setName(categoryName);
-        categoryDAO.update(categoryEager);
-        boolean updated2 = categoryDAO.update(categoryEager);
+        categoryDAO.merge(categoryEager);
+        boolean updated2 = categoryDAO.merge(categoryEager);
         assertTrue(updated2, "Category with valid name should be updated Again");
     }
 
     @Test
+    @DisplayName("Update name with lazy products")
+    void UpdateValidNamesLazyProduct() {
+        Long id = categoryId;
+        String updatedName = "Actualizado testing";
+        CategoryEntity category = new CategoryEntity(null, "Hello");
+        categoryDAO.save(category);
+
+        category.setName(updatedName);
+        categoryDAO.merge(category);
+
+        Optional<CategoryEntity> categoryUpdated = categoryDAO.getByIdEager(category.getId());
+        assertTrue(categoryUpdated.isPresent(), "Category update should be present");
+        assertTrue(categoryUpdated.get().getName().equals(updatedName));
+    }
+
+
+    @Test
     @DisplayName("Update category with valid name and products")
     void updateValidNameAndProductsCascadePersist() {
-        ProductEntity product = new ProductEntity(null, "SSD 2tb", "ssd description", null, null);
-        ProductEntity product2 = new ProductEntity(null, "Motherboard", "motherboard description", null, null);
+        ProductEntity product = new ProductEntity(null, "SSD 2tb", "ssd description", null);
+        ProductEntity product2 = new ProductEntity(null, "Motherboard", "motherboard description", null);
 
-        CategoryEntity category = new CategoryEntity(null, "Hardware", null);
+        CategoryEntity category = new CategoryEntity(null, "Hardware");
         category.addProducts(product, product2);
         categoryDAO.save(category);
 
         assertNotNull(category.getId(), "Category with valid name and products should be saved");
 
         category.setName("UpdatedName");
-        boolean updated = categoryDAO.update(category);
+        boolean updated = categoryDAO.merge(category);
         assertTrue(updated, "Category with valid name and products should be updated");
 
         category.setName("Hardware");
-        categoryDAO.update(category);
-        boolean updated2 = categoryDAO.update(category);
+        categoryDAO.merge(category);
+        boolean updated2 = categoryDAO.merge(category);
         assertTrue(updated2, "Category with valid name and products should be updated Again");
     }
 
     @Test
     @DisplayName("Update products category")
     void updateProductCategory() {
-        ProductEntity product = new ProductEntity(null, "SSD 2tb", "ssd description", null, null);
-        ProductEntity product2 = new ProductEntity(null, "Motherboard", "motherboard description", null, null);
-        CategoryEntity category = new CategoryEntity(null, "Hardware", null);
+        ProductEntity product = new ProductEntity(null, "SSD 2tb", "ssd description", null);
+        ProductEntity product2 = new ProductEntity(null, "Motherboard", "motherboard description", null);
+        CategoryEntity category = new CategoryEntity(null, "HardwareTest");
         category.addProducts(product, product2);
         categoryDAO.save(category);
         assertNotNull(category.getId(), "Category with valid name and products should be saved");
 
         category.getProducts().forEach(productEntity -> productEntity.setName("UpdatedName" + UUID.randomUUID().toString()));
-        boolean updated = categoryDAO.update(category);
+//        category.setName(category.getName() + " HELLO WORD");
+        boolean updated = categoryDAO.merge(category);
         assertTrue(updated, "Category with valid name and products should be updated");
 
         ////
@@ -386,11 +407,21 @@ class CategoryDAOTest {
     @Test
     @DisplayName("BIDIRECTIONAL association, Get Category from a product(element of List) into Category")
     void getCategoryFromProduct() {
-        Long id = categoryId;
-        Optional<CategoryEntity> category = categoryDAO.getByIdEager(id);
-        assertTrue(category.isPresent(), "Category with Id " + id + " should be present");
-        assertNotNull(category.get().getProducts(), "Products of Category with Id " + id + " shouldn't be null");
-        assertNotNull(category.get().getProducts().getFirst().getCategory(), "Category of Product with Id " + id + " shouldn't be null");
+
+        ProductEntity product = new ProductEntity(null, "Metal filing cabinet", "size 150x125", BigDecimal.valueOf(12));
+        ProductEntity product2 = new ProductEntity(null, "Folder", "Blue folder with transparent cover", BigDecimal.valueOf(12.847));
+        CategoryEntity category = new CategoryEntity(null, "Office");
+        category.addProducts(product, product2);
+        categoryDAO.save(category);
+        Long id = category.getId();
+        assertNotNull(id, "Category with valid name and products should be saved");
+
+        Optional<CategoryEntity> categoryOp = categoryDAO.getByIdEager(id);
+        assertTrue(categoryOp.isPresent(), "Category with Id " + id + " should be present");
+        assertNotNull(categoryOp.get().getProducts(), "Products of Category with Id " + id + " shouldn't be null");
+        assertNotNull(categoryOp.get().getProducts().getFirst().getCategory(), "Category of Product with Id " + id + " shouldn't be null");
+
+
     }
 
 

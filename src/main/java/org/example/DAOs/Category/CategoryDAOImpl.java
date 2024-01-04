@@ -1,25 +1,19 @@
-package org.example.DAOs;
+package org.example.DAOs.Category;
 
-import jakarta.persistence.NonUniqueResultException;
 import jakarta.persistence.PersistenceException;
-import jakarta.persistence.RollbackException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaDelete;
 import jakarta.persistence.criteria.Root;
 import org.example.Entities.CategoryEntity;
-import org.example.Entities.ProductEntity;
 import org.example.Exceptions.ExceptionHandler;
 import org.example.Util.HibernateUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.query.MutationQuery;
-import org.hibernate.query.Query;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 /**
  * Database Access Object of {@link CategoryEntity} using Hibernate Methods. <br>
@@ -197,7 +191,7 @@ public class CategoryDAOImpl implements CategoryDAO {
      */
 
     @Override
-    public boolean update(CategoryEntity category) {
+    public boolean merge(CategoryEntity category) {
 
         if (category == null) return false;
         if (category.getId() == null) return false;
@@ -208,6 +202,8 @@ public class CategoryDAOImpl implements CategoryDAO {
             try {
                 session.beginTransaction();
                 session.merge(category);
+                category.getProducts().forEach(product -> session.merge(product));
+                session.getTransaction().commit();
             } catch (Exception e) {
                 session.getTransaction().rollback();
                 throw e;

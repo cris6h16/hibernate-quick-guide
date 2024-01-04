@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Entity
-//@Table(name = "categories")
+@Table(name = "categories")
 public class CategoryEntity implements Serializable {
     @Id
 //    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "categories_id_seq")
@@ -19,9 +19,11 @@ public class CategoryEntity implements Serializable {
     @Column(length = 100, nullable = false, unique = true)
     private String name;
 
+    /*
     //=================== One to many ||| bidirectional ===================\\
     // - Must set the "One" entity explicitly in the "Many" entity, when it is added.
-    @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "category", orphanRemoval = true)
+
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "category", orphanRemoval = true, targetEntity = ProductEntity.class)
     private List<ProductEntity> products = new ArrayList<>();
 
     public void addProducts(ProductEntity... products) {
@@ -29,14 +31,28 @@ public class CategoryEntity implements Serializable {
         //"One" is set in the "Many" entity
         Arrays.asList(products).forEach(product -> product.setCategory(this));
     }
+    //adicional: constructor
+    public CategoryEntity(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+    //============================================================================\\
+    */
 
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "category", orphanRemoval = true, targetEntity = ProductEntity.class)
+    private List<ProductEntity> products = new ArrayList<>();
+    public void addProducts(ProductEntity... products) {
+        this.products.addAll(Arrays.asList(products));
+        //"One" is set in the "Many" entity
+        Arrays.asList(products).forEach(product -> product.setCategory(this));
+    }
 
     //=============================== Constructors ==================================\\
 
     public CategoryEntity() {
     }
 
-    public CategoryEntity(Long id, String name, List<ProductEntity> products) {
+    public CategoryEntity(Long id, String name) {
         this.id = id;
         this.name = name;
     }

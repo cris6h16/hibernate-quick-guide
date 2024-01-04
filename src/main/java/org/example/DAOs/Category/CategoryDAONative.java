@@ -1,4 +1,4 @@
-package org.example.DAOs;
+package org.example.DAOs.Category;
 
 import org.example.Entities.CategoryEntity;
 import org.example.Exceptions.ExceptionHandler;
@@ -47,7 +47,7 @@ public class CategoryDAONative implements CategoryDAO {
      * @return true if category was updated
      */
     @Override
-    public boolean update(CategoryEntity category) {
+    public boolean merge(CategoryEntity category) {
         if (category == null) return false;
         if (category.getId() == null) return false;
         if (category.getName() == null) return false;

@@ -1,7 +1,8 @@
-package org.example.DAOs;
+package org.example.DAOs.Category;
 
 import jakarta.persistence.NonUniqueResultException;
 import jakarta.persistence.criteria.*;
+import org.example.DAOs.Product.ProductDAO;
 import org.example.Entities.CategoryEntity;
 import org.example.Entities.ProductEntity;
 import org.example.Exceptions.ExceptionHandler;
@@ -12,10 +13,10 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.MutationQuery;
 import org.hibernate.query.Query;
-import org.hibernate.query.criteria.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -29,6 +30,7 @@ public class CategoryDAOCriteria implements CategoryDAO {
     private final SessionFactory sessionFactory;
     private final String ID_FIELD = "id";
     private final String NAME_FIELD = "name";
+    private final String CATEGORY_FIELD = "category_id";
 
     public CategoryDAOCriteria() {
         this.sessionFactory = HibernateUtil.getSessionFactory();
@@ -42,7 +44,7 @@ public class CategoryDAOCriteria implements CategoryDAO {
      */
     @Override
     public boolean deleteById(Long id) {
-        if (!validateId(id)) return false;
+        if (!isIdValid(id)) return false;
 
         int affectedRows = 0;
         try (Session session = sessionFactory.openSession()) {
@@ -96,7 +98,7 @@ public class CategoryDAOCriteria implements CategoryDAO {
      * @param categoryEagerly CategoryEntity must be eagerly fetched. we'll do .isEmpty(), here it fails: <br><br>
      */
     @Override
-    public boolean update(CategoryEntity categoryEagerly) {
+    public boolean merge(CategoryEntity categoryEagerly) {
 
         if (categoryEagerly == null) return false;
         if (categoryEagerly.getId() == null) return false;
@@ -115,11 +117,13 @@ public class CategoryDAOCriteria implements CategoryDAO {
     }
 
     private boolean update(Session session, CategoryEntity categoryEagerly) {
-        int affectedRows = 0;
+        int affectedRowsCategory = 0; //mutated rows
+        int affectedRowsProduct = 0; //mutated rows
         try {
             session.beginTransaction();
             //Obtain the criteria builder
-            HibernateCriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+
 
             //Update the category
             CriteriaUpdate<CategoryEntity> update = builder.createCriteriaUpdate(CategoryEntity.class);
@@ -129,48 +133,83 @@ public class CategoryDAOCriteria implements CategoryDAO {
                     .where(builder.equal(root.get(ID_FIELD), categoryEagerly.getId()))
                     .set(NAME_FIELD, categoryEagerly.getName());
             MutationQuery cQuery = session.createMutationQuery(update);
-            affectedRows = cQuery.executeUpdate();
+            affectedRowsCategory = cQuery.executeUpdate();
 
             //If the category doesn't have products, return
-            if (categoryEagerly.getProducts() == null) {
-                return affectedRows > 0;
+            if (categoryEagerly.getProducts() == null || categoryEagerly.getProducts().isEmpty()) {
+                return affectedRowsCategory > 0;
             }
 
             //Retrieve the products related to the category
-            JpaCriteriaQuery<ProductEntity> pQuery = builder.createQuery(ProductEntity.class); //.createCountQuery();
-            JpaRoot<ProductEntity> jpaRoot = pQuery.from(ProductEntity.class);
-            pQuery = pQuery.where(builder.equal(jpaRoot.get("category"), categoryEagerly));
+            CriteriaQuery<ProductEntity> pQuery = builder.createQuery(ProductEntity.class); //.createCountQuery();
+            Root<ProductEntity> jpaRoot = pQuery.from(ProductEntity.class);
+            pQuery = pQuery.where(builder.equal(jpaRoot.get(CATEGORY_FIELD), categoryEagerly.getId()));
 
-            Query<ProductEntity> query = session.createQuery(pQuery);
-            List<ProductEntity> productsFromDB = query.list();
+            List<ProductEntity> productsFromDB = session
+                    .createQuery(pQuery)
+                    .list();
 
-            for (ProductEntity productEntity : categoryEagerly.getProducts()) {
-                //If the category doesn't have products, save them
-                if (productsFromDB.isEmpty()) {
-                    //EntityExistsException: detached entity passed to persist: ProductEntity
-                    //session.persist(productEntity);
-                    session.merge(productEntity); //works
+            //if the categoryFromParameter hasn't passed products, simply delete its products in DB
+            //later save the products from the categoryFromParameter if it has
+            if (categoryEagerly.getProducts().isEmpty()) {
+                CriteriaDelete<ProductEntity> delete = builder.createCriteriaDelete(ProductEntity.class);
+                Root<ProductEntity> mutationQuery = delete.from(ProductEntity.class);
+                delete = delete.where(builder.equal(mutationQuery.get(CATEGORY_FIELD), categoryEagerly.getId()));
+                affectedRowsProduct = affectedRowsProduct + session
+                        .createMutationQuery(delete)
+                        .executeUpdate();
+
+                return affectedRowsCategory > 0;
+            }
+
+
+            //for each product in the category passed as parameter
+            for (ProductEntity productFromParameter : categoryEagerly.getProducts()) {
+
+                //if category hasn't products in DB, and the product hasn't an id, save it
+                if (productsFromDB.isEmpty() && productFromParameter.getId() != null) {
+                    session.persist(productFromParameter);
                     continue;
                 }
-                //If the category has products, update them
-                CriteriaUpdate<ProductEntity> updateProduct = builder.createCriteriaUpdate(ProductEntity.class);
-                Root<ProductEntity> rootProduct = updateProduct.from(ProductEntity.class);
-                updateProduct = updateProduct
-                        .where(builder.equal(rootProduct.get("name"), productEntity.getName()))//name is unique
-                        .set("name", productEntity.getName())
-                        .set("description", productEntity.getDescription())
-                        .set("price", productEntity.getPrice())
-                        .set("category", categoryEagerly.getId());
-                MutationQuery existQuery = session.createMutationQuery(updateProduct);
-                existQuery.executeUpdate();
+
+                //Throw Exception if exists a product in DB with the same name and has an invalid id(null, <=0, etc)
+                for (ProductEntity productFor : productsFromDB) {
+                    // if productFromParameter has an invalid id, and a product name from DB matches with a product name from parameter
+                    if (Objects.equals(productFor.getName(), productFromParameter.getName()) && !isIdValid(productFromParameter.getId())) {
+                        throw new IllegalStateException("Product with name: " + productFromParameter.getName() + " already exists");
+                    }
+                }
+
+                // - if it's got a valid id
+                // THEN UPDATE IT
+                if (isIdValid(productFromParameter.getId())) {
+                    CriteriaUpdate<ProductEntity> updateFor = builder.createCriteriaUpdate(ProductEntity.class);
+                    Root<ProductEntity> productFor = updateFor.from(ProductEntity.class);
+                    updateFor = updateFor
+                            .where(builder.equal(productFor.get(ProductDAO.ID_FIELD), productFromParameter.getId()))
+                            .set(ProductDAO.NAME_FIELD, productFromParameter.getName())
+                            .set(ProductDAO.DESCRIPTION_FIELD, productFromParameter.getDescription())
+                            .set(ProductDAO.PRICE_FIELD, productFromParameter.getPrice())
+                            .set(ProductDAO.CATEGORY_FIELD, categoryEagerly.getId());
+                    MutationQuery queryFor = session.createMutationQuery(updateFor);
+                    affectedRowsProduct = affectedRowsProduct + queryFor.executeUpdate();
+                }
+
+                // - if it has an invalid id
+                //else save it
+                if (!isIdValid(productFromParameter.getId())) {
+                    session.persist(productFromParameter);
+                }
+
             }
             session.getTransaction().commit();
         } catch (Exception e) {
             session.getTransaction().rollback();
             throw e;
         }
-        return affectedRows > 0;
+        return affectedRowsCategory > 0;
     }
+
 
     /**
      * Saves a CategoryEntity object to the database. if was saved successfully
@@ -331,50 +370,26 @@ public class CategoryDAOCriteria implements CategoryDAO {
 
     @Override
     public Optional<CategoryEntity> getByIdEager(Long id) {
-        if (!validateId(id)) return Optional.empty();
+        if (!isIdValid(id)) return Optional.empty();
 
         List<ProductEntity> products = new ArrayList<>();
         Optional<CategoryEntity> category = Optional.empty();
 
         try (Session session = sessionFactory.openSession()) {
-//            category = getCategoryEntityById(session, id);
-
-            // Create the criteria builder
             CriteriaBuilder builder = session.getCriteriaBuilder();
-            CriteriaQuery<CategoryEntity> criteriaQuery = builder.createQuery(CategoryEntity.class);
-            Root<CategoryEntity> root = criteriaQuery.from(CategoryEntity.class);
+            CriteriaQuery<CategoryEntity> query = builder.createQuery(CategoryEntity.class);
+            Root<CategoryEntity> root = query.from(CategoryEntity.class);
+            Fetch<CategoryEntity, ProductEntity> fetch = root.fetch("products", JoinType.LEFT);
+            CriteriaQuery<CategoryEntity> criteriaQuery = query.where(builder.equal(root.get(ID_FIELD), id));
+            category = Optional.ofNullable(session.createQuery(criteriaQuery).getSingleResultOrNull());
 
-            // Create the 'id' = id restriction
-            Fetch<CategoryEntity, ProductEntity> fetch = root.fetch("products", JoinType.LEFT)...; //Eagerly load the products
-
-//            Predicate predicate = builder.equal(root.get(ID_FIELD), id);
-            Predicate predicate = builder.equal(root.get(ID_FIELD), id);
-            criteriaQuery = criteriaQuery.where(predicate);
-
-            //get the category
-            Query<CategoryEntity> query = session.createQuery(criteriaQuery);
-            category = Optional.ofNullable(query.getSingleResultOrNull());
-
-            if (category.isPresent()) {
-                CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-                //Eagerly load the products
-                CriteriaQuery<ProductEntity> pQuery = criteriaBuilder.createQuery(ProductEntity.class);
-                Root<ProductEntity> pRoot = pQuery.from(ProductEntity.class);
-
-
-                pQuery = pQuery.where(criteriaBuilder.equal(pRoot.get("category"), category.get()));
-                Query<ProductEntity> queryProducts = session.createQuery(pQuery);
-
-                products = queryProducts.list();
-            }
-        } catch (HibernateException | IllegalStateException | IllegalArgumentException | NonUniqueResultException e) {
+        } catch (HibernateException | IllegalStateException | IllegalArgumentException |
+                 NonUniqueResultException e) {
             handleSevereException(e, "getByIdEager", ExceptionHandler.SEVERE, id.toString());
         }
 
         if (category.isEmpty()) return Optional.empty();
-
-        category.get().addProducts(products);
-
+//
         return category;
     }
 
@@ -395,7 +410,7 @@ public class CategoryDAOCriteria implements CategoryDAO {
     }
 
 
-    private boolean validateId(Long id) {
+    private boolean isIdValid(Long id) {
         return id != null && id > 0;
     }
 

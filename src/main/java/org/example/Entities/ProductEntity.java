@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
-//@Table(name = "products")
+@Table(name = "products")
 public class ProductEntity implements Serializable {
 
     @Id
@@ -26,21 +26,21 @@ public class ProductEntity implements Serializable {
     @Column(precision = 7, scale = 2)
     private BigDecimal price;
 
-    // One to many ||| bidirectional
+    //=================== One to many ||| bidirectional ===================\\
     // - Many is the owner of the relationship (have the @JoinColumn), Relationship is inverse
-    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, targetEntity = CategoryEntity.class, optional = false)
     @JoinColumn(name = "category_id")
     private CategoryEntity category;
 
     public ProductEntity() {
     }
 
-    public ProductEntity(Long id, String name, String description, BigDecimal price, CategoryEntity category) {
+    public ProductEntity(Long id, String name, String description, BigDecimal price/*, CategoryEntity category*/) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
-        this.category = category;
+//        this.category = category;
     }
 
     //=============================== Getters and Setters ==================================\\

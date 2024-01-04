@@ -1,7 +1,6 @@
-package org.example.DAOs;
+package org.example.DAOs.Category;
 
 import org.example.Entities.CategoryEntity;
-import org.hibernate.LazyInitializationException;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +19,7 @@ public interface CategoryDAO {
      * @param category if update is manually(Hibernate Criteria) must be Eagerly
      * @return true if category was updated
      */
-    boolean update(CategoryEntity category);
+    boolean merge(CategoryEntity category);
 
     /**
      * Saves a CategoryEntity object to the database. if was saved successfully

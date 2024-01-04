@@ -1,9 +1,8 @@
 package org.example.DAOs;
 
+import org.example.DAOs.Category.CategoryDAOCriteria;
 import org.example.Entities.CategoryEntity;
 import org.hibernate.LazyInitializationException;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +26,7 @@ public class CriteriaCategoryDAOTest extends CategoryDAOTest {
         CategoryEntity categoryEager = categoryOp.get();
         categoryEager.setName("UpdatedName");
         assertThrows(LazyInitializationException.class,
-                () -> categoryDAO.update(categoryEager),
+                () -> categoryDAO.merge(categoryEager),
                 "Category lazy fetched with id: " + categoryId + " should throw LazyInitializationException");
     }
 }
