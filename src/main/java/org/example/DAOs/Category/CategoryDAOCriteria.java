@@ -136,7 +136,14 @@ public class CategoryDAOCriteria implements CategoryDAO {
             affectedRowsCategory = cQuery.executeUpdate();
 
             //get attach category later to update
-            CategoryEntity attachedCategory = getCategoryEntityById(session, categoryEagerly.getId()).orElse(null);
+
+            CriteriaQuery<CategoryEntity> builderQuery = builder.createQuery(CategoryEntity.class);
+            // We can't use the above Root<CategoryEntity> root, because We can use it only once per query, it's mutable
+            Root<CategoryEntity> rootCategory = builderQuery.from(CategoryEntity.class);
+            builderQuery = builderQuery.where(builder.equal(rootCategory.get(ID_FIELD), categoryEagerly.getId()));
+
+            CategoryEntity attachedCategory = session
+                    .createQuery(builderQuery).getSingleResult();
 
             //If the category doesn't have products, return
             if (categoryEagerly.getProducts() == null || categoryEagerly.getProducts().isEmpty()) {

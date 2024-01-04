@@ -7,7 +7,6 @@
     <list default="true" id="33d4e801-1be6-4c5e-99fe-37449cf74e6d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DAOs/Category/CategoryDAOCriteria.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/DAOs/Category/CategoryDAOCriteria.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/DAOs/CategoryDAOTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/DAOs/CategoryDAOTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -282,7 +281,7 @@
       <workItem from="1704302886519" duration="4269000" />
       <workItem from="1704327352170" duration="12030000" />
       <workItem from="1704369010024" duration="5192000" />
-      <workItem from="1704384570931" duration="7309000" />
+      <workItem from="1704384570931" duration="8767000" />
     </task>
     <servers />
   </component>
@@ -307,8 +306,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/example/DAOs/Category/CategoryDAOCriteria.java</url>
-          <line>208</line>
+          <line>215</line>
           <option name="timeStamp" value="147" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/example/DAOs/Category/CategoryDAOCriteria.java</url>
+          <line>144</line>
+          <option name="timeStamp" value="148" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
