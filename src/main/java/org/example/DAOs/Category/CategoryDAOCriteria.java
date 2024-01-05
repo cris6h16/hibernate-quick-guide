@@ -124,7 +124,6 @@ public class CategoryDAOCriteria implements CategoryDAO {
             //Obtain the criteria builder
             CriteriaBuilder builder = session.getCriteriaBuilder();
 
-
             //Update the category
             CriteriaUpdate<CategoryEntity> update = builder.createCriteriaUpdate(CategoryEntity.class);
             Root<CategoryEntity> root = update.from(CategoryEntity.class);
@@ -135,61 +134,19 @@ public class CategoryDAOCriteria implements CategoryDAO {
             MutationQuery cQuery = session.createMutationQuery(update);
             affectedRowsCategory = cQuery.executeUpdate();
 
-            //get attach category later to update
-
-            CriteriaQuery<CategoryEntity> builderQuery = builder.createQuery(CategoryEntity.class);
-            // We can't use the above Root<CategoryEntity> root, because We can use it only once per query, it's mutable
-            Root<CategoryEntity> rootCategory = builderQuery.from(CategoryEntity.class);
-            builderQuery = builderQuery.where(builder.equal(rootCategory.get(ID_FIELD), categoryEagerly.getId()));
-
-            CategoryEntity attachedCategory = session
-                    .createQuery(builderQuery).getSingleResult();
-
-            //If the category doesn't have products, return
-            if (categoryEagerly.getProducts() == null || categoryEagerly.getProducts().isEmpty()) {
-                return affectedRowsCategory > 0;
-            }
-
-            //Retrieve the products related to the category
-            CriteriaQuery<ProductEntity> pQuery = builder.createQuery(ProductEntity.class); //.createCountQuery();
-            Root<ProductEntity> rootProd = pQuery.from(ProductEntity.class);
-            pQuery = pQuery.where(builder.equal(rootProd.get("category").get("id"), categoryEagerly.getId()));
-
-            List<ProductEntity> productsFromDB = session
-                    .createQuery(pQuery)
-                    .list();
-
             //if the categoryFromParameter hasn't passed products, simply delete its products in DB
-            //later save the products from the categoryFromParameter if it has
             if (categoryEagerly.getProducts().isEmpty()) {
                 CriteriaDelete<ProductEntity> delete = builder.createCriteriaDelete(ProductEntity.class);
-                Root<ProductEntity> mutationQuery = delete.from(ProductEntity.class);
-                delete = delete.where(builder.equal(mutationQuery.get(CATEGORY_FIELD), categoryEagerly.getId()));
+                Root<ProductEntity> mutationRoot = delete.from(ProductEntity.class);
+                delete = delete.where(builder.equal(mutationRoot.get("category").get("id"), categoryEagerly.getId()));
                 affectedRowsProduct = affectedRowsProduct + session
                         .createMutationQuery(delete)
                         .executeUpdate();
-
-//                return affectedRowsCategory > 0;
             }
 
 
             //for each product in the category passed as parameter
             for (ProductEntity productFromParameter : categoryEagerly.getProducts()) {
-
-                //if category hasn't products in DB, and the product hasn't an id, save it
-                if (productsFromDB.isEmpty() && productFromParameter.getId() != null) {
-                    session.persist(productFromParameter);
-                    continue;
-                }
-
-                //Throw Exception if exists a product in DB with the same name and has an invalid id(null, <=0, etc)
-                for (ProductEntity productFor : productsFromDB) {
-                    // if productFromParameter has an invalid id, and a product name from DB matches with a product name from parameter
-                    if (Objects.equals(productFor.getName(), productFromParameter.getName()) && !isIdValid(productFromParameter.getId())) {
-                        throw new IllegalStateException("Product with name: " + productFromParameter.getName() + " already exists");
-                    }
-                }
-
                 // - if it's got a valid id
                 // THEN UPDATE IT
                 if (isIdValid(productFromParameter.getId())) {
@@ -199,22 +156,18 @@ public class CategoryDAOCriteria implements CategoryDAO {
                             .where(builder.equal(productFor.get(ProductDAO.ID_FIELD), productFromParameter.getId()))
                             .set(ProductDAO.NAME_FIELD, productFromParameter.getName())
                             .set(ProductDAO.DESCRIPTION_FIELD, productFromParameter.getDescription())
-                            .set(ProductDAO.PRICE_FIELD, productFromParameter.getPrice())
-                            //TODO: document this in markdown
-//                            .set("category", categoryEagerly); //detached category
-                            .set("category", attachedCategory);
+                            .set(ProductDAO.PRICE_FIELD, productFromParameter.getPrice());
                     MutationQuery queryFor = session.createMutationQuery(updateFor);
                     affectedRowsProduct = affectedRowsProduct + queryFor.executeUpdate();
                 }
-
-                // - if it has an invalid id and valid name
-                //else save it
-                if (!isIdValid(productFromParameter.getId()) && isNameValid(productFromParameter.getName())) {
-                    //TODO: document this in markdown
-                    //productFromParameter has the category directly from the parameter, it's detached
-                    // because above we update the category in db
-                    productFromParameter.setCategory(attachedCategory);
-                    session.persist(productFromParameter);
+                //this method is UPDATE, if the productFromParameter hasn't a valid id, we throw an exception
+                if (!isIdValid(productFromParameter.getId()) ) {
+                    throw new IllegalArgumentException("Product with name: " + productFromParameter.getName() +
+                            " hasn't a valid id, so it can't be updated");
+                }
+                if (!isNameValid(productFromParameter.getName())) {
+                    throw new IllegalArgumentException("Product with name: " + productFromParameter.getName() +
+                            " hasn't a valid name, so it can't be updated");
                 }
 
             }

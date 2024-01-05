@@ -39,23 +39,25 @@ public class ExceptionHandler {
     }
 
     private static void handleWarningException(String className, Exception e, String method, String[] params) {
-        LOGGER.warning(MSG_EXCEPTION_DEF
-               .replace("?class", className)
-               .replace("?method", method)
-               .replace("?params", Arrays.toString(params))
-               .replace("?msg", e.getMessage())
-               .replace("?exception", e.getClass().getName())
-        );
+//        LOGGER.warning(MSG_EXCEPTION_DEF
+//               .replace("?class", className)
+//               .replace("?method", method)
+//               .replace("?params", Arrays.toString(params))
+//               .replace("?msg", e.getMessage())
+//               .replace("?exception", e.getClass().getName())
+//        );
+        e.printStackTrace();
     }
 
     private static void handleSevereException(String className, Exception e, String method, String... params) {
-        LOGGER.severe(MSG_EXCEPTION_DEF
-                .replace("?class", className)
-                .replace("?method", method)
-                .replace("?params", Arrays.toString(params))
-                .replace("?msg", e.getMessage())
-                .replace("?exception", e.getClass().getName())
-        );
+//        LOGGER.severe(MSG_EXCEPTION_DEF
+//                .replace("?class", className)
+//                .replace("?method", method)
+//                .replace("?params", Arrays.toString(params))
+//                .replace("?msg", e.getMessage())
+//                .replace("?exception", e.getClass().getName())
+//        );
+        e.printStackTrace();
     }
 
 }
