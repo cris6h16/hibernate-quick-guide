@@ -16,17 +16,4 @@ public class CriteriaCategoryDAOTest extends CategoryDAOTest {
         categoryDAO = new CategoryDAOCriteria();
     }
 
-    @Override
-    @Test
-    @DisplayName("Update category with valid name and Lazy Products")
-    void updateValidNameLazyProducts() {
-        Optional<CategoryEntity> categoryOp = categoryDAO.findById(categoryId);
-        assertTrue(categoryOp.isPresent(), "Category valid id must be present");
-
-        CategoryEntity categoryEager = categoryOp.get();
-        categoryEager.setName("UpdatedName");
-        assertThrows(LazyInitializationException.class,
-                () -> categoryDAO.merge(categoryEager),
-                "Category lazy fetched with id: " + categoryId + " should throw LazyInitializationException");
-    }
 }

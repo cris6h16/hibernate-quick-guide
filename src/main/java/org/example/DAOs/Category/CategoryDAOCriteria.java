@@ -95,23 +95,23 @@ public class CategoryDAOCriteria implements CategoryDAO {
      * </pre>
      * //================================================================\\
      *
-     * @param categoryEagerly CategoryEntity must be eagerly fetched. we'll do .isEmpty(), here it fails: <br><br>
+     * @param category CategoryEntity must be eagerly fetched. we'll do .isEmpty(), here it fails: <br><br>
      */
     @Override
-    public boolean merge(CategoryEntity categoryEagerly) {
+    public boolean merge(CategoryEntity category) {
 
-        if (categoryEagerly == null) return false;
-        if (categoryEagerly.getId() == null) return false;
-        if (categoryEagerly.getName() == null) return false;
-        if (categoryEagerly.getName().isEmpty()) return false;
+        if (category == null) return false;
+        if (category.getId() == null) return false;
+        if (category.getName() == null) return false;
+        if (category.getName().isEmpty()) return false;
 
         boolean updated = false;
 
         try (Session session = sessionFactory.openSession()) {
-            updated = update(session, categoryEagerly);
+            updated = update(session, category);
 
         } catch (Exception e) {
-            handleSevereException(e, "update", categoryEagerly.toString());
+            handleSevereException(e, "update", category.toString());
         }
         return updated;
     }
@@ -135,42 +135,47 @@ public class CategoryDAOCriteria implements CategoryDAO {
             affectedRowsCategory = cQuery.executeUpdate();
 
             //if the categoryFromParameter hasn't passed products, simply delete its products in DB
-            if (categoryEagerly.getProducts().isEmpty()) {
-                CriteriaDelete<ProductEntity> delete = builder.createCriteriaDelete(ProductEntity.class);
-                Root<ProductEntity> mutationRoot = delete.from(ProductEntity.class);
-                delete = delete.where(builder.equal(mutationRoot.get("category").get("id"), categoryEagerly.getId()));
-                affectedRowsProduct = affectedRowsProduct + session
-                        .createMutationQuery(delete)
-                        .executeUpdate();
+            //try because it can't be eager and can throw lazyInitializationException and rollback the above category updated
+            try {
+                if (categoryEagerly.getProducts().isEmpty()) {
+                    CriteriaDelete<ProductEntity> delete = builder.createCriteriaDelete(ProductEntity.class);
+                    Root<ProductEntity> mutationRoot = delete.from(ProductEntity.class);
+                    delete = delete.where(builder.equal(mutationRoot.get("category").get("id"), categoryEagerly.getId()));
+                    affectedRowsProduct = affectedRowsProduct + session
+                            .createMutationQuery(delete)
+                            .executeUpdate();
+                }
+
+
+                //for each product in the category passed as parameter
+                for (ProductEntity productFromParameter : categoryEagerly.getProducts()) {
+                    // - if it's got a valid id
+                    // THEN UPDATE IT
+                    if (isIdValid(productFromParameter.getId())) {
+                        CriteriaUpdate<ProductEntity> updateFor = builder.createCriteriaUpdate(ProductEntity.class);
+                        Root<ProductEntity> productFor = updateFor.from(ProductEntity.class);
+                        updateFor = updateFor
+                                .where(builder.equal(productFor.get(ProductDAO.ID_FIELD), productFromParameter.getId()))
+                                .set(ProductDAO.NAME_FIELD, productFromParameter.getName())
+                                .set(ProductDAO.DESCRIPTION_FIELD, productFromParameter.getDescription())
+                                .set(ProductDAO.PRICE_FIELD, productFromParameter.getPrice());
+                        MutationQuery queryFor = session.createMutationQuery(updateFor);
+                        affectedRowsProduct = affectedRowsProduct + queryFor.executeUpdate();
+                    }
+                    //this method is UPDATE, if the productFromParameter hasn't a valid id, we throw an exception
+                    if (!isIdValid(productFromParameter.getId())) {
+                        throw new IllegalArgumentException("Product with name: " + productFromParameter.getName() +
+                                " hasn't a valid id, so it can't be updated");
+                    }
+                    if (!isNameValid(productFromParameter.getName())) {
+                        throw new IllegalArgumentException("Product with name: " + productFromParameter.getName() +
+                                " hasn't a valid name, so it can't be updated");
+                    }
+
+                }
+            }catch (Exception e) {
             }
 
-
-            //for each product in the category passed as parameter
-            for (ProductEntity productFromParameter : categoryEagerly.getProducts()) {
-                // - if it's got a valid id
-                // THEN UPDATE IT
-                if (isIdValid(productFromParameter.getId())) {
-                    CriteriaUpdate<ProductEntity> updateFor = builder.createCriteriaUpdate(ProductEntity.class);
-                    Root<ProductEntity> productFor = updateFor.from(ProductEntity.class);
-                    updateFor = updateFor
-                            .where(builder.equal(productFor.get(ProductDAO.ID_FIELD), productFromParameter.getId()))
-                            .set(ProductDAO.NAME_FIELD, productFromParameter.getName())
-                            .set(ProductDAO.DESCRIPTION_FIELD, productFromParameter.getDescription())
-                            .set(ProductDAO.PRICE_FIELD, productFromParameter.getPrice());
-                    MutationQuery queryFor = session.createMutationQuery(updateFor);
-                    affectedRowsProduct = affectedRowsProduct + queryFor.executeUpdate();
-                }
-                //this method is UPDATE, if the productFromParameter hasn't a valid id, we throw an exception
-                if (!isIdValid(productFromParameter.getId()) ) {
-                    throw new IllegalArgumentException("Product with name: " + productFromParameter.getName() +
-                            " hasn't a valid id, so it can't be updated");
-                }
-                if (!isNameValid(productFromParameter.getName())) {
-                    throw new IllegalArgumentException("Product with name: " + productFromParameter.getName() +
-                            " hasn't a valid name, so it can't be updated");
-                }
-
-            }
             session.getTransaction().commit();
         } catch (Exception e) {
             session.getTransaction().rollback();
@@ -178,6 +183,10 @@ public class CategoryDAOCriteria implements CategoryDAO {
         }
         return affectedRowsCategory > 0;
     }
+
+
+
+
 
     private boolean isNameValid(String name) {
         return name != null && !name.isEmpty();
@@ -199,6 +208,16 @@ public class CategoryDAOCriteria implements CategoryDAO {
 
         try (Session session = sessionFactory.openSession()) {
             try {
+
+                //if exists a category with the same name, throw an exception
+                CriteriaBuilder builder = session.getCriteriaBuilder();
+                CriteriaQuery<CategoryEntity> query = builder.createQuery(CategoryEntity.class);
+                Root<CategoryEntity> root = query.from(CategoryEntity.class);
+                root.fetch("products", JoinType.LEFT);
+
+                query = query.where(builder.equal(root.get(NAME_FIELD), category.getName()));
+                CategoryEntity categoryDB = session.createQuery(query).getSingleResultOrNull();
+
                 session.beginTransaction();
                 session.persist(category);
                 session.refresh(category);

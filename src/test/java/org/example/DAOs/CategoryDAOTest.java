@@ -2,6 +2,7 @@ package org.example.DAOs;
 
 import org.example.DAOs.Category.CategoryDAO;
 import org.example.DAOs.Category.CategoryDAOImpl;
+import org.example.DAOs.Product.ProductDAO;
 import org.example.Entities.CategoryEntity;
 import org.example.Entities.ProductEntity;
 import org.example.Util.HibernateUtil;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CategoryDAOTest {
     protected static CategoryDAO categoryDAO;
+    protected static ProductDAO productDAO;
 
     // Attributes for testing
     protected static Long categoryId;
@@ -28,6 +30,7 @@ class CategoryDAOTest {
 
     public CategoryDAOTest() {
         categoryDAO = new CategoryDAOImpl();
+        productDAO = new ProductDAO();
     }
 
     //    @BeforeAll
@@ -196,6 +199,8 @@ class CategoryDAOTest {
 
         ProductEntity product = new ProductEntity(null, "Hp Victus 15", "Laptop gamer, Model: fb-0028nr", null);
         ProductEntity product2 = new ProductEntity(null, "Generic Mechanical keyboard", "Laptop gamer, Model: Logitech", null);
+        productDAO.save(product);
+
         CategoryEntity category = new CategoryEntity(null, "Laptops");
         category.addProducts(product2, product);
 
@@ -259,14 +264,14 @@ class CategoryDAOTest {
         Optional<CategoryEntity> categoryOp = categoryDAO.findById(categoryId);
         assertTrue(categoryOp.isPresent(), "Category valid id must be present");
 
-        CategoryEntity categoryEager = categoryOp.get();
-        categoryEager.setName("UpdatedName");
-        boolean updated = categoryDAO.merge(categoryEager);
+        CategoryEntity category = categoryOp.get();
+        category.setName("UpdatedName");
+        boolean updated = categoryDAO.merge(category);
         assertTrue(updated, "Category with valid name should be updated");
 
-        categoryEager.setName(categoryName);
-        categoryDAO.merge(categoryEager);
-        boolean updated2 = categoryDAO.merge(categoryEager);
+        category.setName(categoryName);
+        categoryDAO.merge(category);
+        boolean updated2 = categoryDAO.merge(category);
         assertTrue(updated2, "Category with valid name should be updated Again");
     }
 
@@ -321,7 +326,8 @@ class CategoryDAOTest {
         assertNotNull(category.getId(), "Category with valid name and products should be saved");
 
         category.getProducts().forEach(productEntity -> productEntity.setName("UpdatedName" + UUID.randomUUID().toString()));
-//        category.setName(category.getName() + " HELLO WORD");
+        productDAO.merge(category.getProducts().getFirst());
+
         boolean updated = categoryDAO.merge(category);
         assertTrue(updated, "Category with valid name and products should be updated");
 
