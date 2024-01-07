@@ -308,3 +308,6 @@ The `@Id` annotation specifies the primary key of an entity. This annotation is 
   instance is returned. The given instance does not become associated with the session. This operation cascades to
   associated instances if the association is mapped with `cascade="merge"`. 
 
+  Hibernate Methods (save, update, delete, etc.): En estas operaciones de Hibernate, se aplicará automáticamente la cascada configurada (CASCADE.ALL) en las relaciones.
+
+  # Criteria API y Native Queries: En estas situaciones, la cascada (CASCADE) no se aplica automáticamente. Al ejecutar consultas nativas o utilizar Criteria API, debes manejar manualmente cualquier operación de cascada necesaria.

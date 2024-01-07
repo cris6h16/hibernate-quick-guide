@@ -14,10 +14,10 @@ public class CategoryEntity implements Serializable {
 //    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "categories_id_seq")
 //    @SequenceGenerator(name = "categories_id_seq", sequenceName = "categories_id_seq", allocationSize = 50)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long c_id;
 
     @Column(length = 100, nullable = false, unique = true)
-    private String name;
+    private String c_name;
 
     /*
     //=================== One to many ||| bidirectional ===================\\
@@ -53,26 +53,26 @@ public class CategoryEntity implements Serializable {
     }
 
     public CategoryEntity(Long id, String name) {
-        this.id = id;
-        this.name = name;
+        this.c_id = id;
+        this.c_name = name;
     }
 
 
     //=============================== Getters and Setters ==================================\\
-    public Long getId() {
-        return id;
+    public Long getC_id() {
+        return c_id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setC_id(Long id) {
+        this.c_id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getC_name() {
+        return c_name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setC_name(String name) {
+        this.c_name = name;
     }
 
     public List<ProductEntity> getProducts() {
@@ -82,8 +82,8 @@ public class CategoryEntity implements Serializable {
     @Override
     public String toString() {
         return "CategoryEntity{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
+                "id=" + c_id +
+                ", name='" + c_name + '\'' +
 //                ", products=" + products +
                 '}';
     }

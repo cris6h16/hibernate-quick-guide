@@ -16,7 +16,6 @@ import org.hibernate.query.Query;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -101,9 +100,9 @@ public class CategoryDAOCriteria implements CategoryDAO {
     public boolean merge(CategoryEntity category) {
 
         if (category == null) return false;
-        if (category.getId() == null) return false;
-        if (category.getName() == null) return false;
-        if (category.getName().isEmpty()) return false;
+        if (category.getC_id() == null) return false;
+        if (category.getC_name() == null) return false;
+        if (category.getC_name().isEmpty()) return false;
 
         boolean updated = false;
 
@@ -129,8 +128,8 @@ public class CategoryDAOCriteria implements CategoryDAO {
             Root<CategoryEntity> root = update.from(CategoryEntity.class);
 
             update = update
-                    .where(builder.equal(root.get(ID_FIELD), categoryEagerly.getId()))
-                    .set(NAME_FIELD, categoryEagerly.getName());
+                    .where(builder.equal(root.get(ID_FIELD), categoryEagerly.getC_id()))
+                    .set(NAME_FIELD, categoryEagerly.getC_name());
             MutationQuery cQuery = session.createMutationQuery(update);
             affectedRowsCategory = cQuery.executeUpdate();
 
@@ -140,7 +139,7 @@ public class CategoryDAOCriteria implements CategoryDAO {
                 if (categoryEagerly.getProducts().isEmpty()) {
                     CriteriaDelete<ProductEntity> delete = builder.createCriteriaDelete(ProductEntity.class);
                     Root<ProductEntity> mutationRoot = delete.from(ProductEntity.class);
-                    delete = delete.where(builder.equal(mutationRoot.get("category").get("id"), categoryEagerly.getId()));
+                    delete = delete.where(builder.equal(mutationRoot.get("category").get("id"), categoryEagerly.getC_id()));
                     affectedRowsProduct = affectedRowsProduct + session
                             .createMutationQuery(delete)
                             .executeUpdate();
@@ -202,8 +201,8 @@ public class CategoryDAOCriteria implements CategoryDAO {
     @Override
     public void save(CategoryEntity category) {
         if (category == null) return;
-        if (category.getName() == null) return;
-        if (category.getName().isEmpty()) return;
+        if (category.getC_name() == null) return;
+        if (category.getC_name().isEmpty()) return;
 
 
         try (Session session = sessionFactory.openSession()) {
@@ -215,7 +214,7 @@ public class CategoryDAOCriteria implements CategoryDAO {
                 Root<CategoryEntity> root = query.from(CategoryEntity.class);
                 root.fetch("products", JoinType.LEFT);
 
-                query = query.where(builder.equal(root.get(NAME_FIELD), category.getName()));
+                query = query.where(builder.equal(root.get(NAME_FIELD), category.getC_name()));
                 CategoryEntity categoryDB = session.createQuery(query).getSingleResultOrNull();
 
                 session.beginTransaction();

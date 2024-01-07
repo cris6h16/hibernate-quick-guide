@@ -28,7 +28,7 @@ public class ProductEntity implements Serializable {
 
     //=================== One to many ||| bidirectional ===================\\
     // - Many is the owner of the relationship (have the @JoinColumn), Relationship is inverse
-    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, targetEntity = CategoryEntity.class, optional = false)
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, targetEntity = CategoryEntity.class, optional = true)
     @JoinColumn(name = "category_id")
     private CategoryEntity category;
 

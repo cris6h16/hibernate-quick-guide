@@ -65,7 +65,7 @@ public class CategoryDAOImpl implements CategoryDAO {
 
         try (Session session = sessionFactory.openSession()) {
             category = session
-                    .createQuery("FROM CategoryEntity ce LEFT JOIN FETCH ce.products WHERE ce.id = :id", CategoryEntity.class)
+                    .createQuery("FROM CategoryEntity ce LEFT JOIN FETCH ce.products WHERE ce.c_id = :id", CategoryEntity.class)
                     .setParameter(ID_FIELD, id)
                     .getSingleResultOrNull();
 
@@ -113,7 +113,7 @@ public class CategoryDAOImpl implements CategoryDAO {
 
         try (Session session = sessionFactory.openSession()) {
             category = session
-                    .createQuery("FROM CategoryEntity ce WHERE ce.name = :name", CategoryEntity.class)
+                    .createQuery("FROM CategoryEntity ce WHERE ce.c_name = :name", CategoryEntity.class)
                     .setParameter(NAME_FIELD, name)
                     .getSingleResultOrNull();
 
@@ -163,8 +163,8 @@ public class CategoryDAOImpl implements CategoryDAO {
     @Override
     public void save(CategoryEntity category) {
         if (category == null) return;
-        if (category.getName() == null) return;
-        if (category.getName().isEmpty()) return;
+        if (category.getC_name() == null) return;
+        if (category.getC_name().isEmpty()) return;
 
 
         try (Session session = sessionFactory.openSession()) {
@@ -194,9 +194,9 @@ public class CategoryDAOImpl implements CategoryDAO {
     public boolean merge(CategoryEntity category) {
 
         if (category == null) return false;
-        if (category.getId() == null) return false;
-        if (category.getName() == null) return false;
-        if (category.getName().isEmpty()) return false;
+        if (category.getC_id() == null) return false;
+        if (category.getC_name() == null) return false;
+        if (category.getC_name().isEmpty()) return false;
 
         try (Session session = sessionFactory.openSession()) {
             try {

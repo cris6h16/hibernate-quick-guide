@@ -14,6 +14,7 @@ public class ProductDAO {
     public static final String PRICE_FIELD = "price";
     public static final String CATEGORY_FIELD = "category_id";
     public static final String DESCRIPTION_FIELD = "description";
+    public static final String TABLE_NAME = "products";
 
     public void save(ProductEntity product) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
