@@ -6,11 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="33d4e801-1be6-4c5e-99fe-37449cf74e6d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DAOs/Category/CategoryDAOCriteria.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/DAOs/Category/CategoryDAOCriteria.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DAOs/Category/CategoryDAOImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/DAOs/Category/CategoryDAOImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DAOs/Category/CategoryDAONative.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/DAOs/Category/CategoryDAONative.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DAOs/Product/ProductDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/DAOs/Product/ProductDAO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Entities/CategoryEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Entities/CategoryEntity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Entities/ProductEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Entities/ProductEntity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/org/example/DAOs/CategoryDAOTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/DAOs/CategoryDAOTest.java" afterDir="false" />
@@ -88,7 +84,7 @@
     "JUnit.CriteriaCategoryDAOTest.updateValidLazyProducts.executor": "Run",
     "JUnit.CriteriaCategoryDAOTest.updateValidNameLazyProducts.executor": "Run",
     "JUnit.General.createTablesDB.executor": "Run",
-    "JUnit.NativeCategoryDAOTest.executor": "Debug",
+    "JUnit.NativeCategoryDAOTest.executor": "Run",
     "Maven.Hibernate [clean].executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -128,7 +124,7 @@
       <recent name="org.example.Entities" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.NativeCategoryDAOTest">
+  <component name="RunManager" selected="JUnit.CategoryDAOTest">
     <configuration name="CategoryDAOTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="Hibernate" />
       <extension name="coverage">
@@ -223,9 +219,9 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.NativeCategoryDAOTest" />
-        <item itemvalue="JUnit.CriteriaCategoryDAOTest" />
         <item itemvalue="JUnit.CategoryDAOTest" />
+        <item itemvalue="JUnit.CriteriaCategoryDAOTest" />
+        <item itemvalue="JUnit.NativeCategoryDAOTest" />
         <item itemvalue="JUnit.CriteriaCategoryDAOTest.updateValidNameLazyProducts" />
         <item itemvalue="JUnit.CategoryDAOTest.updateProductCategory" />
       </list>
@@ -293,7 +289,8 @@
       <workItem from="1704475005995" duration="4969000" />
       <workItem from="1704503027083" duration="442000" />
       <workItem from="1704503476360" duration="7520000" />
-      <workItem from="1704550084365" duration="24026000" />
+      <workItem from="1704550084365" duration="24637000" />
+      <workItem from="1704659740190" duration="7108000" />
     </task>
     <servers />
   </component>
@@ -315,13 +312,23 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/example/DAOs/Category/CategoryDAOCriteria.java</url>
-          <line>109</line>
+          <line>106</line>
           <option name="timeStamp" value="9" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/test/java/org/example/DAOs/CriteriaCategoryDAOTest.java</url>
           <line>13</line>
           <option name="timeStamp" value="13" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/org/example/DAOs/CategoryDAOTest.java</url>
+          <line>236</line>
+          <option name="timeStamp" value="17" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/org/example/DAOs/CategoryDAOTest.java</url>
+          <line>366</line>
+          <option name="timeStamp" value="18" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

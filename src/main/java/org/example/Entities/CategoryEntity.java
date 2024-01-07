@@ -39,7 +39,7 @@ public class CategoryEntity implements Serializable {
     //============================================================================\\
     */
 
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "category", orphanRemoval = true, targetEntity = ProductEntity.class)
+    @OneToMany(/*cascade = {CascadeType.ALL},*/fetch = FetchType.LAZY, mappedBy = "category", orphanRemoval = true, targetEntity = ProductEntity.class)
     private List<ProductEntity> products = new ArrayList<>();
     public void addProducts(ProductEntity... products) {
         this.products.addAll(Arrays.asList(products));

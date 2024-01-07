@@ -27,9 +27,8 @@ import java.util.Optional;
 
 public class CategoryDAOCriteria implements CategoryDAO {
     private final SessionFactory sessionFactory;
-    private final String ID_FIELD = "id";
-    private final String NAME_FIELD = "name";
-    private final String CATEGORY_FIELD = "category_id";
+    private final String ID_FIELD = "c_id";
+    private final String NAME_FIELD = "c_name";
 
     public CategoryDAOCriteria() {
         this.sessionFactory = HibernateUtil.getSessionFactory();
@@ -46,33 +45,31 @@ public class CategoryDAOCriteria implements CategoryDAO {
         if (!isIdValid(id)) return false;
 
         int affectedRows = 0;
+
         try (Session session = sessionFactory.openSession()) {
-            affectedRows = deleteById(session, id);
+            try {
+                session.beginTransaction();
+
+                CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+                CriteriaDelete<CategoryEntity> delete = criteriaBuilder.createCriteriaDelete(CategoryEntity.class);
+                Root<CategoryEntity> root = delete.from(CategoryEntity.class);
+                Predicate predicate = criteriaBuilder.equal(root.get(ID_FIELD), id);
+                CriteriaDelete<CategoryEntity> deleteFinal = delete.where(predicate);
+                MutationQuery query = session.createMutationQuery(deleteFinal);
+                affectedRows = query.executeUpdate();
+
+                session.getTransaction().commit();
+
+            } catch (Exception e) {
+                session.getTransaction().rollback();
+                throw e;
+            }
         } catch (Exception e) {
-            handleSevereException(e, "deleteById", id.toString());
+            handleSevereException(e, "deleteById", ExceptionHandler.SEVERE, id.toString());
         }
+
         return affectedRows > 0;
     }
-
-    private int deleteById(Session session, Long id) {
-        int affectedRows = 0;
-        try {
-            session.beginTransaction();
-            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-            CriteriaDelete<CategoryEntity> delete = criteriaBuilder.createCriteriaDelete(CategoryEntity.class);
-            Root<CategoryEntity> root = delete.from(CategoryEntity.class);
-            Predicate predicate = criteriaBuilder.equal(root.get(ID_FIELD), id);
-            CriteriaDelete<CategoryEntity> deleteFinal = delete.where(predicate);
-            MutationQuery query = session.createMutationQuery(deleteFinal);
-            affectedRows = query.executeUpdate();
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            session.getTransaction().rollback();
-            throw e;
-        }
-        return affectedRows;
-    }
-
 
     /**
      * //================================================================\\
@@ -104,87 +101,35 @@ public class CategoryDAOCriteria implements CategoryDAO {
         if (category.getC_name() == null) return false;
         if (category.getC_name().isEmpty()) return false;
 
-        boolean updated = false;
+        int affectedRowsCategory = 0;
 
         try (Session session = sessionFactory.openSession()) {
-            updated = update(session, category);
+            try {
+                session.beginTransaction();
 
+                //Obtain the criteria builder
+                CriteriaBuilder builder = session.getCriteriaBuilder();
+                //Update the category
+                CriteriaUpdate<CategoryEntity> update = builder.createCriteriaUpdate(CategoryEntity.class);
+                Root<CategoryEntity> root = update.from(CategoryEntity.class);
+                affectedRowsCategory = session
+                        .createMutationQuery(update
+                                .where(builder.equal(root.get(ID_FIELD), category.getC_id()))
+                                .set(NAME_FIELD, category.getC_name()))
+                        .executeUpdate();
+
+                session.getTransaction().commit();
+
+            } catch (Exception e) {
+                session.getTransaction().rollback();
+                throw e;
+            }
         } catch (Exception e) {
             handleSevereException(e, "update", category.toString());
         }
-        return updated;
-    }
 
-    private boolean update(Session session, CategoryEntity categoryEagerly) {
-        int affectedRowsCategory = 0; //mutated rows
-        int affectedRowsProduct = 0; //mutated rows
-        try {
-            session.beginTransaction();
-            //Obtain the criteria builder
-            CriteriaBuilder builder = session.getCriteriaBuilder();
-
-            //Update the category
-            CriteriaUpdate<CategoryEntity> update = builder.createCriteriaUpdate(CategoryEntity.class);
-            Root<CategoryEntity> root = update.from(CategoryEntity.class);
-
-            update = update
-                    .where(builder.equal(root.get(ID_FIELD), categoryEagerly.getC_id()))
-                    .set(NAME_FIELD, categoryEagerly.getC_name());
-            MutationQuery cQuery = session.createMutationQuery(update);
-            affectedRowsCategory = cQuery.executeUpdate();
-
-            //if the categoryFromParameter hasn't passed products, simply delete its products in DB
-            //try because it can't be eager and can throw lazyInitializationException and rollback the above category updated
-            try {
-                if (categoryEagerly.getProducts().isEmpty()) {
-                    CriteriaDelete<ProductEntity> delete = builder.createCriteriaDelete(ProductEntity.class);
-                    Root<ProductEntity> mutationRoot = delete.from(ProductEntity.class);
-                    delete = delete.where(builder.equal(mutationRoot.get("category").get("id"), categoryEagerly.getC_id()));
-                    affectedRowsProduct = affectedRowsProduct + session
-                            .createMutationQuery(delete)
-                            .executeUpdate();
-                }
-
-
-                //for each product in the category passed as parameter
-                for (ProductEntity productFromParameter : categoryEagerly.getProducts()) {
-                    // - if it's got a valid id
-                    // THEN UPDATE IT
-                    if (isIdValid(productFromParameter.getId())) {
-                        CriteriaUpdate<ProductEntity> updateFor = builder.createCriteriaUpdate(ProductEntity.class);
-                        Root<ProductEntity> productFor = updateFor.from(ProductEntity.class);
-                        updateFor = updateFor
-                                .where(builder.equal(productFor.get(ProductDAO.ID_FIELD), productFromParameter.getId()))
-                                .set(ProductDAO.NAME_FIELD, productFromParameter.getName())
-                                .set(ProductDAO.DESCRIPTION_FIELD, productFromParameter.getDescription())
-                                .set(ProductDAO.PRICE_FIELD, productFromParameter.getPrice());
-                        MutationQuery queryFor = session.createMutationQuery(updateFor);
-                        affectedRowsProduct = affectedRowsProduct + queryFor.executeUpdate();
-                    }
-                    //this method is UPDATE, if the productFromParameter hasn't a valid id, we throw an exception
-                    if (!isIdValid(productFromParameter.getId())) {
-                        throw new IllegalArgumentException("Product with name: " + productFromParameter.getName() +
-                                " hasn't a valid id, so it can't be updated");
-                    }
-                    if (!isNameValid(productFromParameter.getName())) {
-                        throw new IllegalArgumentException("Product with name: " + productFromParameter.getName() +
-                                " hasn't a valid name, so it can't be updated");
-                    }
-
-                }
-            }catch (Exception e) {
-            }
-
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            session.getTransaction().rollback();
-            throw e;
-        }
         return affectedRowsCategory > 0;
     }
-
-
-
 
 
     private boolean isNameValid(String name) {
@@ -207,19 +152,19 @@ public class CategoryDAOCriteria implements CategoryDAO {
 
         try (Session session = sessionFactory.openSession()) {
             try {
+                session.beginTransaction();
 
-                //if exists a category with the same name, throw an exception
                 CriteriaBuilder builder = session.getCriteriaBuilder();
                 CriteriaQuery<CategoryEntity> query = builder.createQuery(CategoryEntity.class);
                 Root<CategoryEntity> root = query.from(CategoryEntity.class);
-                root.fetch("products", JoinType.LEFT);
-
                 query = query.where(builder.equal(root.get(NAME_FIELD), category.getC_name()));
-                CategoryEntity categoryDB = session.createQuery(query).getSingleResultOrNull();
+                Optional<CategoryEntity> categoryDB = session.createQuery(query).uniqueResultOptional();
 
-                session.beginTransaction();
+                if (categoryDB.isPresent()) {
+                    throw new IllegalArgumentException("Category already exists");
+                }
+
                 session.persist(category);
-                session.refresh(category);
                 session.getTransaction().commit();
             } catch (Exception e) {
                 handleSevereException(e, "save", category.toString());
@@ -290,18 +235,17 @@ public class CategoryDAOCriteria implements CategoryDAO {
             Root<CategoryEntity> root = criteriaQuery.from(CategoryEntity.class);
 
             // Create the 'name' = name restriction
-            Predicate predicate = criteriaBuilder.equal(root.get("name"), name);
+            Predicate predicate = criteriaBuilder.equal(root.get(NAME_FIELD), name);
             criteriaQuery = criteriaQuery.where(predicate);
 
-            // Create the query and return the result
+            // Create the query and obtain the result
             Query<CategoryEntity> query = session.createQuery(criteriaQuery);
-
-            //obtain the result
             entity = query.getSingleResultOrNull();
 
         } catch (Exception e) {
-            handleSevereException(e, "findByName", name);
+            handleSevereException(e, "findByName", ExceptionHandler.SEVERE, name);
         }
+
         return Optional.ofNullable(entity);
     }
 
@@ -313,16 +257,28 @@ public class CategoryDAOCriteria implements CategoryDAO {
      */
     @Override
     public Optional<CategoryEntity> findById(Long id) {
-        CategoryEntity entity = null;
+        Optional<CategoryEntity> entity = Optional.empty();
 
         try (Session session = sessionFactory.openSession()) {
-            entity = getCategoryEntityById(session, id).orElse(null);
+            // Create the criteria builder
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<CategoryEntity> criteriaQuery = builder.createQuery(CategoryEntity.class);
+            Root<CategoryEntity> root = criteriaQuery.from(CategoryEntity.class);
+
+            // Create the 'id' = id restriction
+            Predicate predicate = builder.equal(root.get(ID_FIELD), id);
+            criteriaQuery = criteriaQuery.where(predicate);
+
+            //get the category
+            entity = session
+                    .createQuery(criteriaQuery)
+                    .uniqueResultOptional();
 
         } catch (Exception e) {
             handleSevereException(e, "findById", id.toString());
         }
 
-        return Optional.ofNullable(entity);
+        return entity;
     }
 
     /**
@@ -336,14 +292,13 @@ public class CategoryDAOCriteria implements CategoryDAO {
 
         try (Session session = sessionFactory.openSession()) {
             // Create the criteria builder
-            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-            CriteriaQuery<CategoryEntity> criteriaQuery = criteriaBuilder.createQuery(CategoryEntity.class);
-
-            Root<CategoryEntity> root = criteriaQuery.from(CategoryEntity.class);
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<CategoryEntity> query = builder.createQuery(CategoryEntity.class);
+            query.from(CategoryEntity.class);
 
             // get result
-            Query<CategoryEntity> query = session.createQuery(criteriaQuery);
-            categories = query.list();
+            Query<CategoryEntity> query2 = session.createQuery(query);
+            categories = query2.list();
 
         } catch (Exception e) {
             handleSevereException(e, "listAll", "n/a");
@@ -367,39 +322,21 @@ public class CategoryDAOCriteria implements CategoryDAO {
         Optional<CategoryEntity> category = Optional.empty();
 
         try (Session session = sessionFactory.openSession()) {
+
             CriteriaBuilder builder = session.getCriteriaBuilder();
             CriteriaQuery<CategoryEntity> query = builder.createQuery(CategoryEntity.class);
             Root<CategoryEntity> root = query.from(CategoryEntity.class);
-            Fetch<CategoryEntity, ProductEntity> fetch = root.fetch("products", JoinType.LEFT);
+            root.fetch("products", JoinType.LEFT);
             CriteriaQuery<CategoryEntity> criteriaQuery = query.where(builder.equal(root.get(ID_FIELD), id));
-            category = Optional.ofNullable(session.createQuery(criteriaQuery).getSingleResultOrNull());
+            category = session.createQuery(criteriaQuery).uniqueResultOptional();
 
         } catch (HibernateException | IllegalStateException | IllegalArgumentException |
                  NonUniqueResultException e) {
             handleSevereException(e, "getByIdEager", ExceptionHandler.SEVERE, id.toString());
         }
 
-        if (category.isEmpty()) return Optional.empty();
-//
         return category;
     }
-
-    private Optional<CategoryEntity> getCategoryEntityById(Session session, Long id) {
-        // Create the criteria builder
-        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-        CriteriaQuery<CategoryEntity> criteriaQuery = criteriaBuilder.createQuery(CategoryEntity.class);
-        Root<CategoryEntity> root = criteriaQuery.from(CategoryEntity.class);
-
-        // Create the 'id' = id restriction
-        Predicate predicate = criteriaBuilder.equal(root.get(ID_FIELD), id);
-        criteriaQuery = criteriaQuery.where(predicate);
-
-        //get the category
-        Query<CategoryEntity> query = session.createQuery(criteriaQuery);
-
-        return Optional.ofNullable(query.getSingleResultOrNull());
-    }
-
 
     private boolean isIdValid(Long id) {
         return id != null && id > 0;
