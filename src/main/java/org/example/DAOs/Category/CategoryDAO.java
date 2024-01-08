@@ -27,7 +27,7 @@ public interface CategoryDAO {
      *
      * @param category the CategoryEntity object to be saved
      */
-    void save(CategoryEntity category);
+    void persist(CategoryEntity category);
 
     /**
      * <b>For testing purposes.</b>

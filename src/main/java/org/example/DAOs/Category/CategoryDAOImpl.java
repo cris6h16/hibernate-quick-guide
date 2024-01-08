@@ -14,6 +14,7 @@ import org.hibernate.SessionFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 /**
  * Database Access Object of {@link CategoryEntity} using Hibernate Methods. <br>
@@ -23,9 +24,8 @@ import java.util.Optional;
  */
 
 public class CategoryDAOImpl implements CategoryDAO {
-    private final SessionFactory sessionFactory;
-    private static final String ID_FIELD = "id";
-    private static final String NAME_FIELD = "name";
+    public final SessionFactory sessionFactory;
+    public final Logger logger = Logger.getLogger(CategoryDAOImpl.class.getName());
 
     public CategoryDAOImpl() {
         sessionFactory = HibernateUtil.getSessionFactory();
@@ -46,7 +46,7 @@ public class CategoryDAOImpl implements CategoryDAO {
                     .list();
 
         } catch (HibernateException he) {
-            handleException(he, "listAll", ExceptionHandler.SEVERE, "n/a");
+            logger.severe("Error in listAll: " + he.getMessage());
         }
         return categories;
     }
@@ -61,21 +61,19 @@ public class CategoryDAOImpl implements CategoryDAO {
     public Optional<CategoryEntity> getByIdEager(Long id) {
         if (id == null) return Optional.empty();
 
-        CategoryEntity category = null;
+        Optional<CategoryEntity> category = Optional.empty();
 
         try (Session session = sessionFactory.openSession()) {
             category = session
                     .createQuery("FROM CategoryEntity ce LEFT JOIN FETCH ce.products WHERE ce.c_id = :id", CategoryEntity.class)
-                    .setParameter(ID_FIELD, id)
-                    .getSingleResultOrNull();
+                    .setParameter("id", id)
+                    .uniqueResultOptional();
 
         } catch (HibernateException e) {
-            handleException(e, "getByIdEager", ExceptionHandler.SEVERE, String.valueOf(id));
+            logger.severe("Error in getByIdEager: " + e.getMessage());
         }
 
-        if (category == null) return Optional.empty();
-
-        return Optional.of(category);
+        return category;
     }
 
     /**
@@ -86,18 +84,18 @@ public class CategoryDAOImpl implements CategoryDAO {
      */
     @Override
     public Optional<CategoryEntity> findById(Long id) {
-
         if (id == null) return Optional.empty();
 
-        CategoryEntity category = null;
+        Optional<CategoryEntity> category = Optional.empty();
 
         try (Session session = sessionFactory.openSession()) {
-            category = session.get(CategoryEntity.class, id);
+            category = Optional.ofNullable(session.get(CategoryEntity.class, id));
+
         } catch (HibernateException e) {
             handleException(e, "findById", ExceptionHandler.SEVERE, String.valueOf(id));
         }
 
-        return Optional.ofNullable(category);
+        return category;
     }
 
     /**
@@ -107,21 +105,21 @@ public class CategoryDAOImpl implements CategoryDAO {
      * @return an optional containing the category if it exists, or an empty optional if no category with the given name exists
      */
     public Optional<CategoryEntity> findByName(String name) {
+        if (name == null || name.isEmpty()) return Optional.empty();
 
-        if (name == null) return Optional.empty();
-        CategoryEntity category = null;
+        Optional<CategoryEntity> category = Optional.empty();
 
         try (Session session = sessionFactory.openSession()) {
             category = session
                     .createQuery("FROM CategoryEntity ce WHERE ce.c_name = :name", CategoryEntity.class)
-                    .setParameter(NAME_FIELD, name)
-                    .getSingleResultOrNull();
+                    .setParameter("name", name)
+                    .uniqueResultOptional();
 
         } catch (HibernateException he) {
             handleException(he, "findByName", ExceptionHandler.SEVERE, name);
         }
 
-        return Optional.ofNullable(category);
+        return category;
     }
 
     /**
@@ -134,16 +132,13 @@ public class CategoryDAOImpl implements CategoryDAO {
      */
     @Override
     public List<CategoryEntity> listAllWithEmptyRows() {
-        List<CategoryEntity> categories = null;
+        List<CategoryEntity> categories = new ArrayList<>();
 
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
-            // It deletes rows only if we commit the transaction
-            session.createQuery("delete from CategoryEntity")
-                    .executeUpdate();
-            categories = session
-                    .createQuery("from CategoryEntity", CategoryEntity.class)
-                    .list();
+            //PD: It deletes rows only if we commit the transaction
+            session.createMutationQuery("delete from CategoryEntity").executeUpdate();
+            categories = session.createQuery("from CategoryEntity", CategoryEntity.class).list();
 
             session.getTransaction().rollback();
 
@@ -154,6 +149,8 @@ public class CategoryDAOImpl implements CategoryDAO {
         return categories;
     }
 
+    //TODO: Improve the docs
+
     /**
      * Saves a CategoryEntity object to the database. if was saved successfully
      * the category will have id assigned
@@ -161,10 +158,11 @@ public class CategoryDAOImpl implements CategoryDAO {
      * @param category the CategoryEntity object to be saved
      */
     @Override
-    public void save(CategoryEntity category) {
+    public void persist(CategoryEntity category) {
         if (category == null) return;
         if (category.getC_name() == null) return;
         if (category.getC_name().isEmpty()) return;
+        if (category.getC_id() != null) return;
 
 
         try (Session session = sessionFactory.openSession()) {
@@ -176,8 +174,6 @@ public class CategoryDAOImpl implements CategoryDAO {
                 session.getTransaction().rollback();
                 throw e;
             }
-            //RollbackException, HibernateException ny(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    @JoinColumn(name = "catextends PersistenceException
         } catch (IllegalStateException | PersistenceException e) {
             handleException(e, "save", ExceptionHandler.SEVERE, category.toString());
         }
@@ -202,7 +198,7 @@ public class CategoryDAOImpl implements CategoryDAO {
             try {
                 session.beginTransaction();
                 session.merge(category);
-                category.getProducts().forEach(product -> session.merge(product));
+                category.getProducts().forEach(session::merge);
                 session.getTransaction().commit();
             } catch (Exception e) {
                 session.getTransaction().rollback();
@@ -232,7 +228,7 @@ public class CategoryDAOImpl implements CategoryDAO {
                 CriteriaBuilder builder = session.getCriteriaBuilder();
                 CriteriaDelete<CategoryEntity> criteriaDelete = builder.createCriteriaDelete(CategoryEntity.class);
                 Root<CategoryEntity> root = criteriaDelete.from(CategoryEntity.class);
-                criteriaDelete = criteriaDelete.where(builder.equal(root.get(ID_FIELD), id));
+                criteriaDelete = criteriaDelete.where(builder.equal(root.get("id"), id));
 
                 affectedRows = session
                         .createMutationQuery(criteriaDelete)

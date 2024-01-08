@@ -2,7 +2,6 @@ package org.example.DAOs.Category;
 
 import org.example.DAOs.Product.ProductDAO;
 import org.example.Entities.CategoryEntity;
-import org.example.Entities.ProductEntity;
 import org.example.Exceptions.ExceptionHandler;
 import org.example.Util.HibernateUtil;
 import org.hibernate.Session;
@@ -106,7 +105,7 @@ public class CategoryDAONative implements CategoryDAO {
      * @param category the CategoryEntity object to be saved
      */
     @Override
-    public void save(CategoryEntity category) {
+    public void persist(CategoryEntity category) {
         if (category == null) return;
         if (category.getC_name() == null) return;
         if (category.getC_name().isEmpty()) return;

@@ -2,7 +2,6 @@ package org.example.DAOs.Category;
 
 import jakarta.persistence.NonUniqueResultException;
 import jakarta.persistence.criteria.*;
-import org.example.DAOs.Product.ProductDAO;
 import org.example.Entities.CategoryEntity;
 import org.example.Entities.ProductEntity;
 import org.example.Exceptions.ExceptionHandler;
@@ -26,9 +25,9 @@ import java.util.Optional;
  */
 
 public class CategoryDAOCriteria implements CategoryDAO {
-    private final SessionFactory sessionFactory;
-    private final String ID_FIELD = "c_id";
-    private final String NAME_FIELD = "c_name";
+    public final SessionFactory sessionFactory;
+    public static final String ATTRIBUTE_ID = "id";
+    public static final String ATTRIBUTE_NAME = "name";
 
     public CategoryDAOCriteria() {
         this.sessionFactory = HibernateUtil.getSessionFactory();
@@ -53,7 +52,7 @@ public class CategoryDAOCriteria implements CategoryDAO {
                 CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
                 CriteriaDelete<CategoryEntity> delete = criteriaBuilder.createCriteriaDelete(CategoryEntity.class);
                 Root<CategoryEntity> root = delete.from(CategoryEntity.class);
-                Predicate predicate = criteriaBuilder.equal(root.get(ID_FIELD), id);
+                Predicate predicate = criteriaBuilder.equal(root.get(ATTRIBUTE_ID), id);
                 CriteriaDelete<CategoryEntity> deleteFinal = delete.where(predicate);
                 MutationQuery query = session.createMutationQuery(deleteFinal);
                 affectedRows = query.executeUpdate();
@@ -114,8 +113,8 @@ public class CategoryDAOCriteria implements CategoryDAO {
                 Root<CategoryEntity> root = update.from(CategoryEntity.class);
                 affectedRowsCategory = session
                         .createMutationQuery(update
-                                .where(builder.equal(root.get(ID_FIELD), category.getC_id()))
-                                .set(NAME_FIELD, category.getC_name()))
+                                .where(builder.equal(root.get(ATTRIBUTE_ID), category.getC_id()))
+                                .set(ATTRIBUTE_NAME, category.getC_name()))
                         .executeUpdate();
 
                 session.getTransaction().commit();
@@ -144,7 +143,7 @@ public class CategoryDAOCriteria implements CategoryDAO {
      * @param category the CategoryEntity object to be saved
      */
     @Override
-    public void save(CategoryEntity category) {
+    public void persist(CategoryEntity category) {
         if (category == null) return;
         if (category.getC_name() == null) return;
         if (category.getC_name().isEmpty()) return;
@@ -157,7 +156,7 @@ public class CategoryDAOCriteria implements CategoryDAO {
                 CriteriaBuilder builder = session.getCriteriaBuilder();
                 CriteriaQuery<CategoryEntity> query = builder.createQuery(CategoryEntity.class);
                 Root<CategoryEntity> root = query.from(CategoryEntity.class);
-                query = query.where(builder.equal(root.get(NAME_FIELD), category.getC_name()));
+                query = query.where(builder.equal(root.get(ATTRIBUTE_NAME), category.getC_name()));
                 Optional<CategoryEntity> categoryDB = session.createQuery(query).uniqueResultOptional();
 
                 if (categoryDB.isPresent()) {
@@ -235,7 +234,7 @@ public class CategoryDAOCriteria implements CategoryDAO {
             Root<CategoryEntity> root = criteriaQuery.from(CategoryEntity.class);
 
             // Create the 'name' = name restriction
-            Predicate predicate = criteriaBuilder.equal(root.get(NAME_FIELD), name);
+            Predicate predicate = criteriaBuilder.equal(root.get(ATTRIBUTE_NAME), name);
             criteriaQuery = criteriaQuery.where(predicate);
 
             // Create the query and obtain the result
@@ -266,7 +265,7 @@ public class CategoryDAOCriteria implements CategoryDAO {
             Root<CategoryEntity> root = criteriaQuery.from(CategoryEntity.class);
 
             // Create the 'id' = id restriction
-            Predicate predicate = builder.equal(root.get(ID_FIELD), id);
+            Predicate predicate = builder.equal(root.get(ATTRIBUTE_ID), id);
             criteriaQuery = criteriaQuery.where(predicate);
 
             //get the category
@@ -327,7 +326,7 @@ public class CategoryDAOCriteria implements CategoryDAO {
             CriteriaQuery<CategoryEntity> query = builder.createQuery(CategoryEntity.class);
             Root<CategoryEntity> root = query.from(CategoryEntity.class);
             root.fetch("products", JoinType.LEFT);
-            CriteriaQuery<CategoryEntity> criteriaQuery = query.where(builder.equal(root.get(ID_FIELD), id));
+            CriteriaQuery<CategoryEntity> criteriaQuery = query.where(builder.equal(root.get(ATTRIBUTE_ID), id));
             category = session.createQuery(criteriaQuery).uniqueResultOptional();
 
         } catch (HibernateException | IllegalStateException | IllegalArgumentException |

@@ -71,7 +71,7 @@ public class CategoryEntity implements Serializable {
         return c_name;
     }
 
-    public void setC_name(String name) {
+    public void setName(String name) {
         this.c_name = name;
     }
 

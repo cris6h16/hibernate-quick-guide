@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.List;
 
 @Entity
 @Table(name = "products")
@@ -14,17 +13,17 @@ public class ProductEntity implements Serializable {
 //    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "products_id_seq")
 //    @SequenceGenerator(name = "products_id_seq", sequenceName = "products_id_seq", allocationSize = 50)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long p_id;
 
     //TODO, test what exception is thrown FOR EACH METHOD
-    @Column(length = 100, nullable = false, unique = true)
-    private String name;
+    @Column( length = 100, nullable = false, unique = true)
+    private String p_name;
 
     @Column(length = 100)
-    private String description;
+    private String p_description;
 
-    @Column(precision = 7, scale = 2)
-    private BigDecimal price;
+    @Column( precision = 7, scale = 2)
+    private BigDecimal p_price;
 
     //=================== One to many ||| bidirectional ===================\\
     // - Many is the owner of the relationship (have the @JoinColumn), Relationship is inverse
@@ -36,45 +35,45 @@ public class ProductEntity implements Serializable {
     }
 
     public ProductEntity(Long id, String name, String description, BigDecimal price/*, CategoryEntity category*/) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.price = price;
+        this.p_id = id;
+        this.p_name = name;
+        this.p_description = description;
+        this.p_price = price;
 //        this.category = category;
     }
 
     //=============================== Getters and Setters ==================================\\
 
-    public Long getId() {
-        return id;
+    public Long getP_id() {
+        return p_id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setP_id(Long id) {
+        this.p_id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getP_name() {
+        return p_name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setP_name(String name) {
+        this.p_name = name;
     }
 
-    public String getDescription() {
-        return description;
+    public String getP_description() {
+        return p_description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setP_description(String description) {
+        this.p_description = description;
     }
 
-    public BigDecimal getPrice() {
-        return price;
+    public BigDecimal getP_price() {
+        return p_price;
     }
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
+    public void setP_price(BigDecimal price) {
+        this.p_price = price;
     }
 
     public CategoryEntity getCategory() {
@@ -88,9 +87,9 @@ public class ProductEntity implements Serializable {
     @Override
     public String toString() {
         return "ProductEntity{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", price=" + price + '}';
+                "id=" + p_id +
+                ", name='" + p_name + '\'' +
+                ", description='" + p_description + '\'' +
+                ", price=" + p_price + '}';
     }
 }
