@@ -4,7 +4,6 @@ import jakarta.persistence.NonUniqueResultException;
 import jakarta.persistence.criteria.*;
 import org.example.Entities.CategoryEntity;
 import org.example.Entities.ProductEntity;
-import org.example.Exceptions.ExceptionHandler;
 import org.example.Util.HibernateUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.LazyInitializationException;
@@ -64,7 +63,7 @@ public class CategoryDAOCriteria implements CategoryDAO {
                 throw e;
             }
         } catch (Exception e) {
-            handleSevereException(e, "deleteById", ExceptionHandler.SEVERE, id.toString());
+//            handleSevereException(e, "deleteById", ExceptionHandler.SEVERE, id.toString());
         }
 
         return affectedRows > 0;
@@ -242,7 +241,7 @@ public class CategoryDAOCriteria implements CategoryDAO {
             entity = query.getSingleResultOrNull();
 
         } catch (Exception e) {
-            handleSevereException(e, "findByName", ExceptionHandler.SEVERE, name);
+//            handleSevereException(e, "findByName", ExceptionHandler.SEVERE, name);
         }
 
         return Optional.ofNullable(entity);
@@ -331,7 +330,7 @@ public class CategoryDAOCriteria implements CategoryDAO {
 
         } catch (HibernateException | IllegalStateException | IllegalArgumentException |
                  NonUniqueResultException e) {
-            handleSevereException(e, "getByIdEager", ExceptionHandler.SEVERE, id.toString());
+//            handleSevereException(e, "getByIdEager", ExceptionHandler.SEVERE, id.toString());
         }
 
         return category;
@@ -342,7 +341,7 @@ public class CategoryDAOCriteria implements CategoryDAO {
     }
 
     private void handleSevereException(Exception e, String method, String type, String... params) {
-        ExceptionHandler.handleException(this.getClass().getName(), e, method, type, params);
+//        ExceptionHandler.handleException(this.getClass().getName(), e, method, type, params);
     }
 
 }

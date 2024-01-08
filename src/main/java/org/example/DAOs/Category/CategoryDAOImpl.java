@@ -4,8 +4,8 @@ import jakarta.persistence.PersistenceException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaDelete;
 import jakarta.persistence.criteria.Root;
+import org.example.DAOs.Product.Exceptions.ProductInvalidIdException;
 import org.example.Entities.CategoryEntity;
-import org.example.Exceptions.ExceptionHandler;
 import org.example.Util.HibernateUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -45,7 +45,7 @@ public class CategoryDAOImpl implements CategoryDAO {
                     .createQuery("from CategoryEntity", CategoryEntity.class)
                     .list();
 
-        } catch (HibernateException he) {
+        } catch (Exception he) {
             logger.severe("Error in listAll: " + he.getMessage());
         }
         return categories;
@@ -59,8 +59,6 @@ public class CategoryDAOImpl implements CategoryDAO {
      */
     @Override
     public Optional<CategoryEntity> getByIdEager(Long id) {
-        if (id == null) return Optional.empty();
-
         Optional<CategoryEntity> category = Optional.empty();
 
         try (Session session = sessionFactory.openSession()) {
@@ -69,7 +67,9 @@ public class CategoryDAOImpl implements CategoryDAO {
                     .setParameter("id", id)
                     .uniqueResultOptional();
 
-        } catch (HibernateException e) {
+        } catch (IllegalArgumentException ie) {
+            logger.warning("Invalid id: " + id);
+        } catch (Exception e) {
             logger.severe("Error in getByIdEager: " + e.getMessage());
         }
 
@@ -84,15 +84,15 @@ public class CategoryDAOImpl implements CategoryDAO {
      */
     @Override
     public Optional<CategoryEntity> findById(Long id) {
-        if (id == null) return Optional.empty();
-
         Optional<CategoryEntity> category = Optional.empty();
 
         try (Session session = sessionFactory.openSession()) {
             category = Optional.ofNullable(session.get(CategoryEntity.class, id));
 
-        } catch (HibernateException e) {
-            handleException(e, "findById", ExceptionHandler.SEVERE, String.valueOf(id));
+        } catch (IllegalArgumentException ie) {
+            logger.warning("Invalid id: " + id);
+        } catch (Exception e) {
+            logger.severe("Error in findById: " + e.getMessage());
         }
 
         return category;
@@ -105,8 +105,6 @@ public class CategoryDAOImpl implements CategoryDAO {
      * @return an optional containing the category if it exists, or an empty optional if no category with the given name exists
      */
     public Optional<CategoryEntity> findByName(String name) {
-        if (name == null || name.isEmpty()) return Optional.empty();
-
         Optional<CategoryEntity> category = Optional.empty();
 
         try (Session session = sessionFactory.openSession()) {
@@ -115,8 +113,10 @@ public class CategoryDAOImpl implements CategoryDAO {
                     .setParameter("name", name)
                     .uniqueResultOptional();
 
-        } catch (HibernateException he) {
-            handleException(he, "findByName", ExceptionHandler.SEVERE, name);
+        } catch (IllegalArgumentException ie) {
+            logger.warning("Invalid name: " + name);
+        } catch (Exception e) {
+            logger.severe("Error in findByName: " + e.getMessage());
         }
 
         return category;
@@ -142,8 +142,8 @@ public class CategoryDAOImpl implements CategoryDAO {
 
             session.getTransaction().rollback();
 
-        } catch (IllegalStateException | PersistenceException e) {
-            handleException(e, "listAllWithEmptyRows", ExceptionHandler.SEVERE, "n/a");
+        } catch (Exception e) {
+            logger.severe("Error in listAllWithEmptyRows: " + e.getMessage());
         }
 
         return categories;
@@ -159,10 +159,23 @@ public class CategoryDAOImpl implements CategoryDAO {
      */
     @Override
     public void persist(CategoryEntity category) {
-        if (category == null) return;
-        if (category.getC_name() == null) return;
-        if (category.getC_name().isEmpty()) return;
-        if (category.getC_id() != null) return;
+
+        if (category == null) {
+            logger.warning("Category can't be null");
+            return;
+        }
+        if (category.getC_name() == null) {
+            logger.warning("Category name can't be null");
+            return;
+        }
+        if (category.getC_name().isEmpty()) {
+            logger.warning("Category name can't be empty");
+            return;
+        }
+        if (category.getC_id() != null) {
+            logger.warning("Category id must be null");
+            return;
+        }
 
 
         try (Session session = sessionFactory.openSession()) {
@@ -174,8 +187,8 @@ public class CategoryDAOImpl implements CategoryDAO {
                 session.getTransaction().rollback();
                 throw e;
             }
-        } catch (IllegalStateException | PersistenceException e) {
-            handleException(e, "save", ExceptionHandler.SEVERE, category.toString());
+        } catch (Exception e) {
+            logger.severe("Error in persist: " + e.getMessage());
         }
     }
 
@@ -189,25 +202,36 @@ public class CategoryDAOImpl implements CategoryDAO {
     @Override
     public boolean merge(CategoryEntity category) {
 
-        if (category == null) return false;
-        if (category.getC_id() == null) return false;
-        if (category.getC_name() == null) return false;
-        if (category.getC_name().isEmpty()) return false;
+        if (category == null) {
+            logger.warning("Category can't be null");
+            return false;
+        }
+        if (category.getC_id() == null) {
+            logger.warning("Category id can't be null");
+            return false;
+        }
+        if (category.getC_name() == null) {
+            logger.warning("Category name can't be null");
+            return false;
+        }
+        if (category.getC_name().isEmpty()) {
+            logger.warning("Category name can't be empty");
+            return false;
+        }
 
         try (Session session = sessionFactory.openSession()) {
             try {
                 session.beginTransaction();
                 session.merge(category);
-                category.getProducts().forEach(session::merge);
                 session.getTransaction().commit();
             } catch (Exception e) {
                 session.getTransaction().rollback();
                 throw e;
             }
-            //RollbackException, HibernateException extends PersistenceException
-        } catch (IllegalStateException | PersistenceException e) {
-            handleException(e, "update", ExceptionHandler.SEVERE, category.toString());
+        } catch (Exception e) {
+            logger.severe("Error in merge: " + e.getMessage());
         }
+
         return true;
     }
 
@@ -218,20 +242,19 @@ public class CategoryDAOImpl implements CategoryDAO {
      * @return true if the deletion was successful, false otherwise
      */
     public boolean deleteById(Long id) {
-        if (id == null) return false;
+        if (id == null) {
+            logger.warning("Category id can't be null");
+            return false;
+        }
 
         int affectedRows = 0;
 
         try (Session session = sessionFactory.openSession()) {
             try {
                 session.beginTransaction();
-                CriteriaBuilder builder = session.getCriteriaBuilder();
-                CriteriaDelete<CategoryEntity> criteriaDelete = builder.createCriteriaDelete(CategoryEntity.class);
-                Root<CategoryEntity> root = criteriaDelete.from(CategoryEntity.class);
-                criteriaDelete = criteriaDelete.where(builder.equal(root.get("id"), id));
-
                 affectedRows = session
-                        .createMutationQuery(criteriaDelete)
+                        .createMutationQuery("DELETE FROM CategoryEntity c WHERE c.id = :id")
+                        .setParameter("id", id)
                         .executeUpdate();
 
                 session.getTransaction().commit();
@@ -239,18 +262,12 @@ public class CategoryDAOImpl implements CategoryDAO {
                 session.getTransaction().rollback();
                 throw e;
             }
-            //HibernateException, RollbackException extends PersistenceException
-        } catch (PersistenceException | IllegalStateException e) {
-            handleException(e, "deleteById", ExceptionHandler.SEVERE, String.valueOf(id));
-        } catch (IllegalArgumentException ie) {
-            handleException(ie, "deleteById", ExceptionHandler.WARNING, String.valueOf(id));
+        } catch (Exception e) {
+            logger.severe("Error in deleteById: " + e.getMessage());
+
         }
 
         return affectedRows > 0;
     }
 
-    private void handleException(Exception e, String method, String type, String... params) {
-        ExceptionHandler.handleException(this.getClass().getName(), e, method, type, params);
-
-    }
 }

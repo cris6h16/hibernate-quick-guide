@@ -1,8 +1,7 @@
 package org.example.DAOs.Product;
 
-import org.example.DAOs.Product.Exceptions.ProductAlreadyExist;
+import org.example.DAOs.Product.Exceptions.ProductAlreadyExistException;
 import org.example.Entities.ProductEntity;
-import org.example.Exceptions.ExceptionHandler;
 import org.example.Util.HibernateUtil;
 import org.hibernate.Session;
 
@@ -21,7 +20,7 @@ public class ProductDAO {
                         .setParameter("name", product.getP_name())
                         .uniqueResult()).intValue();
 
-                if (count > 0) throw new ProductAlreadyExist();
+                if (count > 0) throw new ProductAlreadyExistException();
 
                 session.beginTransaction();
                 session.persist(product);
@@ -31,10 +30,10 @@ public class ProductDAO {
                 session.getTransaction().rollback();
                 throw e;
             }
-        }catch (ProductAlreadyExist pe){
-            handleSevereException(pe, "save", ExceptionHandler.WARNING, product.toString());
+        }catch (ProductAlreadyExistException pe){
+//            handleSevereException(pe, "save", ExceptionHandler.WARNING, product.toString());
         }catch (Exception e) {
-            handleSevereException(e, "save", ExceptionHandler.SEVERE, product.toString());
+//            handleSevereException(e, "save", ExceptionHandler.SEVERE, product.toString());
         }
     }
 
@@ -55,12 +54,12 @@ public class ProductDAO {
                 throw e;
             }
         } catch (Exception e) {
-            handleSevereException(e, "merge", ExceptionHandler.SEVERE, product.toString());
+//            handleSevereException(e, "merge", ExceptionHandler.SEVERE, product.toString());
         }
     }
 
 
     private void handleSevereException(Exception e, String method, String type, String... params) {
-        ExceptionHandler.handleException(this.getClass().getName(), e, method, type, params);
+//        ExceptionHandler.handleException(this.getClass().getName(), e, method, type, params);
     }
 }

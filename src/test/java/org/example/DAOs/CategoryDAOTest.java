@@ -224,8 +224,8 @@ class CategoryDAOTest {
         CategoryEntity category = new CategoryEntity(null, "Laptops");
         categoryDAO.persist(category);
 
-        category.addProducts(product2, product);
-        categoryDAO.merge(category);
+        product.setCategory(category);
+        product2.setCategory(category);
         productDAO.merge(product);
         productDAO.merge(product2);
 
@@ -311,7 +311,8 @@ class CategoryDAOTest {
         categoryDAO.persist(category);
         assertNotNull(category.getC_id(), "Category with valid name and products should be saved");
 
-        category.addProducts(product, product2);
+        product.setCategory(category);
+        product2.setCategory(category);
         productDAO.merge(product);
         productDAO.merge(product2);
 
@@ -340,11 +341,11 @@ class CategoryDAOTest {
         categoryDAO.persist(category);
         assertNotNull(category.getC_id(), "Category with valid name should be saved");
 
-        //add products to category and save
-        category.addProducts(product, product2);
-
-        //merge products of category(because when we .addProducts(product, product2) we set category in product instance)
-        category.getProducts().forEach(productEntity -> productDAO.merge(productEntity));
+        //add category to products and save
+        product.setCategory(category);
+        product2.setCategory(category);
+        productDAO.merge(product);
+        productDAO.merge(product2);
 
         //change category name and merge
         category.getProducts().forEach(productEntity -> productEntity.setP_name("UpdatedName" + UUID.randomUUID().toString()));
@@ -441,7 +442,8 @@ class CategoryDAOTest {
         CategoryEntity category = new CategoryEntity(null, "Office");
         categoryDAO.persist(category);
 
-        category.addProducts(product, product2);
+        product.setCategory(category);
+        product2.setCategory(category);
         categoryDAO.merge(category);
         productDAO.merge(product);
 

@@ -16,13 +16,13 @@ public class ProductEntity implements Serializable {
     private Long p_id;
 
     //TODO, test what exception is thrown FOR EACH METHOD
-    @Column( length = 100, nullable = false, unique = true)
+    @Column(length = 100, nullable = false, unique = true)
     private String p_name;
 
     @Column(length = 100)
     private String p_description;
 
-    @Column( precision = 7, scale = 2)
+    @Column(precision = 7, scale = 2)
     private BigDecimal p_price;
 
     //=================== One to many ||| bidirectional ===================\\
@@ -30,6 +30,12 @@ public class ProductEntity implements Serializable {
     @ManyToOne(/*cascade = {CascadeType.ALL},*/ fetch = FetchType.EAGER, targetEntity = CategoryEntity.class, optional = true)
     @JoinColumn(name = "category_id")
     private CategoryEntity category;
+
+    public void setCategory(CategoryEntity category) {
+        this.category = category;
+        category.getProducts().add(this);
+    }
+
 
     public ProductEntity() {
     }
@@ -80,9 +86,6 @@ public class ProductEntity implements Serializable {
         return category;
     }
 
-    public void setCategory(CategoryEntity category) {
-        this.category = category;
-    }
 
     @Override
     public String toString() {

@@ -2,7 +2,6 @@ package org.example.DAOs.Category;
 
 import org.example.DAOs.Product.ProductDAO;
 import org.example.Entities.CategoryEntity;
-import org.example.Exceptions.ExceptionHandler;
 import org.example.Util.HibernateUtil;
 import org.hibernate.Session;
 
@@ -140,7 +139,7 @@ public class CategoryDAONative implements CategoryDAO {
                 throw e;
             }
         } catch (Exception e) {
-            handleException(e, "save", ExceptionHandler.SEVERE, category.toString());
+//            handleException(e, "save", ExceptionHandler.SEVERE, category.toString());
         }
     }
 
@@ -170,7 +169,7 @@ public class CategoryDAONative implements CategoryDAO {
                 throw e;
             }
         } catch (Exception e) {
-            handleException(e, "listAllWithEmptyRows", ExceptionHandler.SEVERE, "n/a");
+//            handleException(e, "listAllWithEmptyRows", ExceptionHandler.SEVERE, "n/a");
         }
         return categoryEntities;
     }
@@ -198,7 +197,7 @@ public class CategoryDAONative implements CategoryDAO {
                     .setParameter("name", name)
                     .uniqueResultOptional();
         } catch (Exception e) {
-            handleException(e, "findByName", ExceptionHandler.SEVERE, name);
+//            handleException(e, "findByName", ExceptionHandler.SEVERE, name);
         }
         return categoryEntity;
     }
@@ -224,7 +223,7 @@ public class CategoryDAONative implements CategoryDAO {
                     .setParameter("id", id)
                     .uniqueResultOptional();
         } catch (Exception e) {
-            handleException(e, "findById", ExceptionHandler.SEVERE, id.toString());
+//            handleException(e, "findById", ExceptionHandler.SEVERE, id.toString());
         }
         return categoryEntity;
     }
@@ -243,7 +242,7 @@ public class CategoryDAONative implements CategoryDAO {
                     .createNativeQuery(sql, CategoryEntity.class)
                     .list();
         } catch (Exception e) {
-            handleException(e, "listAll", ExceptionHandler.SEVERE, "n/a");
+//            handleException(e, "listAll", ExceptionHandler.SEVERE, "n/a");
         }
         return categoryEntities;
     }
@@ -275,12 +274,12 @@ public class CategoryDAONative implements CategoryDAO {
 
 
         } catch (Exception e) {
-            handleException(e, "getByIdEager", ExceptionHandler.SEVERE, id.toString());
+//            handleException(e, "getByIdEager", ExceptionHandler.SEVERE, id.toString());
         }
         return categoryEntity;
     }
 
     private void handleException(Exception e, String method, String type, String... params) {
-        ExceptionHandler.handleException(this.getClass().getName(), e, method, type, Arrays.toString(params));
+//        ExceptionHandler.handleException(this.getClass().getName(), e, method, type, Arrays.toString(params));
     }
 }
