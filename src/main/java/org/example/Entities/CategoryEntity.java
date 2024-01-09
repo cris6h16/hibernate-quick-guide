@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Entity
@@ -40,7 +39,7 @@ public class CategoryEntity implements Serializable {
     */
 
     @OneToMany(/*cascade = {CascadeType.ALL},*/fetch = FetchType.LAZY, mappedBy = "category", orphanRemoval = true, targetEntity = ProductEntity.class)
-    private List<ProductEntity> products = new ArrayList<>();
+    private List<ProductEntity> c_products = new ArrayList<>();
 
     //=============================== Constructors ==================================\\
 
@@ -54,15 +53,15 @@ public class CategoryEntity implements Serializable {
 
 
     //=============================== Getters and Setters ==================================\\
-    public Long getC_id() {
+    public Long getId() {
         return c_id;
     }
 
-    public void setC_id(Long id) {
+    public void setId(Long id) {
         this.c_id = id;
     }
 
-    public String getC_name() {
+    public String getName() {
         return c_name;
     }
 
@@ -71,7 +70,7 @@ public class CategoryEntity implements Serializable {
     }
 
     public List<ProductEntity> getProducts() {
-        return products;
+        return c_products;
     }
 
     @Override
@@ -82,4 +81,5 @@ public class CategoryEntity implements Serializable {
 //                ", products=" + products +
                 '}';
     }
+
 }

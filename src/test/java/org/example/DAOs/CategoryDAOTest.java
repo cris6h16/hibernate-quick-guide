@@ -39,23 +39,28 @@ class CategoryDAOTest {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // Delete CategoryForTesting if it exists
-            session.beginTransaction();
-            session.createQuery("from CategoryEntity c where c.c_name = :name", CategoryEntity.class)
-                    .setParameter("name", categoryForTesting.getC_name())
-                    .getResultList()
-                    .forEach(session::detach); // session.delete is deprecated
-            session.getTransaction().commit();
+            try {
+                // Delete CategoryForTesting if it exists
+                session.beginTransaction();
+                session.createMutationQuery("DELETE FROM CategoryEntity c WHERE c.c_name = :name")
+                        .setParameter("name", categoryForTesting.getName())
+                        .executeUpdate();
 
-            // Persist CategoryForTesting
-            session.beginTransaction();
-            session.persist(categoryForTesting);
-            session.getTransaction().commit();
+                // Persist CategoryForTesting
+                session.persist(categoryForTesting);
+                session.getTransaction().commit();
 
-            // Set values in test attributes
-            categoryId = categoryForTesting.getC_id();
-            categoryName = categoryForTesting.getC_name();
+            } catch (Exception e) {
+                session.getTransaction().rollback();
+                throw e;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        // Set values in test attributes
+        categoryId = categoryForTesting.getId();
+        categoryName = categoryForTesting.getName();
     }
 
     //=============================== categoryDAO.findById(Long id) ===============================\\
@@ -75,7 +80,7 @@ class CategoryDAOTest {
         Long validId = categoryId;
         Optional<CategoryEntity> category = categoryDAO.findById(validId);
         assertTrue(category.isPresent(), "Category with ID " + validId + " should be present");
-        assertEquals(categoryName, category.get().getC_name(), "Category with ID " + validId + " should be " + categoryName);
+        assertEquals(categoryName, category.get().getName(), "Category with ID " + validId + " should be " + categoryName);
     }
 
     @Test
@@ -159,7 +164,7 @@ class CategoryDAOTest {
     void saveNullName() {
         CategoryEntity category = new CategoryEntity(null, null);
         categoryDAO.persist(category);
-        assertNull(category.getC_id(), "Category with null name shouldn't be saved");
+        assertNull(category.getId(), "Category with null name shouldn't be saved");
     }
 
     @Test
@@ -167,7 +172,7 @@ class CategoryDAOTest {
     void saveEmptyName() {
         CategoryEntity category = new CategoryEntity(null, "");
         categoryDAO.persist(category);
-        assertNull(category.getC_id(), "Category with empty name shouldn't be saved");
+        assertNull(category.getId(), "Category with empty name shouldn't be saved");
     }
 
     @Test
@@ -175,7 +180,7 @@ class CategoryDAOTest {
     void saveValidName() {
         CategoryEntity category = new CategoryEntity(null, "Food");
         categoryDAO.persist(category);
-        assertNotNull(category.getC_id(), "Category with valid name should be saved");
+        assertNotNull(category.getId(), "Category with valid name should be saved");
     }
 
     @Test
@@ -229,13 +234,13 @@ class CategoryDAOTest {
         productDAO.merge(product);
         productDAO.merge(product2);
 
-        Optional<CategoryEntity> categoryOp = categoryDAO.getByIdEager(category.getC_id());
+        Optional<CategoryEntity> categoryOp = categoryDAO.getByIdEager(category.getId());
         assertTrue(categoryOp.isPresent(), "Category with valid name and products should be saved");
 
         category = categoryOp.get();
-        assertNotNull(category.getC_id(), "Category with valid name and products should be saved");
+        assertNotNull(category.getId(), "Category with valid name and products should be saved");
         assertEquals(2, category.getProducts().size(), "Category should have 2 products");
-        assertNotNull(category.getProducts().get(0).getP_id(), "Product with valid name and products should be saved");
+        assertNotNull(category.getProducts().get(0).getId(), "Product with valid name and products should be saved");
     }
 
 
@@ -309,7 +314,7 @@ class CategoryDAOTest {
 
         CategoryEntity category = new CategoryEntity(null, "Hardware");
         categoryDAO.persist(category);
-        assertNotNull(category.getC_id(), "Category with valid name and products should be saved");
+        assertNotNull(category.getId(), "Category with valid name and products should be saved");
 
         product.setCategory(category);
         product2.setCategory(category);
@@ -331,34 +336,39 @@ class CategoryDAOTest {
     @DisplayName("Update products category")
     void updateProductCategory() {
         //create products and save
-        ProductEntity product = new ProductEntity(null, "SSD 2tb", "ssd description", null);
-        ProductEntity product2 = new ProductEntity(null, "Motherboard", "motherboard description", null);
+        ProductEntity product = new ProductEntity(null, "updateProductCategory 1", "updateProductCategory description 1", null);
+        ProductEntity product2 = new ProductEntity(null, "updateProductCategory 2", "updateProductCategory description 2", null);
         productDAO.save(product);
         productDAO.save(product2);
 
         //create category and save
-        CategoryEntity category = new CategoryEntity(null, "HardwareTest");
+        CategoryEntity category = new CategoryEntity(null, "updateProductCategory Category 1");
         categoryDAO.persist(category);
-        assertNotNull(category.getC_id(), "Category with valid name should be saved");
+        assertNotNull(category.getId(), "Category with valid name should be saved");
 
         //add category to products and save
         product.setCategory(category);
         product2.setCategory(category);
         productDAO.merge(product);
         productDAO.merge(product2);
-
+/* public void setCategory(CategoryEntity category) {
+        this.category = category;
+        category.getProducts().add(this);
+    }
+*/
         //change category name and merge
-        category.getProducts().forEach(productEntity -> productEntity.setP_name("UpdatedName" + UUID.randomUUID().toString()));
+        category.getProducts().forEach(productEntity -> productEntity.setName("UpdatedName" + UUID.randomUUID().toString()));
         category.getProducts().forEach(productEntity -> productDAO.merge(productEntity));
 
-        Optional<CategoryEntity> categoryUpdate = categoryDAO.getByIdEager(category.getC_id());
+        Optional<CategoryEntity> categoryUpdate = categoryDAO.getByIdEager(category.getId());
         assertTrue(categoryUpdate.isPresent(), "Category valid id must be present");
         assertTrue(categoryUpdate.get().getProducts().size() == 2, "We added and updated 2 products, Category should have 2 products");
 
-        assertTrue(categoryUpdate.get().getProducts().getFirst().getP_name().contains("UpdatedName"),
+        assertTrue(categoryUpdate.get().getProducts().getFirst().getName().contains("UpdatedName"),
                 "First Product name should be updated");
-        assertTrue(categoryUpdate.get().getProducts().getLast().getP_name().contains("UpdatedName"),
+        assertTrue(categoryUpdate.get().getProducts().getLast().getName().contains("UpdatedName"),
                 "Last Product name should be updated");
+
     }
 
     //=============================== categoryDAO.delete(CategoryEntity category) ===============================\\
@@ -447,7 +457,7 @@ class CategoryDAOTest {
         categoryDAO.merge(category);
         productDAO.merge(product);
 
-        Long id = category.getC_id();
+        Long id = category.getId();
         assertNotNull(id, "Category with valid name and products should be saved");
 
         Optional<CategoryEntity> categoryOp = categoryDAO.getByIdEager(id);

@@ -5,19 +5,41 @@ import org.example.Entities.ProductEntity;
 import org.example.Util.HibernateUtil;
 import org.hibernate.Session;
 
+import java.util.logging.Logger;
+
 public class ProductDAO {
-    public static final String ID_FIELD = "id";
-    public static final String NAME_FIELD = "name";
-    public static final String PRICE_FIELD = "price";
-    public static final String CATEGORY_FIELD = "category_id";
-    public static final String DESCRIPTION_FIELD = "description";
+    public static final Logger LOGGER = Logger.getLogger(ProductDAO.class.getName());
+    public static final String ATTRIBUTE_NAME = "p_name";
+    public static final String ATTRIBUTE_ID = "p_id";
     public static final String TABLE_NAME = "products";
+    public static final String ATTRIBUTE_CATEGORY = "products";
+    public static final String FIELD_CATEGORY = "category_id";
+
+
+
 
     public void save(ProductEntity product) {
+        if (product == null) {
+            LOGGER.warning("Product is null");
+            return;
+        }
+        if (product.getName() == null) {
+            LOGGER.warning("Product name is null");
+            return;
+        }
+        if (product.getName().isEmpty()) {
+            LOGGER.warning("Product name is empty");
+            return;
+        }
+        if (product.getCategory() != null) {
+            LOGGER.warning("First save the product, then set the category");
+            return;
+        }
+
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             try {
-                Integer count = ((Number) session.createQuery("select count(*) from ProductEntity where p_name = :name")
-                        .setParameter("name", product.getP_name())
+                Integer count = ((Number) session.createQuery("select count(*) from ProductEntity where name = :name")
+                        .setParameter("name", product.getName())
                         .uniqueResult()).intValue();
 
                 if (count > 0) throw new ProductAlreadyExistException();
@@ -31,17 +53,30 @@ public class ProductDAO {
                 throw e;
             }
         }catch (ProductAlreadyExistException pe){
-//            handleSevereException(pe, "save", ExceptionHandler.WARNING, product.toString());
+            LOGGER.warning("Product already exist");
         }catch (Exception e) {
-//            handleSevereException(e, "save", ExceptionHandler.SEVERE, product.toString());
+            LOGGER.severe("Error saving product");
+            e.printStackTrace();
         }
     }
 
     public void merge(ProductEntity product) {
-        if (product == null) return;
-        if (product.getP_id() == null) return;
-        if (product.getP_name() == null) return;
-        if (product.getP_name().isEmpty()) return;
+        if (product == null) {
+            LOGGER.warning("Product is null");
+            return;
+        }
+        if (product.getId() == null) {
+            LOGGER.warning("Product id is null");
+            return;
+        }
+        if (product.getName() == null) {
+            LOGGER.warning("Product name is null");
+            return;
+        }
+        if (product.getName().isEmpty()) {
+            LOGGER.warning("Product name is empty");
+            return;
+        }
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             try {
@@ -54,12 +89,8 @@ public class ProductDAO {
                 throw e;
             }
         } catch (Exception e) {
-//            handleSevereException(e, "merge", ExceptionHandler.SEVERE, product.toString());
+            LOGGER.severe("Error merging product");
+            e.printStackTrace();
         }
-    }
-
-
-    private void handleSevereException(Exception e, String method, String type, String... params) {
-//        ExceptionHandler.handleException(this.getClass().getName(), e, method, type, params);
     }
 }

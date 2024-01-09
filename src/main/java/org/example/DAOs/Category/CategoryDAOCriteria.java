@@ -1,11 +1,9 @@
 package org.example.DAOs.Category;
 
-import jakarta.persistence.NonUniqueResultException;
 import jakarta.persistence.criteria.*;
+import org.example.DAOs.Category.Exceptions.CategoryAlreadyExistsException;
 import org.example.Entities.CategoryEntity;
-import org.example.Entities.ProductEntity;
 import org.example.Util.HibernateUtil;
-import org.hibernate.HibernateException;
 import org.hibernate.LazyInitializationException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -15,6 +13,7 @@ import org.hibernate.query.Query;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 /**
  * Database Access Object of {@link CategoryEntity} using Hibernate Criteria. <br>
@@ -25,8 +24,10 @@ import java.util.Optional;
 
 public class CategoryDAOCriteria implements CategoryDAO {
     public final SessionFactory sessionFactory;
-    public static final String ATTRIBUTE_ID = "id";
-    public static final String ATTRIBUTE_NAME = "name";
+    public static final String ATTRIBUTE_ID = "c_id";
+    public static final String ATTRIBUTE_NAME = "c_name";
+    public static final String ATTRIBUTE_PRODUCTS = "c_products";
+    public static final Logger LOGGER = Logger.getLogger(CategoryDAOCriteria.class.getName());
 
     public CategoryDAOCriteria() {
         this.sessionFactory = HibernateUtil.getSessionFactory();
@@ -40,7 +41,7 @@ public class CategoryDAOCriteria implements CategoryDAO {
      */
     @Override
     public boolean deleteById(Long id) {
-        if (!isIdValid(id)) return false;
+        if (!isIdValid(id)) LOGGER.warning("Invalid id: " + id);
 
         int affectedRows = 0;
 
@@ -57,13 +58,13 @@ public class CategoryDAOCriteria implements CategoryDAO {
                 affectedRows = query.executeUpdate();
 
                 session.getTransaction().commit();
-
             } catch (Exception e) {
                 session.getTransaction().rollback();
                 throw e;
             }
         } catch (Exception e) {
-//            handleSevereException(e, "deleteById", ExceptionHandler.SEVERE, id.toString());
+            LOGGER.severe("Exception in deleteById: " + e.getMessage());
+            e.printStackTrace();
         }
 
         return affectedRows > 0;
@@ -94,10 +95,22 @@ public class CategoryDAOCriteria implements CategoryDAO {
     @Override
     public boolean merge(CategoryEntity category) {
 
-        if (category == null) return false;
-        if (category.getC_id() == null) return false;
-        if (category.getC_name() == null) return false;
-        if (category.getC_name().isEmpty()) return false;
+        if (category == null) {
+            LOGGER.warning("Category is null");
+            return false;
+        }
+        if (category.getId() == null) {
+            LOGGER.warning("Category id is null");
+            return false;
+        }
+        if (category.getName() == null) {
+            LOGGER.warning("Category name is null");
+            return false;
+        }
+        if (category.getName().isEmpty()) {
+            LOGGER.warning("Category name is empty");
+            return false;
+        }
 
         int affectedRowsCategory = 0;
 
@@ -112,8 +125,8 @@ public class CategoryDAOCriteria implements CategoryDAO {
                 Root<CategoryEntity> root = update.from(CategoryEntity.class);
                 affectedRowsCategory = session
                         .createMutationQuery(update
-                                .where(builder.equal(root.get(ATTRIBUTE_ID), category.getC_id()))
-                                .set(ATTRIBUTE_NAME, category.getC_name()))
+                                .where(builder.equal(root.get(ATTRIBUTE_ID), category.getId()))
+                                .set(ATTRIBUTE_NAME, category.getName()))
                         .executeUpdate();
 
                 session.getTransaction().commit();
@@ -123,15 +136,11 @@ public class CategoryDAOCriteria implements CategoryDAO {
                 throw e;
             }
         } catch (Exception e) {
-            handleSevereException(e, "update", category.toString());
+            LOGGER.severe("Exception in merge: " + e.getMessage());
+            e.printStackTrace();
         }
 
         return affectedRowsCategory > 0;
-    }
-
-
-    private boolean isNameValid(String name) {
-        return name != null && !name.isEmpty();
     }
 
 
@@ -143,9 +152,22 @@ public class CategoryDAOCriteria implements CategoryDAO {
      */
     @Override
     public void persist(CategoryEntity category) {
-        if (category == null) return;
-        if (category.getC_name() == null) return;
-        if (category.getC_name().isEmpty()) return;
+        if (category == null) {
+            LOGGER.warning("Category is null");
+            return;
+        }
+        if (category.getName() == null) {
+            LOGGER.warning("Category name is null");
+            return;
+        }
+        if (category.getName().isEmpty()) {
+            LOGGER.warning("Category name is empty");
+            return;
+        }
+        if (category.getId() != null) {
+            LOGGER.warning("Category ID must be null");
+            return;
+        }
 
 
         try (Session session = sessionFactory.openSession()) {
@@ -155,19 +177,25 @@ public class CategoryDAOCriteria implements CategoryDAO {
                 CriteriaBuilder builder = session.getCriteriaBuilder();
                 CriteriaQuery<CategoryEntity> query = builder.createQuery(CategoryEntity.class);
                 Root<CategoryEntity> root = query.from(CategoryEntity.class);
-                query = query.where(builder.equal(root.get(ATTRIBUTE_NAME), category.getC_name()));
+                query = query.where(builder.equal(root.get(ATTRIBUTE_NAME), category.getName()));
                 Optional<CategoryEntity> categoryDB = session.createQuery(query).uniqueResultOptional();
 
                 if (categoryDB.isPresent()) {
-                    throw new IllegalArgumentException("Category already exists");
+                    throw new CategoryAlreadyExistsException(category);
                 }
-
                 session.persist(category);
+
                 session.getTransaction().commit();
+
             } catch (Exception e) {
-                handleSevereException(e, "save", category.toString());
                 session.getTransaction().rollback();
+                throw e;
             }
+        } catch (CategoryAlreadyExistsException ce) {
+            LOGGER.warning(ce.getMessage());
+        } catch (Exception e) {
+            LOGGER.severe("Exception in persist: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -211,7 +239,8 @@ public class CategoryDAOCriteria implements CategoryDAO {
                 throw e;
             }
         } catch (Exception e) {
-            handleSevereException(e, "listAllWithEmptyRows", "n/a");
+            LOGGER.severe("Exception in listAllWithEmptyRows: " + e.getMessage());
+            e.printStackTrace();
         }
         return categories;
     }
@@ -224,7 +253,16 @@ public class CategoryDAOCriteria implements CategoryDAO {
      */
     @Override
     public Optional<CategoryEntity> findByName(String name) {
-        CategoryEntity entity = null;
+        if (name == null) {
+            LOGGER.warning("Category name is null");
+            return Optional.empty();
+        }
+        if (name.isEmpty()) {
+            LOGGER.warning("Category name is empty");
+            return Optional.empty();
+        }
+
+        Optional<CategoryEntity> entity = Optional.empty();
 
         try (Session session = sessionFactory.openSession()) {
             // Create the criteria builder
@@ -238,13 +276,14 @@ public class CategoryDAOCriteria implements CategoryDAO {
 
             // Create the query and obtain the result
             Query<CategoryEntity> query = session.createQuery(criteriaQuery);
-            entity = query.getSingleResultOrNull();
+            entity = query.uniqueResultOptional();
 
         } catch (Exception e) {
-//            handleSevereException(e, "findByName", ExceptionHandler.SEVERE, name);
+            LOGGER.severe("Exception in findByName: " + e.getMessage());
+            e.printStackTrace();
         }
 
-        return Optional.ofNullable(entity);
+        return entity;
     }
 
     /**
@@ -255,6 +294,8 @@ public class CategoryDAOCriteria implements CategoryDAO {
      */
     @Override
     public Optional<CategoryEntity> findById(Long id) {
+        if (!isIdValid(id)) LOGGER.warning("Invalid id: " + id);
+
         Optional<CategoryEntity> entity = Optional.empty();
 
         try (Session session = sessionFactory.openSession()) {
@@ -273,7 +314,8 @@ public class CategoryDAOCriteria implements CategoryDAO {
                     .uniqueResultOptional();
 
         } catch (Exception e) {
-            handleSevereException(e, "findById", id.toString());
+            LOGGER.severe("Exception in findById: " + e.getMessage());
+            e.printStackTrace();
         }
 
         return entity;
@@ -299,7 +341,8 @@ public class CategoryDAOCriteria implements CategoryDAO {
             categories = query2.list();
 
         } catch (Exception e) {
-            handleSevereException(e, "listAll", "n/a");
+            LOGGER.severe("Exception in listAll: " + e.getMessage());
+            e.printStackTrace();
         }
 
         return categories;
@@ -314,9 +357,11 @@ public class CategoryDAOCriteria implements CategoryDAO {
 
     @Override
     public Optional<CategoryEntity> getByIdEager(Long id) {
-        if (!isIdValid(id)) return Optional.empty();
+        if (!isIdValid(id)) {
+            LOGGER.warning("Invalid id: " + id);
+            return Optional.empty();
+        }
 
-        List<ProductEntity> products = new ArrayList<>();
         Optional<CategoryEntity> category = Optional.empty();
 
         try (Session session = sessionFactory.openSession()) {
@@ -324,13 +369,13 @@ public class CategoryDAOCriteria implements CategoryDAO {
             CriteriaBuilder builder = session.getCriteriaBuilder();
             CriteriaQuery<CategoryEntity> query = builder.createQuery(CategoryEntity.class);
             Root<CategoryEntity> root = query.from(CategoryEntity.class);
-            root.fetch("products", JoinType.LEFT);
+            root.fetch(ATTRIBUTE_PRODUCTS, JoinType.LEFT);
             CriteriaQuery<CategoryEntity> criteriaQuery = query.where(builder.equal(root.get(ATTRIBUTE_ID), id));
             category = session.createQuery(criteriaQuery).uniqueResultOptional();
 
-        } catch (HibernateException | IllegalStateException | IllegalArgumentException |
-                 NonUniqueResultException e) {
-//            handleSevereException(e, "getByIdEager", ExceptionHandler.SEVERE, id.toString());
+        } catch (Exception e) {
+            LOGGER.severe("Exception in getByIdEager: " + e.getMessage());
+            e.printStackTrace();
         }
 
         return category;
@@ -338,10 +383,6 @@ public class CategoryDAOCriteria implements CategoryDAO {
 
     private boolean isIdValid(Long id) {
         return id != null && id > 0;
-    }
-
-    private void handleSevereException(Exception e, String method, String type, String... params) {
-//        ExceptionHandler.handleException(this.getClass().getName(), e, method, type, params);
     }
 
 }

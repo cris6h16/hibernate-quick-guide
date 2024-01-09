@@ -5,16 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="33d4e801-1be6-4c5e-99fe-37449cf74e6d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/DAOs/Product/Exceptions/ProductInvalidIdException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/DAOs/Category/Exceptions/CategoryAlreadyExistsException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/DTOs/CategoryEntityDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/DTOs/ProductEntityDTO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DAOs/Category/CategoryDAOCriteria.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/DAOs/Category/CategoryDAOCriteria.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DAOs/Category/CategoryDAOImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/DAOs/Category/CategoryDAOImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DAOs/Category/CategoryDAONative.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/DAOs/Category/CategoryDAONative.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DAOs/Product/Exceptions/ProductAlreadyExist.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/DAOs/Product/Exceptions/ProductAlreadyExistException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DAOs/Product/Exceptions/ProductInvalidIdException.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DAOs/Product/ProductDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/DAOs/Product/ProductDAO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Entities/CategoryEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Entities/CategoryEntity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Entities/ProductEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Entities/ProductEntity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/org/example/DAOs/CategoryDAOTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/DAOs/CategoryDAOTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/DAOs/CriteriaCategoryDAOTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/DAOs/CriteriaCategoryDAOTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/DAOs/NativeCategoryDAOTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/DAOs/NativeCategoryDAOTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -90,6 +94,7 @@
     "JUnit.CategoryDAOTest.updateValidName.executor": "Run",
     "JUnit.CategoryDAOTest.updateValidNameAndProductsCascadePersist.executor": "Debug",
     "JUnit.CriteriaCategoryDAOTest.executor": "Run",
+    "JUnit.CriteriaCategoryDAOTest.updateValid.executor": "Run",
     "JUnit.CriteriaCategoryDAOTest.updateValidLazyProducts.executor": "Run",
     "JUnit.CriteriaCategoryDAOTest.updateValidNameLazyProducts.executor": "Run",
     "JUnit.General.createTablesDB.executor": "Run",
@@ -125,6 +130,7 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
+      <recent name="org.example.DTOs" />
       <recent name="org.example.Entities" />
     </key>
     <key name="CreateTestDialog.Recents.Supers">
@@ -135,7 +141,7 @@
       <recent name="org.example.Entities" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.CategoryDAOTest">
+  <component name="RunManager" selected="JUnit.NativeCategoryDAOTest">
     <configuration name="CategoryDAOTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="Hibernate" />
       <extension name="coverage">
@@ -162,22 +168,6 @@
       <option name="PACKAGE_NAME" value="org.example.DAOs" />
       <option name="MAIN_CLASS_NAME" value="org.example.DAOs.CategoryDAOTest" />
       <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="CategoryDAOTest.updateProductCategory" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="Hibernate" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="org.example.DAOs.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="org.example.DAOs" />
-      <option name="MAIN_CLASS_NAME" value="org.example.DAOs.CategoryDAOTest" />
-      <option name="METHOD_NAME" value="updateProductCategory" />
-      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -193,6 +183,22 @@
       <option name="PACKAGE_NAME" value="org.example.DAOs" />
       <option name="MAIN_CLASS_NAME" value="org.example.DAOs.CriteriaCategoryDAOTest" />
       <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="CriteriaCategoryDAOTest.updateValid" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Hibernate" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.DAOs.Category.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.DAOs" />
+      <option name="MAIN_CLASS_NAME" value="org.example.DAOs.CriteriaCategoryDAOTest" />
+      <option name="METHOD_NAME" value="updateValid" />
+      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -230,11 +236,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.CategoryDAOTest" />
         <item itemvalue="JUnit.NativeCategoryDAOTest" />
         <item itemvalue="JUnit.CriteriaCategoryDAOTest" />
+        <item itemvalue="JUnit.CategoryDAOTest" />
+        <item itemvalue="JUnit.CriteriaCategoryDAOTest.updateValid" />
         <item itemvalue="JUnit.CriteriaCategoryDAOTest.updateValidNameLazyProducts" />
-        <item itemvalue="JUnit.CategoryDAOTest.updateProductCategory" />
       </list>
     </recent_temporary>
   </component>
@@ -304,6 +310,10 @@
       <workItem from="1704659740190" duration="17647000" />
       <workItem from="1704719689023" duration="5988000" />
       <workItem from="1704734189296" duration="4988000" />
+      <workItem from="1704739194329" duration="131000" />
+      <workItem from="1704739339385" duration="171000" />
+      <workItem from="1704759508490" duration="1549000" />
+      <workItem from="1704761067573" duration="12586000" />
     </task>
     <servers />
   </component>
@@ -315,23 +325,23 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/example/Entities/CategoryEntity.java</url>
-          <line>13</line>
+          <line>12</line>
           <option name="timeStamp" value="6" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/test/java/org/example/DAOs/CriteriaCategoryDAOTest.java</url>
-          <line>18</line>
+          <line>10</line>
           <option name="timeStamp" value="8" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/test/java/org/example/DAOs/CriteriaCategoryDAOTest.java</url>
-          <line>13</line>
+          <line>5</line>
           <option name="timeStamp" value="13" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/test/java/org/example/DAOs/CategoryDAOTest.java</url>
-          <line>355</line>
-          <option name="timeStamp" value="18" />
+          <url>file://$PROJECT_DIR$/src/main/java/org/example/DAOs/Category/CategoryDAONative.java</url>
+          <line>325</line>
+          <option name="timeStamp" value="54" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

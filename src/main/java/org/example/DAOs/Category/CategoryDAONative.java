@@ -2,17 +2,20 @@ package org.example.DAOs.Category;
 
 import org.example.DAOs.Product.ProductDAO;
 import org.example.Entities.CategoryEntity;
+import org.example.Entities.ProductEntity;
 import org.example.Util.HibernateUtil;
 import org.hibernate.Session;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 public class CategoryDAONative implements CategoryDAO {
+    public static final Logger LOGGER = Logger.getLogger(CategoryDAONative.class.getName());
     private final String ID_FIELD = "c_id";
     private final String NAME_FIELD = "c_name";
+    private final String ATTRIBUTE_PRODUCTS = "c_products";
     private final String TABLE_NAME = "categories";
     private final String SCHEMA_NAME = "tienda";
 
@@ -26,7 +29,10 @@ public class CategoryDAONative implements CategoryDAO {
      */
     @Override
     public boolean deleteById(Long id) {
-        if (id == null) return false;
+        if (id == null) {
+            LOGGER.warning("Id is null");
+            return false;
+        }
 
         int affectedRows = 0;
 
@@ -47,7 +53,8 @@ public class CategoryDAONative implements CategoryDAO {
                 throw e;
             }
         } catch (Exception e) {
-            handleException(e, "deleteById", id.toString());
+            LOGGER.severe("Exception in deleteById: " + e.getMessage());
+            e.printStackTrace();
         }
 
         return affectedRows > 0;
@@ -55,15 +62,27 @@ public class CategoryDAONative implements CategoryDAO {
 //TODO: rewrite the description of this method, because jus merge the category, not its products
 
     /**
-     * @param category if update is manually(Hibernate Criteria) must be Eagerly
+     * @param categoryDTO if update is manually(Hibernate Criteria) must be Eagerly
      * @return true if category was updated
      */
     @Override
-    public boolean merge(CategoryEntity category) {
-        if (category == null) return false;
-        if (category.getC_id() == null) return false;
-        if (category.getC_name() == null) return false;
-        if (category.getC_name().isEmpty()) return false;
+    public boolean merge(CategoryEntity categoryDTO) {
+        if (categoryDTO == null) {
+            LOGGER.warning("Category is null");
+            return false;
+        }
+        if (categoryDTO.getId() == null) {
+            LOGGER.warning("Category id is null");
+            return false;
+        }
+        if (categoryDTO.getName() == null) {
+            LOGGER.warning("Category name is null");
+            return false;
+        }
+        if (categoryDTO.getName().isEmpty()) {
+            LOGGER.warning("Category name is empty");
+            return false;
+        }
 
         int affectedRows = 0;
 
@@ -79,8 +98,8 @@ public class CategoryDAONative implements CategoryDAO {
 
                 affectedRows = session
                         .createNativeMutationQuery(sql)
-                        .setParameter("name", category.getC_name())
-                        .setParameter("id", category.getC_id())
+                        .setParameter("name", categoryDTO.getName())
+                        .setParameter("id", categoryDTO.getId())
                         .executeUpdate();
 
                 session.getTransaction().commit();
@@ -91,7 +110,8 @@ public class CategoryDAONative implements CategoryDAO {
             }
 
         } catch (Exception e) {
-            handleException(e, "merge", category.toString());
+            LOGGER.severe("Exception in merge: " + e.getMessage());
+            e.printStackTrace();
         }
 
         return affectedRows > 0;
@@ -101,13 +121,22 @@ public class CategoryDAONative implements CategoryDAO {
      * Saves a CategoryEntity object to the database. if was saved successfully
      * the category will have id assigned
      *
-     * @param category the CategoryEntity object to be saved
+     * @param categoryDTO the CategoryEntity object to be saved
      */
     @Override
-    public void persist(CategoryEntity category) {
-        if (category == null) return;
-        if (category.getC_name() == null) return;
-        if (category.getC_name().isEmpty()) return;
+    public void persist(CategoryEntity categoryDTO) {
+        if (categoryDTO == null) {
+            LOGGER.warning("Category is null");
+            return;
+        }
+        if (categoryDTO.getName() == null) {
+            LOGGER.warning("Category name is null");
+            return;
+        }
+        if (categoryDTO.getName().isEmpty()) {
+            LOGGER.warning("Category name is empty");
+            return;
+        }
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             session.beginTransaction();
@@ -119,7 +148,7 @@ public class CategoryDAONative implements CategoryDAO {
                         NAME_FIELD);
 
                 session.createNativeMutationQuery(insertSql)
-                        .setParameter("name", category.getC_name())
+                        .setParameter("name", categoryDTO.getName())
                         .executeUpdate();
 
                 String getNewIdSql = String.format("SELECT %s FROM %s.%s WHERE %s = :name",
@@ -128,9 +157,9 @@ public class CategoryDAONative implements CategoryDAO {
                         TABLE_NAME,
                         NAME_FIELD);
 
-                category.setC_id(session
+                categoryDTO.setId(session
                         .createNativeQuery(getNewIdSql, Long.class)
-                        .setParameter("name", category.getC_name())
+                        .setParameter("name", categoryDTO.getName())
                         .getSingleResultOrNull());
 
                 session.getTransaction().commit();
@@ -139,7 +168,8 @@ public class CategoryDAONative implements CategoryDAO {
                 throw e;
             }
         } catch (Exception e) {
-//            handleException(e, "save", ExceptionHandler.SEVERE, category.toString());
+            LOGGER.severe("Exception in persist: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -169,8 +199,10 @@ public class CategoryDAONative implements CategoryDAO {
                 throw e;
             }
         } catch (Exception e) {
-//            handleException(e, "listAllWithEmptyRows", ExceptionHandler.SEVERE, "n/a");
+            LOGGER.severe("Exception in listAllWithEmptyRows: " + e.getMessage());
+            e.printStackTrace();
         }
+
         return categoryEntities;
     }
 
@@ -182,8 +214,14 @@ public class CategoryDAONative implements CategoryDAO {
      */
     @Override
     public Optional<CategoryEntity> findByName(String name) {
-        if (name == null) return Optional.empty();
-        if (name.isEmpty()) return Optional.empty();
+        if (name == null) {
+            LOGGER.warning("Name is null");
+            return Optional.empty();
+        }
+        if (name.isEmpty()) {
+            LOGGER.warning("Name is empty");
+            return Optional.empty();
+        }
 
         Optional<CategoryEntity> categoryEntity = Optional.empty();
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -197,8 +235,10 @@ public class CategoryDAONative implements CategoryDAO {
                     .setParameter("name", name)
                     .uniqueResultOptional();
         } catch (Exception e) {
-//            handleException(e, "findByName", ExceptionHandler.SEVERE, name);
+            LOGGER.severe("Exception in findByName: " + e.getMessage());
+            e.printStackTrace();
         }
+
         return categoryEntity;
     }
 
@@ -210,7 +250,10 @@ public class CategoryDAONative implements CategoryDAO {
      */
     @Override
     public Optional<CategoryEntity> findById(Long id) {
-        if (id == null) return Optional.empty();
+        if (id == null) {
+            LOGGER.warning("Id is null");
+            return Optional.empty();
+        }
 
         Optional<CategoryEntity> categoryEntity = Optional.empty();
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -223,7 +266,8 @@ public class CategoryDAONative implements CategoryDAO {
                     .setParameter("id", id)
                     .uniqueResultOptional();
         } catch (Exception e) {
-//            handleException(e, "findById", ExceptionHandler.SEVERE, id.toString());
+            LOGGER.severe("Exception in findById: " + e.getMessage());
+            e.printStackTrace();
         }
         return categoryEntity;
     }
@@ -242,7 +286,8 @@ public class CategoryDAONative implements CategoryDAO {
                     .createNativeQuery(sql, CategoryEntity.class)
                     .list();
         } catch (Exception e) {
-//            handleException(e, "listAll", ExceptionHandler.SEVERE, "n/a");
+            LOGGER.severe("Exception in listAll: " + e.getMessage());
+            e.printStackTrace();
         }
         return categoryEntities;
     }
@@ -255,31 +300,34 @@ public class CategoryDAONative implements CategoryDAO {
      */
     @Override
     public Optional<CategoryEntity> getByIdEager(Long id) {
-        if (id == null) return Optional.empty();
+        if (id == null) {
+            LOGGER.warning("Id is null");
+            return Optional.empty();
+        }
 
         Optional<CategoryEntity> categoryEntity = Optional.empty();
+
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            String sql = String.format("SELECT * FROM %s.%s c LEFT JOIN %s.%s p ON p.%s = c.%s WHERE c.%s = :id",
+            String sql = String.format("SELECT * FROM %s.%s c JOIN %s.%s p ON c.%s=p.%s WHERE c.%s = :id",
                     SCHEMA_NAME, TABLE_NAME,
-                    SCHEMA_NAME, ProductDAO.TABLE_NAME,
-                    ProductDAO.CATEGORY_FIELD, ID_FIELD,
+                    SCHEMA_NAME,  ProductDAO.TABLE_NAME,
+                    NAME_FIELD, ProductDAO.FIELD_CATEGORY,
                     ID_FIELD);
 
-            categoryEntity = session.createNativeQuery(sql)
+            categoryEntity = session
+                    .createNativeQuery(sql, CategoryEntity.class)
                     .setParameter("id", id)
+                    .addEntity(CategoryEntity.class)
                     .addEntity("c", CategoryEntity.class)
-                    .addJoin("p", "c.products")  // Map the joined products to the `products` collection
+                    .addJoin("p", "c.c_products")
                     .uniqueResultOptional();
 
-
+            System.out.println();
         } catch (Exception e) {
-//            handleException(e, "getByIdEager", ExceptionHandler.SEVERE, id.toString());
+            LOGGER.severe("Exception in getByIdEager: " + e.getMessage());
+            e.printStackTrace();
         }
         return categoryEntity;
-    }
-
-    private void handleException(Exception e, String method, String type, String... params) {
-//        ExceptionHandler.handleException(this.getClass().getName(), e, method, type, Arrays.toString(params));
     }
 }

@@ -1,13 +1,7 @@
 package org.example.DAOs.Category;
 
-import jakarta.persistence.PersistenceException;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaDelete;
-import jakarta.persistence.criteria.Root;
-import org.example.DAOs.Product.Exceptions.ProductInvalidIdException;
 import org.example.Entities.CategoryEntity;
 import org.example.Util.HibernateUtil;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
@@ -63,7 +57,7 @@ public class CategoryDAOImpl implements CategoryDAO {
 
         try (Session session = sessionFactory.openSession()) {
             category = session
-                    .createQuery("FROM CategoryEntity ce LEFT JOIN FETCH ce.products WHERE ce.c_id = :id", CategoryEntity.class)
+                    .createQuery("FROM CategoryEntity ce LEFT JOIN FETCH ce.c_products WHERE ce.c_id = :id", CategoryEntity.class)
                     .setParameter("id", id)
                     .uniqueResultOptional();
 
@@ -164,15 +158,15 @@ public class CategoryDAOImpl implements CategoryDAO {
             logger.warning("Category can't be null");
             return;
         }
-        if (category.getC_name() == null) {
+        if (category.getName() == null) {
             logger.warning("Category name can't be null");
             return;
         }
-        if (category.getC_name().isEmpty()) {
+        if (category.getName().isEmpty()) {
             logger.warning("Category name can't be empty");
             return;
         }
-        if (category.getC_id() != null) {
+        if (category.getId() != null) {
             logger.warning("Category id must be null");
             return;
         }
@@ -206,15 +200,15 @@ public class CategoryDAOImpl implements CategoryDAO {
             logger.warning("Category can't be null");
             return false;
         }
-        if (category.getC_id() == null) {
+        if (category.getId() == null) {
             logger.warning("Category id can't be null");
             return false;
         }
-        if (category.getC_name() == null) {
+        if (category.getName() == null) {
             logger.warning("Category name can't be null");
             return false;
         }
-        if (category.getC_name().isEmpty()) {
+        if (category.getName().isEmpty()) {
             logger.warning("Category name can't be empty");
             return false;
         }
@@ -253,7 +247,7 @@ public class CategoryDAOImpl implements CategoryDAO {
             try {
                 session.beginTransaction();
                 affectedRows = session
-                        .createMutationQuery("DELETE FROM CategoryEntity c WHERE c.id = :id")
+                        .createMutationQuery("DELETE FROM CategoryEntity c WHERE c.c_id = :id")
                         .setParameter("id", id)
                         .executeUpdate();
 
