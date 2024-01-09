@@ -5,6 +5,8 @@ import org.example.Entities.CategoryEntity;
 import org.example.Entities.ProductEntity;
 import org.example.Util.HibernateUtil;
 import org.hibernate.Session;
+import org.hibernate.query.MutationQuery;
+import org.hibernate.query.NativeQuery;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -300,34 +302,29 @@ public class CategoryDAONative implements CategoryDAO {
      */
     @Override
     public Optional<CategoryEntity> getByIdEager(Long id) {
-        if (id == null) {
-            LOGGER.warning("Id is null");
-            return Optional.empty();
-        }
 
+        List<ProductEntity> productEntities = new ArrayList<>();
         Optional<CategoryEntity> categoryEntity = Optional.empty();
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-
-            String sql = String.format("SELECT * FROM %s.%s c JOIN %s.%s p ON c.%s=p.%s WHERE c.%s = :id",
-                    SCHEMA_NAME, TABLE_NAME,
-                    SCHEMA_NAME,  ProductDAO.TABLE_NAME,
-                    NAME_FIELD, ProductDAO.FIELD_CATEGORY,
-                    ID_FIELD);
-
-            categoryEntity = session
-                    .createNativeQuery(sql, CategoryEntity.class)
+            categoryEntity = session.createNativeQuery("SELECT * FROM tienda.categories WHERE c_id = :id", CategoryEntity.class)
                     .setParameter("id", id)
-                    .addEntity(CategoryEntity.class)
-                    .addEntity("c", CategoryEntity.class)
-                    .addJoin("p", "c.c_products")
                     .uniqueResultOptional();
 
-            System.out.println();
-        } catch (Exception e) {
-            LOGGER.severe("Exception in getByIdEager: " + e.getMessage());
-            e.printStackTrace();
+            productEntities = session.createNativeQuery("SELECT * FROM tienda.products WHERE category_id = :id", ProductEntity.class)
+                    .setParameter("id", id)
+                    .list();
         }
-        return categoryEntity;
+        if (categoryEntity.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Optional<CategoryEntity> finalCategoryEntity = Optional.of(
+                new CategoryEntity(
+                        categoryEntity.get().getId(),
+                        categoryEntity.get().getName(),
+                        productEntities));
+
+        return finalCategoryEntity;
     }
 }

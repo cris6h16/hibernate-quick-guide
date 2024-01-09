@@ -51,6 +51,11 @@ public class CategoryEntity implements Serializable {
         this.c_name = name;
     }
 
+    public CategoryEntity(Long c_id, String c_name, List<ProductEntity> c_products) {
+        this.c_id = c_id;
+        this.c_name = c_name;
+        this.c_products = c_products;
+    }
 
     //=============================== Getters and Setters ==================================\\
     public Long getId() {
@@ -71,6 +76,10 @@ public class CategoryEntity implements Serializable {
 
     public List<ProductEntity> getProducts() {
         return c_products;
+    }
+
+    public void setProductsList(List<ProductEntity> products) {
+        this.c_products = products;
     }
 
     @Override
