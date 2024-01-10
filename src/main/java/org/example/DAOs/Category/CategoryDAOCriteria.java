@@ -24,9 +24,6 @@ import java.util.logging.Logger;
 
 public class CategoryDAOCriteria implements CategoryDAO {
     public final SessionFactory sessionFactory;
-    public static final String ATTRIBUTE_ID = "c_id";
-    public static final String ATTRIBUTE_NAME = "c_name";
-    public static final String ATTRIBUTE_PRODUCTS = "c_products";
     public static final Logger LOGGER = Logger.getLogger(CategoryDAOCriteria.class.getName());
 
     public CategoryDAOCriteria() {
@@ -52,7 +49,7 @@ public class CategoryDAOCriteria implements CategoryDAO {
                 CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
                 CriteriaDelete<CategoryEntity> delete = criteriaBuilder.createCriteriaDelete(CategoryEntity.class);
                 Root<CategoryEntity> root = delete.from(CategoryEntity.class);
-                Predicate predicate = criteriaBuilder.equal(root.get(ATTRIBUTE_ID), id);
+                Predicate predicate = criteriaBuilder.equal(root.get(CategoryEntity.ATTR_ID), id);
                 CriteriaDelete<CategoryEntity> deleteFinal = delete.where(predicate);
                 MutationQuery query = session.createMutationQuery(deleteFinal);
                 affectedRows = query.executeUpdate();
@@ -125,8 +122,8 @@ public class CategoryDAOCriteria implements CategoryDAO {
                 Root<CategoryEntity> root = update.from(CategoryEntity.class);
                 affectedRowsCategory = session
                         .createMutationQuery(update
-                                .where(builder.equal(root.get(ATTRIBUTE_ID), category.getId()))
-                                .set(ATTRIBUTE_NAME, category.getName()))
+                                .where(builder.equal(root.get(CategoryEntity.ATTR_ID), category.getId()))
+                                .set(CategoryEntity.ATTR_NAME, category.getName()))
                         .executeUpdate();
 
                 session.getTransaction().commit();
@@ -177,7 +174,7 @@ public class CategoryDAOCriteria implements CategoryDAO {
                 CriteriaBuilder builder = session.getCriteriaBuilder();
                 CriteriaQuery<CategoryEntity> query = builder.createQuery(CategoryEntity.class);
                 Root<CategoryEntity> root = query.from(CategoryEntity.class);
-                query = query.where(builder.equal(root.get(ATTRIBUTE_NAME), category.getName()));
+                query = query.where(builder.equal(root.get(CategoryEntity.ATTR_NAME), category.getName()));
                 Optional<CategoryEntity> categoryDB = session.createQuery(query).uniqueResultOptional();
 
                 if (categoryDB.isPresent()) {
@@ -271,7 +268,7 @@ public class CategoryDAOCriteria implements CategoryDAO {
             Root<CategoryEntity> root = criteriaQuery.from(CategoryEntity.class);
 
             // Create the 'name' = name restriction
-            Predicate predicate = criteriaBuilder.equal(root.get(ATTRIBUTE_NAME), name);
+            Predicate predicate = criteriaBuilder.equal(root.get(CategoryEntity.ATTR_NAME), name);
             criteriaQuery = criteriaQuery.where(predicate);
 
             // Create the query and obtain the result
@@ -305,7 +302,7 @@ public class CategoryDAOCriteria implements CategoryDAO {
             Root<CategoryEntity> root = criteriaQuery.from(CategoryEntity.class);
 
             // Create the 'id' = id restriction
-            Predicate predicate = builder.equal(root.get(ATTRIBUTE_ID), id);
+            Predicate predicate = builder.equal(root.get(CategoryEntity.ATTR_ID), id);
             criteriaQuery = criteriaQuery.where(predicate);
 
             //get the category
@@ -369,8 +366,8 @@ public class CategoryDAOCriteria implements CategoryDAO {
             CriteriaBuilder builder = session.getCriteriaBuilder();
             CriteriaQuery<CategoryEntity> query = builder.createQuery(CategoryEntity.class);
             Root<CategoryEntity> root = query.from(CategoryEntity.class);
-            root.fetch(ATTRIBUTE_PRODUCTS, JoinType.LEFT);
-            CriteriaQuery<CategoryEntity> criteriaQuery = query.where(builder.equal(root.get(ATTRIBUTE_ID), id));
+            root.fetch(CategoryEntity.ATTR_PRODUCTS, JoinType.LEFT);
+            CriteriaQuery<CategoryEntity> criteriaQuery = query.where(builder.equal(root.get(CategoryEntity.ATTR_ID), id));
             category = session.createQuery(criteriaQuery).uniqueResultOptional();
 
         } catch (Exception e) {

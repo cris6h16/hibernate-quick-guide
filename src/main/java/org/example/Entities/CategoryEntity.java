@@ -9,6 +9,15 @@ import java.util.List;
 @Entity
 @Table(name = "categories")
 public class CategoryEntity {
+    public static final String ATTR_ID = "c_id";
+    public static final String FIELD_ID = "c_id";
+    public static final String ATTR_NAME = "c_name";
+    public static final String FIELD_NAME = "c_name";
+    public static final String ATTR_PRODUCTS = "c_products";
+    public static final String FIELD_PRODUCTS = "c_products";
+    public static final String TABLE_NAME = "categories";
+    public static final String SCHEMA_NAME = "tienda";
+
     @Id
 //    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "categories_id_seq")
 //    @SequenceGenerator(name = "categories_id_seq", sequenceName = "categories_id_seq", allocationSize = 50)

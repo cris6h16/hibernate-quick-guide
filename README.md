@@ -257,12 +257,11 @@ public class HibernateUtil {
 
 ## 4. Hibernate Mapping
 
-### 4.1 Annotations
+### 4.1 Annotations in Entity classes
+<br>
 
-#### 4.1.1 Entity
-
-- `@Entity` annotation marks the class as an entity and how it will named in DB.
-
+#### 4.1.1 @Entity
+Annotation marks the class as an entity and how it will named in DB.
 ```java
 
 @Entity(name = "table_name")
@@ -270,7 +269,10 @@ public class User {
     // ...
 }
 ```
-- `@Id` annotation specifies what attribute is the primary key.  
+<br>
+
+#### 4.1.2 @Id
+Annotation specifies what attribute is the primary key.  
 _make sure that isn't a primitive type(We can use the wrappers), because it can't be null._
 ```java
 @Entity(name = "table_name")
@@ -280,7 +282,10 @@ public class User {
     // ...
 }
 ```
-- `@GeneratedValue` annotation specifies how the primary key will be generated.
+<br>
+
+#### 4.1.3 @GeneratedValue
+Annotation specifies how the primary key will be generated.
 ```java
 @Entity(name = "table_name")
 public class User {
@@ -290,6 +295,7 @@ public class User {
     // ...
 }
 ```
+or
 ```java
 @Entity(name = "table_name")
 public class User {
@@ -312,9 +318,11 @@ public class User {
 
 **Why `SEQUENCE` might be faster:**
 - **Pre-allocation** (`allocationSize`): When using `SEQUENCE` with an `allocationSize` greater than 1, Hibernate can pre-allocate a block of IDs from the sequence. This reduces the number of times it needs to interact with the database to obtain a new ID, which can improve performance.
-- **Reduced contention**: In high-concurrency scenarios, where multiple transactions are inserting records simultaneously, using a sequence might reduce contention compared to auto-increment columns. Each transaction can work with its pre-allocated block of IDs without waiting for the database to generate them.
+- **Reduced contention**: In high-concurrency scenarios, where multiple transactions are inserting records simultaneously, using a sequence might reduce contention compared to auto-increment columns. Each transaction can work with its pre-allocated block of IDs without waiting for the database to generate them.  
+<br>
   
-- `@Column` specifies column properties.
+#### 4.1.4 @Column
+Specifies column properties.
 ```java
 @Entity(name = "products")
 public class ProductEntity {
@@ -351,10 +359,11 @@ public class ProductEntity {
 - `columnDefinition`: The SQL fragment that is used when generating the DDL for the column.
 - `table`: The name of the table that contains the column.
 
-If we use `precision=7` and `scale=2`, the column will be `DECIMAL(7,2)`, in others words, the column will have 7 digits in total, 2 of them will be decimals(after the dot).
+If we use `precision=7` and `scale=2`, the column will be `DECIMAL(7,2)`, in others words, the column will have 7 digits in total, 2 of them will be decimals(after the dot).  
+<br>
 
-
-- `@Transient` annotation marks the attribute as not persistent.
+#### 4.1.5 @Transient
+Annotation marks the attribute as not persistent.
 ```java 
 @Entity(name = "products")
 public class ProductEntity {
@@ -367,6 +376,10 @@ public class ProductEntity {
     // ...
 }
 ```
+<br>
+
+#### PD: static attributes
+Hibernate don't persist `static` attributes
 
 
 #### 4.1.2 Table

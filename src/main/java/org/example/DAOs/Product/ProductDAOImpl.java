@@ -9,11 +9,6 @@ import java.util.logging.Logger;
 
 public class ProductDAOImpl implements ProductDAO {
     public static final Logger LOGGER = Logger.getLogger(ProductDAOImpl.class.getName());
-    public static final String ATTRIBUTE_NAME = "p_name";
-    public static final String ATTRIBUTE_ID = "p_id";
-    public static final String TABLE_NAME = "products";
-    public static final String ATTRIBUTE_CATEGORY = "products";
-    public static final String FIELD_CATEGORY = "category_id";
 
 
 
