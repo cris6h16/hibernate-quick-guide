@@ -1,12 +1,10 @@
 package org.example.DAOs.Category;
 
-import org.example.DAOs.Product.ProductDAO;
+import org.example.DAOs.Product.ProductDAOImpl;
 import org.example.Entities.CategoryEntity;
 import org.example.Entities.ProductEntity;
 import org.example.Util.HibernateUtil;
 import org.hibernate.Session;
-import org.hibernate.query.MutationQuery;
-import org.hibernate.query.NativeQuery;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -291,6 +289,7 @@ public class CategoryDAONative implements CategoryDAO {
             LOGGER.severe("Exception in listAll: " + e.getMessage());
             e.printStackTrace();
         }
+
         return categoryEntities;
     }
 
@@ -307,11 +306,17 @@ public class CategoryDAONative implements CategoryDAO {
         Optional<CategoryEntity> categoryEntity = Optional.empty();
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            categoryEntity = session.createNativeQuery("SELECT * FROM tienda.categories WHERE c_id = :id", CategoryEntity.class)
+            // Get the category
+            String getCategorySql = String.format("SELECT * FROM %s.%s WHERE %s = :id",
+                    SCHEMA_NAME, TABLE_NAME, ID_FIELD);
+            categoryEntity = session.createNativeQuery(getCategorySql, CategoryEntity.class)
                     .setParameter("id", id)
                     .uniqueResultOptional();
 
-            productEntities = session.createNativeQuery("SELECT * FROM tienda.products WHERE category_id = :id", ProductEntity.class)
+            // Get the products of the category
+            String getCategoryProductsSql = String.format("SELECT * FROM %s.%s WHERE %s = :id",
+                    SCHEMA_NAME, ProductDAOImpl.TABLE_NAME, ProductDAOImpl.FIELD_CATEGORY);
+            productEntities = session.createNativeQuery(getCategoryProductsSql, ProductEntity.class)
                     .setParameter("id", id)
                     .list();
         }
@@ -319,6 +324,7 @@ public class CategoryDAONative implements CategoryDAO {
             return Optional.empty();
         }
 
+        // Create a new CategoryEntity with the adding the products (avoid LazyInitializationException)
         Optional<CategoryEntity> finalCategoryEntity = Optional.of(
                 new CategoryEntity(
                         categoryEntity.get().getId(),

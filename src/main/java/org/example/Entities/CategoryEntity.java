@@ -8,7 +8,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "categories")
-public class CategoryEntity implements Serializable {
+public class CategoryEntity {
     @Id
 //    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "categories_id_seq")
 //    @SequenceGenerator(name = "categories_id_seq", sequenceName = "categories_id_seq", allocationSize = 50)
@@ -20,7 +20,7 @@ public class CategoryEntity implements Serializable {
 
     /*
     //=================== One to many ||| bidirectional ===================\\
-    // - Must set the "One" entity explicitly in the "Many" entity, when it is added.
+    // - Must set the "One" entity explicitly in the "Many" entity, when it is added.(If we don't do this here we must do it in the "Many" entity)
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "category", orphanRemoval = true, targetEntity = ProductEntity.class)
     private List<ProductEntity> products = new ArrayList<>();

@@ -27,6 +27,7 @@ public class ProductEntity implements Serializable {
 
     //=================== One to many ||| bidirectional ===================\\
     // - Many is the owner of the relationship (have the @JoinColumn), Relationship is inverse
+    // - Must add "MANY" entity explicitly in the "ONE" entity, when "ONE" is set (this can also be done in the "ONE")
     @ManyToOne(/*cascade = {CascadeType.ALL},*/ fetch = FetchType.EAGER, targetEntity = CategoryEntity.class, optional = true)
     @JoinColumn(name = "category_id")
     private CategoryEntity category;
@@ -35,6 +36,8 @@ public class ProductEntity implements Serializable {
         this.category = category;
         category.getProducts().add(this);
     }
+
+    //=============================== Constructors ==================================\\
 
 
     public ProductEntity() {

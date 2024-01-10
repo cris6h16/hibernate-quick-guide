@@ -2,7 +2,7 @@ package org.example.DAOs;
 
 import org.example.DAOs.Category.CategoryDAO;
 import org.example.DAOs.Category.CategoryDAOImpl;
-import org.example.DAOs.Product.ProductDAO;
+import org.example.DAOs.Product.ProductDAOImpl;
 import org.example.Entities.CategoryEntity;
 import org.example.Entities.ProductEntity;
 import org.example.Util.HibernateUtil;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CategoryDAOTest {
     protected static CategoryDAO categoryDAO;
-    protected static ProductDAO productDAO;
+    protected static ProductDAOImpl productDAO;
 
     // Attributes for testing
     protected static Long categoryId;
@@ -30,7 +30,7 @@ class CategoryDAOTest {
 
     public CategoryDAOTest() {
         categoryDAO = new CategoryDAOImpl();
-        productDAO = new ProductDAO();
+        productDAO = new ProductDAOImpl();
     }
 
     @BeforeAll
