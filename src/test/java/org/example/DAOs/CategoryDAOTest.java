@@ -40,9 +40,12 @@ class CategoryDAOTest {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
             try {
+
+                String deleteSQL = String.format("DELETE FROM CategoryEntity c WHERE c.%s = :name",
+                        CategoryEntity.ATTR_NAME);
                 // Delete CategoryForTesting if it exists
                 session.beginTransaction();
-                session.createMutationQuery("DELETE FROM CategoryEntity c WHERE c.c_name = :name")
+                session.createMutationQuery(deleteSQL)
                         .setParameter("name", categoryForTesting.getName())
                         .executeUpdate();
 
@@ -364,9 +367,10 @@ class CategoryDAOTest {
         assertTrue(categoryUpdate.isPresent(), "Category valid id must be present");
         assertTrue(categoryUpdate.get().getProducts().size() == 2, "We added and updated 2 products, Category should have 2 products");
 
-        assertTrue(categoryUpdate.get().getProducts().getFirst().getName().contains("UpdatedName"),
+        System.out.println(System.getProperties().replace(",", "\n"));
+        assertTrue(categoryUpdate.get().getProducts().get(0).getName().contains("UpdatedName"),
                 "First Product name should be updated");
-        assertTrue(categoryUpdate.get().getProducts().getLast().getName().contains("UpdatedName"),
+        assertTrue(categoryUpdate.get().getProducts().get(1).getName().contains("UpdatedName"),
                 "Last Product name should be updated");
 
     }
@@ -463,7 +467,7 @@ class CategoryDAOTest {
         Optional<CategoryEntity> categoryOp = categoryDAO.getByIdEager(id);
         assertTrue(categoryOp.isPresent(), "Category with Id " + id + " should be present");
         assertNotNull(categoryOp.get().getProducts(), "Products of Category with Id " + id + " shouldn't be null");
-        assertNotNull(categoryOp.get().getProducts().getFirst().getCategory(), "Category of Product with Id " + id + " shouldn't be null");
+        assertNotNull(categoryOp.get().getProducts().get(0).getCategory(), "Category of Product with Id " + id + " shouldn't be null");
 
 
     }

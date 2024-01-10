@@ -57,7 +57,7 @@ public class CategoryDAOImpl implements CategoryDAO {
 
         try (Session session = sessionFactory.openSession()) {
             category = session
-                    .createQuery("FROM CategoryEntity ce LEFT JOIN FETCH ce.c_products WHERE ce.c_id = :id", CategoryEntity.class)
+                    .createQuery("FROM CategoryEntity ce LEFT JOIN FETCH ce.products WHERE ce.id = :id", CategoryEntity.class)
                     .setParameter("id", id)
                     .uniqueResultOptional();
 
@@ -103,7 +103,7 @@ public class CategoryDAOImpl implements CategoryDAO {
 
         try (Session session = sessionFactory.openSession()) {
             category = session
-                    .createQuery("FROM CategoryEntity ce WHERE ce.c_name = :name", CategoryEntity.class)
+                    .createQuery("FROM CategoryEntity ce WHERE ce.name = :name", CategoryEntity.class)
                     .setParameter("name", name)
                     .uniqueResultOptional();
 
@@ -247,7 +247,7 @@ public class CategoryDAOImpl implements CategoryDAO {
             try {
                 session.beginTransaction();
                 affectedRows = session
-                        .createMutationQuery("DELETE FROM CategoryEntity c WHERE c.c_id = :id")
+                        .createMutationQuery("DELETE FROM CategoryEntity c WHERE c.id = :id")
                         .setParameter("id", id)
                         .executeUpdate();
 

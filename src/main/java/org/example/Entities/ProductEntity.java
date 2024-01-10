@@ -8,16 +8,12 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "products")
 public class ProductEntity {
-    public static final String ATTR_ID = "p_id";
-    public static final String FIELD_ID = "p_id";
-    public static final String ATTR_NAME = "p_name";
-    public static final String FIELD_NAME = "p_name";
-    public static final String ATTR_DESCRIPTION = "p_description";
-    public static final String FIELD_DESCRIPTION = "p_description";
-    public static final String ATTR_PRICE = "p_price";
-    public static final String FIELD_PRICE = "p_price";
-    public static final String ATTR_CATEGORY = "p_category";
-    public static final String FIELD_CATEGORY = "p_category";
+    public static final String ATTR_ID = "id";
+    public static final String ATTR_NAME = "name";
+    public static final String ATTR_DESCRIPTION = "description";
+    public static final String ATTR_PRICE = "price";
+    public static final String ATTR_CATEGORY = "category";
+    public static final String FIELD_CATEGORY = "category_id";
     public static final String TABLE_NAME = "products";
     public static final String SCHEMA_NAME = "tienda";
 

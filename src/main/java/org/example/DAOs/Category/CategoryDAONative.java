@@ -1,6 +1,5 @@
 package org.example.DAOs.Category;
 
-import org.example.DAOs.Product.ProductDAOImpl;
 import org.example.Entities.CategoryEntity;
 import org.example.Entities.ProductEntity;
 import org.example.Util.HibernateUtil;
@@ -37,7 +36,7 @@ public class CategoryDAONative implements CategoryDAO {
                 String deleteSql = String.format("DELETE FROM %s.%s WHERE %s = :id",
                         CategoryEntity.SCHEMA_NAME,
                         CategoryEntity.TABLE_NAME,
-                        CategoryEntity.FIELD_ID);
+                        CategoryEntity.ATTR_ID);
                 affectedRows = session
                         .createNativeMutationQuery(deleteSql)
                         .setParameter("id", id).executeUpdate();
@@ -88,8 +87,8 @@ public class CategoryDAONative implements CategoryDAO {
                 String sql = String.format("UPDATE %s.%s SET %s = :name WHERE %s = :id",
                         CategoryEntity.SCHEMA_NAME,
                         CategoryEntity.TABLE_NAME,
-                        CategoryEntity.FIELD_NAME,
-                        CategoryEntity.FIELD_ID);
+                        CategoryEntity.ATTR_NAME,
+                        CategoryEntity.ATTR_ID);
 
                 affectedRows = session
                         .createNativeMutationQuery(sql)
@@ -140,17 +139,17 @@ public class CategoryDAONative implements CategoryDAO {
                 String insertSql = String.format("INSERT INTO %s.%s (%s) VALUES (:name)",
                         CategoryEntity.SCHEMA_NAME,
                         CategoryEntity.TABLE_NAME,
-                        CategoryEntity.FIELD_NAME);
+                        CategoryEntity.ATTR_NAME);
 
                 session.createNativeMutationQuery(insertSql)
                         .setParameter("name", categoryDTO.getName())
                         .executeUpdate();
 
                 String getNewIdSql = String.format("SELECT %s FROM %s.%s WHERE %s = :name",
-                        CategoryEntity.FIELD_ID,
+                        CategoryEntity.ATTR_ID,
                         CategoryEntity.SCHEMA_NAME,
                         CategoryEntity.TABLE_NAME,
-                        CategoryEntity.FIELD_NAME);
+                        CategoryEntity.ATTR_NAME);
 
                 categoryDTO.setId(session
                         .createNativeQuery(getNewIdSql, Long.class)
@@ -223,7 +222,7 @@ public class CategoryDAONative implements CategoryDAO {
             String sql = String.format("SELECT * FROM %s.%s WHERE %s = :name",
                     CategoryEntity.SCHEMA_NAME,
                     CategoryEntity.TABLE_NAME,
-                    CategoryEntity.FIELD_NAME);
+                    CategoryEntity.ATTR_NAME);
 
             categoryEntity = session
                     .createNativeQuery(sql, CategoryEntity.class)
@@ -255,7 +254,7 @@ public class CategoryDAONative implements CategoryDAO {
             String sql = String.format("SELECT * FROM %s.%s WHERE %s = :id",
                     CategoryEntity.SCHEMA_NAME,
                     CategoryEntity.TABLE_NAME,
-                    CategoryEntity.FIELD_ID);
+                    CategoryEntity.ATTR_ID);
             categoryEntity = session
                     .createNativeQuery(sql, CategoryEntity.class)
                     .setParameter("id", id)
@@ -303,7 +302,7 @@ public class CategoryDAONative implements CategoryDAO {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             // Get the category
             String getCategorySql = String.format("SELECT * FROM %s.%s WHERE %s = :id",
-                    CategoryEntity.SCHEMA_NAME, CategoryEntity.TABLE_NAME, CategoryEntity.FIELD_ID);
+                    CategoryEntity.SCHEMA_NAME, CategoryEntity.TABLE_NAME, CategoryEntity.ATTR_ID);
             categoryEntity = session.createNativeQuery(getCategorySql, CategoryEntity.class)
                     .setParameter("id", id)
                     .uniqueResultOptional();
