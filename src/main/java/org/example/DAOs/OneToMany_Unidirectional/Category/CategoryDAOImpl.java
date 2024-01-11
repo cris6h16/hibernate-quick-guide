@@ -68,6 +68,7 @@ public class CategoryDAOImpl implements CategoryDAO {
     }
 
     //TODO: Improve the docs
+
     /**
      * Finds a category by its name.
      *
@@ -166,7 +167,7 @@ public class CategoryDAOImpl implements CategoryDAO {
         try (Session session = sessionFactory.openSession()) {
             try {
                 session.beginTransaction();
-                session.merge(category);
+                category = session.merge(category);
                 session.getTransaction().commit();
             } catch (Exception e) {
                 session.getTransaction().rollback();

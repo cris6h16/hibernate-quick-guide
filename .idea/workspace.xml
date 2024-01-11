@@ -5,24 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="33d4e801-1be6-4c5e-99fe-37449cf74e6d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/DAOs/OneToMany_Unidirectional/Product/ProductDAOImplTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Entities/OneToOne_Bidirectional/UserDetailsEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Entities/OneToOne_Bidirectional/UserEntity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DAOs/Category/CategoryDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/DAOs/OneToManyToOne_Bidirectional/Category/CategoryDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DAOs/Category/CategoryDAOCriteria.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/DAOs/OneToManyToOne_Bidirectional/Category/CategoryDAOCriteria.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DAOs/Category/CategoryDAOImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/DAOs/OneToManyToOne_Bidirectional/Category/CategoryDAOImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DAOs/Category/CategoryDAONative.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/DAOs/OneToManyToOne_Bidirectional/Category/CategoryDAONative.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DAOs/Category/Exceptions/CategoryAlreadyExistsException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/DAOs/OneToManyToOne_Bidirectional/Category/Exceptions/CategoryAlreadyExistsException.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DAOs/Product/Exceptions/ProductAlreadyExistException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/DAOs/OneToManyToOne_Bidirectional/Product/Exceptions/ProductAlreadyExistException.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DAOs/Product/ProductDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/DAOs/OneToManyToOne_Bidirectional/Product/ProductDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DAOs/Product/ProductDAOImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/DAOs/OneToManyToOne_Bidirectional/Product/ProductDAOImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Entities/CategoryEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Entities/OneToManyToOne_Bidirectional/CategoryEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Entities/CourseEnrollmentsEntity.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Entities/ProductEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Entities/OneToManyToOne_Bidirectional/ProductEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/hibernate.cfg.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/hibernate.cfg.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/DAOs/CategoryDAOTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/DAOs/OneToMany_Bidirectional/CategoryDAOTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/DAOs/CriteriaCategoryDAOTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/DAOs/OneToMany_Bidirectional/CriteriaCategoryDAOTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/DAOs/NativeCategoryDAOTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/DAOs/OneToMany_Bidirectional/NativeCategoryDAOTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DAOs/OneToMany_Unidirectional/Category/CategoryDAOImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/DAOs/OneToMany_Unidirectional/Category/CategoryDAOImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/DAOs/OneToMany_Unidirectional/Category/CategoryDAOImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/DAOs/OneToMany_Unidirectional/Category/CategoryDAOImplTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,8 +27,8 @@
       <list>
         <option value="package-info" />
         <option value="Interface" />
-        <option value="Class" />
         <option value="JUnit5 Test Class" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -70,6 +57,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Application.Main.executor": "Run",
+    "JUnit.CategoryDAOImplTest.executor": "Run",
     "JUnit.CategoryDAOTest.DeleteByMinValue.executor": "Debug",
     "JUnit.CategoryDAOTest.DeleteByValidId.executor": "Run",
     "JUnit.CategoryDAOTest.UpdateValidNamesLazyProduct.executor": "Run",
@@ -157,7 +145,22 @@
       <recent name="org.example.Entities" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.ProductDAOImplTest">
+  <component name="RunManager" selected="JUnit.CategoryDAOImplTest">
+    <configuration name="CategoryDAOImplTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Hibernate" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.DAOs.OneToMany_Unidirectional.Category.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.DAOs.OneToMany_Unidirectional.Category" />
+      <option name="MAIN_CLASS_NAME" value="org.example.DAOs.OneToMany_Unidirectional.Category.CategoryDAOImplTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="CategoryDAOTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="Hibernate" />
       <extension name="coverage">
@@ -183,21 +186,6 @@
       </extension>
       <option name="PACKAGE_NAME" value="org.example.DAOs" />
       <option name="MAIN_CLASS_NAME" value="org.example.DAOs.CategoryDAOTest" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="CriteriaCategoryDAOTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="Hibernate" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="org.example.DAOs.Category.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="org.example.DAOs.OneToMany_Bidirectional" />
-      <option name="MAIN_CLASS_NAME" value="org.example.DAOs.OneToMany_Bidirectional.CriteriaCategoryDAOTest" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -252,11 +240,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.CategoryDAOImplTest" />
         <item itemvalue="JUnit.ProductDAOImplTest" />
         <item itemvalue="JUnit.ProductDAOImplTest.merge" />
         <item itemvalue="JUnit.ProductDAOImplTest.persist" />
         <item itemvalue="JUnit.CategoryDAOTest" />
-        <item itemvalue="JUnit.CriteriaCategoryDAOTest" />
       </list>
     </recent_temporary>
   </component>
@@ -333,7 +321,7 @@
       <workItem from="1704826523545" duration="18220000" />
       <workItem from="1704915011350" duration="70000" />
       <workItem from="1704915398433" duration="18935000" />
-      <workItem from="1704980272959" duration="5176000" />
+      <workItem from="1704980272959" duration="8846000" />
     </task>
     <servers />
   </component>
@@ -370,7 +358,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/example/DAOs/OneToMany_Unidirectional/Category/CategoryDAOImpl.java</url>
-          <line>201</line>
+          <line>202</line>
           <option name="timeStamp" value="27" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -380,7 +368,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/example/DAOs/OneToMany_Unidirectional/Category/CategoryDAOImpl.java</url>
-          <line>188</line>
+          <line>189</line>
           <option name="timeStamp" value="29" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
