@@ -263,8 +263,18 @@ public class HibernateUtil {
 
 ```java
 
-@Entity(name = "table_name")
-public class ExampleEntity {
+@Table(name = "table_name",
+        schema = "tienda",
+        catalog = "tienda",
+        indexes = {
+                @Index(name = "weight_id_idx", columnList = "id", unique = true)
+        },
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "student_course_unique",
+                        columnNames = {"student_id", "course_id"})}
+)
+public class CourseEnrollmentsEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 // or  
@@ -296,6 +306,28 @@ public class ExampleEntity {
 
 - `@Entity` Annotation marks the class as an entity and how it will name in DB.  
   <br>
+    - `@Table` Annotation specifies the table name, schema, catalog, indexes, and unique constraints.
+        - `name`: The table name in the database.
+        - `schema`: The schema of the table.
+        - `catalog`: The catalog of the table.
+          > **Catalogs** and **schemas** are "namespaces" that you define on the server side of the database. Some
+          databases contains schemas, some contains catalogs, and some contains both. When logging in with a specific
+          user, some databases defaults the schema/catalog to the user's namespace, causing the table to not be visible
+          to other users, thus, causing the need to use a "common" namespace. So, depending on the database you are
+          using to back your data, you might want to ignore those settings. For MySQL, you might want to ignore those
+          settings. This is because the "database" part of the JDBC URL (the one after the last slash) points to the
+          database name, which is semantically identical to schema (for MySQL). Retrieved
+          from: https://itecnote.com/tecnote/mysql-what-are-the-jpa-table-annotation-catalog-and-schema-variables-used-for/
+        - `indexes`: The indexes of the table.
+        - `uniqueConstraints`: The unique constraints of the table.
+            - `name`: The name of the constraint.
+            - `columnNames`: The column names of the constraint.
+        > e.g. Imagine we have a table that represents the courses enrolled by students. A student can enroll only once in a course. (In the table just can have one combination of `student_id` and `course_id`)
+          
+            @UniqueConstraint(
+            name = "student_course_unique",
+            columnNames = {"student_id", "course_id"})}"
+
 - `@Id` Annotation specifies what attribute is the primary key.  
   _make sure that isn't a primitive type(We can use the wrappers), because it can't be null._  
   <br>
@@ -343,7 +375,57 @@ public class ExampleEntity {
 Hibernate don't persist `static` attributes  
 <br>
 
-### 4.1.1 OneToMany
+### 4.1.1 ManyToOne (Without cascades and Bidirectional)
+
+```java
+//=================== One to many ||| bidirectional ===================\\
+// - Many is the owner of the relationship (have the @JoinColumn), Relationship is inverse
+@ManyToOne(/*cascade = {CascadeType.ALL},*/ fetch = FetchType.EAGER, targetEntity = CategoryEntity.class, optional = true)
+@JoinColumn(name = "category_id")
+private CategoryEntity category;
+```
+
+- `optional`: Defines whether the association is optional. If set to false then a non-null relationship must always
+  exist.  
+  `@JoinColumn` (Optional) The name of the foreign key column. The table in which it is found depends upon the context.
+
+See more below...
+
+### 4.1.2 OneToMany (Without cascades and Bidirectional)
+
+```java
+
+@OneToMany(/*cascade = {CascadeType.ALL}*/,
+        fetch = FetchType.LAZY,
+        mappedBy = "category",
+        orphanRemoval = true,
+        targetEntity = ProductEntity.class)
+private List<ProductEntity> products = new ArrayList<>();
+```
+
+- `cascade`: Specifies the operations that must be cascaded to the target of the association.
+- `fetch`: Specifies whether the association should be lazily loaded or must be eagerly fetched.
+- `mappedBy`: The field that owns the relationship. Required unless the relationship is unidirectional.
+- `orphanRemoval` with true, if an secondary Entity is removed from the collection of the principal Entity("ONE"), it
+  will be removed
+  from the database.(with `CascadeType.REMOVE` deletes the associated entities when the principal is deleted)
+- `targetEntity`: The entity class that is the target of the association. Optional only if the collection property is
+  defined using Java generics. Must be specified otherwise.
+
+ CascadeType | Description                                                                         
+-------------|-------------------------------------------------------------------------------------
+ `ALL`       | Apply all operations (persist, remove, refresh, merge, detach) to the child entity. 
+ `DETACH`    | Detach the child entity when the parent entity is detached.                         
+ `MERGE`     | Merge the child entity when the parent entity is merged.                            
+ `PERSIST`   | Persist the child entity when the parent entity is persisted.                       
+ `REFRESH`   | Refresh the child entity when the parent entity is refreshed.                       
+ `REMOVE`    | Remove the child entity when the parent entity is removed.                          
+
+e.g. `session.persist(category)`
+
+### 4.1.3 Example:
+
+#### Most recommended
 
 In "Many" side:
 
@@ -364,22 +446,53 @@ public void setCategory(CategoryEntity category) {
 In "One" side:
 
 ```java
+
 @OneToMany(/*cascade = {CascadeType.ALL},*/fetch = FetchType.LAZY, mappedBy = "category", orphanRemoval = true, targetEntity = ProductEntity.class)
 private List<ProductEntity> products = new ArrayList<>();
 ```
 
-#### OR
+Later you need cand do:  
+_PD: `category1` and `product1` must be persisted in the database before do the below_
 
-#### 4.1.5 GeneratedValue
+1. `product1.setCategory(category1)`
+2. `productDAO.merge(product1)`  
+   <br>
 
- CascadeType | Description                                                                         
--------------|-------------------------------------------------------------------------------------
- `ALL`       | Apply all operations (persist, remove, refresh, merge, detach) to the child entity. 
- `DETACH`    | Detach the child entity when the parent entity is detached.                         
- `MERGE`     | Merge the child entity when the parent entity is merged.                            
- `PERSIST`   | Persist the child entity when the parent entity is persisted.                       
- `REFRESH`   | Refresh the child entity when the parent entity is refreshed.                       
- `REMOVE`    | Remove the child entity when the parent entity is removed.                          
+#### You can also do inverse
+
+In "One" side:
+
+```java
+   //=================== One to many ||| bidirectional ===================\\
+// - Must set the "One" entity explicitly in the "Many" entity, when it is added.(If we don't do this here we must do it in the "Many" entity)
+
+@OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "category", orphanRemoval = true, targetEntity = ProductEntity.class)
+private List<ProductEntity> products = new ArrayList<>();
+
+public void addProducts(ProductEntity... products) {
+    this.products.addAll(Arrays.asList(products));
+    //"One" is set in the "Many" entity
+    Arrays.asList(products).forEach(product -> product.setCategory(this));
+}
+//============================================================================\\
+```
+
+In "Many" side:
+
+```java
+  //=================== One to many ||| bidirectional ===================\\
+// - Many is the owner of the relationship (have the @JoinColumn), Relationship is inverse
+@ManyToOne(/*cascade = {CascadeType.ALL},*/ fetch = FetchType.EAGER, targetEntity = CategoryEntity.class, optional = true)
+@JoinColumn(name = "category_id")
+private CategoryEntity category;
+```
+
+Later you need cand do:  
+_PD: `category1` and `product1` must be persisted in the database before do the below_
+
+1. `category1.addProducts(product1)`
+2. `category1.forEach(product -> productDAO.merge(product))`
+   <br>
 
 - session.merge(): If there is a persistent instance with the same identifier currently associated with the session,
   copy the state of the given object onto the persistent instance. If there is no persistent instance currently
