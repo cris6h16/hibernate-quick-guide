@@ -12,7 +12,9 @@ import jakarta.persistence.*;
         uniqueConstraints = {
                 @UniqueConstraint(
                         name = "student_course_unique",
-                        columnNames = {"student_id", "course_id"})}
+                        columnNames = {"student_id", "course_id"}
+                )
+        }
 )
 public class CourseEnrollmentsEntity {
     @Id

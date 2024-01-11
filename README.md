@@ -322,11 +322,11 @@ public class CourseEnrollmentsEntity {
         - `uniqueConstraints`: The unique constraints of the table.
             - `name`: The name of the constraint.
             - `columnNames`: The column names of the constraint.
-        > e.g. Imagine we have a table that represents the courses enrolled by students. A student can enroll only once in a course. (In the table just can have one combination of `student_id` and `course_id`)
+                > e.g. Imagine we have a table that represents the courses enrolled by students. A student can enroll only once in a course. (In the table just can have one combination of `student_id` and `course_id`)
           
-            @UniqueConstraint(
-            name = "student_course_unique",
-            columnNames = {"student_id", "course_id"})}"
+                  @UniqueConstraint(
+                  name = "student_course_unique",
+                  columnNames = {"student_id", "course_id"})}"
 
 - `@Id` Annotation specifies what attribute is the primary key.  
   _make sure that isn't a primitive type(We can use the wrappers), because it can't be null._  
