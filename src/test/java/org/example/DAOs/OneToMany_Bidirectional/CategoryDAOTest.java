@@ -1,10 +1,10 @@
-package org.example.DAOs;
+package org.example.DAOs.OneToMany_Bidirectional;
 
-import org.example.DAOs.Category.CategoryDAO;
-import org.example.DAOs.Category.CategoryDAOImpl;
-import org.example.DAOs.Product.ProductDAOImpl;
-import org.example.Entities.CategoryEntity;
-import org.example.Entities.ProductEntity;
+import org.example.DAOs.OneToManyToOne_Bidirectional.Category.CategoryDAO;
+import org.example.DAOs.OneToManyToOne_Bidirectional.Category.CategoryDAOImpl;
+import org.example.DAOs.OneToManyToOne_Bidirectional.Product.ProductDAOImpl;
+import org.example.Entities.OneToManyToOne_Bidirectional.CategoryEntity;
+import org.example.Entities.OneToManyToOne_Bidirectional.ProductEntity;
 import org.example.Util.HibernateUtil;
 import org.hibernate.LazyInitializationException;
 import org.hibernate.Session;
@@ -25,7 +25,7 @@ class CategoryDAOTest {
     protected static ProductDAOImpl productDAO;
 
     // Attributes for testing
-    protected static Long categoryId;
+    protected static java.lang.Long categoryId;
     protected static String categoryName;
 
     public CategoryDAOTest() {
@@ -70,7 +70,7 @@ class CategoryDAOTest {
     @Test
     @DisplayName("findById by valid Id NO EAGER FETCHING")
     void getByIdLazyValidId() {
-        Long id = categoryId;
+        java.lang.Long id = categoryId;
         Optional<CategoryEntity> category = categoryDAO.findById(id);
         assertTrue(category.isPresent(), "Category with Id " + id + " should be present");
         assertThrows(LazyInitializationException.class, () -> category.get().getProducts().isEmpty(), "Products of Category with Id " + id + " shouldn't be null");
@@ -80,7 +80,7 @@ class CategoryDAOTest {
     @DisplayName("Find category by valid ID")
     void findByIdValid() {
         // categoryId, categoryName are set in setUpTestData()
-        Long validId = categoryId;
+        java.lang.Long validId = categoryId;
         Optional<CategoryEntity> category = categoryDAO.findById(validId);
         assertTrue(category.isPresent(), "Category with ID " + validId + " should be present");
         assertEquals(categoryName, category.get().getName(), "Category with ID " + validId + " should be " + categoryName);
@@ -89,7 +89,7 @@ class CategoryDAOTest {
     @Test
     @DisplayName("Find category by null ID")
     void findByIdNull() {
-        Long nullId = null;
+        java.lang.Long nullId = null;
         Optional<CategoryEntity> category = categoryDAO.findById(nullId);
         assertTrue(category.isEmpty(), "Category with ID " + nullId + " should be empty");
     }
@@ -97,7 +97,7 @@ class CategoryDAOTest {
     @Test
     @DisplayName("Find category by Long.MAX_VALUE ID")
     void findByIdMaxValue() {
-        Long maxValueId = Long.MAX_VALUE;
+        java.lang.Long maxValueId = java.lang.Long.MAX_VALUE;
         Optional<CategoryEntity> category = categoryDAO.findById(maxValueId);
         assertFalse(category.isPresent(), "Category with ID " + maxValueId + " shouldn't be present");
     }
@@ -105,7 +105,7 @@ class CategoryDAOTest {
     @Test
     @DisplayName("Find category by Long.MIN_VALUE ID")
     void findByIdMinValue() {
-        Long minValueId = Long.MIN_VALUE;
+        java.lang.Long minValueId = java.lang.Long.MIN_VALUE;
         Optional<CategoryEntity> category = categoryDAO.findById(minValueId);
         assertFalse(category.isPresent(), "Category with ID " + minValueId + " shouldn't be present");
     }
@@ -379,7 +379,7 @@ class CategoryDAOTest {
     @Test
     @DisplayName("Delete by null Id")
     void deleteByNullId() {
-        Long idDel = null;
+        java.lang.Long idDel = null;
         Boolean deleted = categoryDAO.deleteById(idDel);
         assertFalse(deleted, "Category with null Id shouldn't be deleted");
     }
@@ -387,7 +387,7 @@ class CategoryDAOTest {
     @Test
     @DisplayName("Delete by Long.MAX_VALUE Id")
     void DeleteByMaxValue() {
-        Long id = Long.MAX_VALUE;
+        java.lang.Long id = java.lang.Long.MAX_VALUE;
         boolean deleted = categoryDAO.deleteById(id);
         assertFalse(deleted, "Shouldn't be category with Id " + id + " for delete");
     }
@@ -395,7 +395,7 @@ class CategoryDAOTest {
     @Test
     @DisplayName("Delete by Long.MIN_VALUE Id")
     void DeleteByMinValue() {
-        Long id = Long.MIN_VALUE;
+        java.lang.Long id = java.lang.Long.MIN_VALUE;
         boolean deleted = categoryDAO.deleteById(id);
         assertFalse(deleted, "Shouldn't be category with Id " + id + " for delete");
     }
@@ -403,7 +403,7 @@ class CategoryDAOTest {
     @Test
     @DisplayName("Delete by valid Id")
     void DeleteByValidId() {
-        Long id = categoryId;
+        java.lang.Long id = categoryId;
         boolean deleted = categoryDAO.deleteById(id);
         assertTrue(deleted, "Category with Id " + id + " should be deleted");
 
@@ -414,7 +414,7 @@ class CategoryDAOTest {
     @Test
     @DisplayName("Get by valid Id Eager")
     void getByIdEagerValidId() {
-        Long id = categoryId;
+        java.lang.Long id = categoryId;
         Optional<CategoryEntity> category = categoryDAO.getByIdEager(id);
         assertTrue(category.isPresent(), "Category with Id " + id + " should be present");
         assertNotNull(category.get().getProducts(), "Products of Category with Id " + id + " shouldn't be null");
@@ -423,7 +423,7 @@ class CategoryDAOTest {
     @Test
     @DisplayName("Get by null Id Eager")
     void getByIdEagerNullId() {
-        Long id = null;
+        java.lang.Long id = null;
         Optional<CategoryEntity> category = categoryDAO.getByIdEager(id);
         assertTrue(category.isEmpty(), "Category with Id " + id + " shouldn't be present");
     }
@@ -431,7 +431,7 @@ class CategoryDAOTest {
     @Test
     @DisplayName("Get by Long.MAX_VALUE Id Eager")
     void getByIdEagerMaxValueId() {
-        Long id = Long.MAX_VALUE;
+        java.lang.Long id = java.lang.Long.MAX_VALUE;
         Optional<CategoryEntity> category = categoryDAO.getByIdEager(id);
         assertTrue(category.isEmpty(), "Category with Id " + id + " shouldn't be present");
     }
@@ -439,7 +439,7 @@ class CategoryDAOTest {
     @Test
     @DisplayName("Get by Long.MIN_VALUE Id Eager")
     void getByIdEagerMinValueId() {
-        Long id = Long.MIN_VALUE;
+        java.lang.Long id = java.lang.Long.MIN_VALUE;
         Optional<CategoryEntity> category = categoryDAO.getByIdEager(id);
         assertTrue(category.isEmpty(), "Category with Id " + id + " shouldn't be present");
     }
@@ -461,7 +461,7 @@ class CategoryDAOTest {
         categoryDAO.merge(category);
         productDAO.merge(product);
 
-        Long id = category.getId();
+        java.lang.Long id = category.getId();
         assertNotNull(id, "Category with valid name and products should be saved");
 
         Optional<CategoryEntity> categoryOp = categoryDAO.getByIdEager(id);

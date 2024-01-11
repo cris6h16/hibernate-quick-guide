@@ -1,18 +1,14 @@
-package org.example.Entities;
+package org.example.Entities.OneToManyToOne_Unidirectional;
 
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "categories")
 public class CategoryEntity {
-    public static final String ATTR_ID = "id";
-    public static final String ATTR_NAME = "name";
-    public static final String ATTR_PRODUCTS = "products";
-    public static final String TABLE_NAME = "categories";
-    public static final String SCHEMA_NAME = "tienda";
 
     @Id
 //    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "categories_id_seq")
@@ -23,8 +19,12 @@ public class CategoryEntity {
     @Column(length = 100, nullable = false, unique = true)
     private String name;
 
+    //=================== One to many ||| Unidirectional - First Way ===================\\
+    // All logic is in the "Many" entity
+    //==================================================================================\\
+
     /*
-    //=================== One to many ||| bidirectional ===================\\
+    //=================== One to many ||| bidirectional - First Way ===================\\
     // - Must set the "One" entity explicitly in the "Many" entity, when it is added.(If we don't do this here we must do it in the "Many" entity)
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "category", orphanRemoval = true, targetEntity = ProductEntity.class)
@@ -40,13 +40,19 @@ public class CategoryEntity {
         this.id = id;
         this.name = name;
     }
-    //============================================================================\\
+    //=================================================================================\\
+
+
+
+    //=================== One to many ||| bidirectional - Second Way ===================\\
+    @OneToMany(/*cascade = {CascadeType.ALL},/* fetch = FetchType.LAZY, mappedBy = "category", orphanRemoval = true, targetEntity = ProductEntity.class)
+    private List<ProductEntity> products = new ArrayList<>();
+    //==================================================================================\\
     */
 
-    @OneToMany(/*cascade = {CascadeType.ALL},*/fetch = FetchType.LAZY, mappedBy = "category", orphanRemoval = true, targetEntity = ProductEntity.class)
-    private List<ProductEntity> products = new ArrayList<>();
 
     //=============================== Constructors ==================================\\
+
 
     public CategoryEntity() {
     }
@@ -56,13 +62,7 @@ public class CategoryEntity {
         this.name = name;
     }
 
-    public CategoryEntity(Long c_id, String c_name, List<ProductEntity> c_products) {
-        this.id = c_id;
-        this.name = c_name;
-        this.products = c_products;
-    }
-
-    //=============================== Getters and Setters ==================================\\
+    //============================ GETTERS & SETTERS ================================\\
     public Long getId() {
         return id;
     }
@@ -79,21 +79,13 @@ public class CategoryEntity {
         this.name = name;
     }
 
-    public List<ProductEntity> getProducts() {
-        return products;
-    }
-
-    public void setProductsList(List<ProductEntity> products) {
-        this.products = products;
-    }
+    //=============================== toString ==================================\\
 
     @Override
     public String toString() {
         return "CategoryEntity{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-//                ", products=" + products +
                 '}';
     }
-
 }

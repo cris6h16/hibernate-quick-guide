@@ -1,7 +1,7 @@
-package org.example.DAOs.Category;
+package org.example.DAOs.OneToManyToOne_Bidirectional.Category;
 
-import org.example.Entities.CategoryEntity;
-import org.example.Entities.ProductEntity;
+import org.example.Entities.OneToManyToOne_Bidirectional.CategoryEntity;
+import org.example.Entities.OneToManyToOne_Bidirectional.ProductEntity;
 import org.example.Util.HibernateUtil;
 import org.hibernate.Session;
 
@@ -22,7 +22,7 @@ public class CategoryDAONative implements CategoryDAO {
      * @return true if the deletion was successful, false otherwise
      */
     @Override
-    public boolean deleteById(Long id) {
+    public boolean deleteById(java.lang.Long id) {
         if (id == null) {
             LOGGER.warning("Id is null");
             return false;
@@ -152,7 +152,7 @@ public class CategoryDAONative implements CategoryDAO {
                         CategoryEntity.ATTR_NAME);
 
                 categoryDTO.setId(session
-                        .createNativeQuery(getNewIdSql, Long.class)
+                        .createNativeQuery(getNewIdSql, java.lang.Long.class)
                         .setParameter("name", categoryDTO.getName())
                         .getSingleResultOrNull());
 
@@ -243,7 +243,7 @@ public class CategoryDAONative implements CategoryDAO {
      * @return an optional containing the category if it exists, or an empty optional if no category with the given ID exists
      */
     @Override
-    public Optional<CategoryEntity> findById(Long id) {
+    public Optional<CategoryEntity> findById(java.lang.Long id) {
         if (id == null) {
             LOGGER.warning("Id is null");
             return Optional.empty();
@@ -294,7 +294,7 @@ public class CategoryDAONative implements CategoryDAO {
      * @return an Optional of a CategoryEntity with the given id, including its associated products
      */
     @Override
-    public Optional<CategoryEntity> getByIdEager(Long id) {
+    public Optional<CategoryEntity> getByIdEager(java.lang.Long id) {
 
         List<ProductEntity> productEntities = new ArrayList<>();
         Optional<CategoryEntity> categoryEntity = Optional.empty();

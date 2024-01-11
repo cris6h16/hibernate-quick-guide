@@ -1,6 +1,6 @@
-package org.example.DAOs.Category;
+package org.example.DAOs.OneToMany_Unidirectional.Category;
 
-import org.example.Entities.CategoryEntity;
+import org.example.Entities.OneToManyToOne_Unidirectional.CategoryEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,15 +29,15 @@ public interface CategoryDAO {
      */
     void persist(CategoryEntity category);
 
-    /**
-     * <b>For testing purposes.</b>
-     * First, delete all rows from CategoryEntity table.
-     * Second, retrieve the rows from the empty table.
-     * Third, rollback the deletion.
-     *
-     * @return List<CategoryEntity> with all the rows from CategoryEntity table.
-     */
-    List<CategoryEntity> listAllWithEmptyRows();
+//    /**
+//     * <b>For testing purposes.</b>
+//     * First, delete all rows from CategoryEntity table.
+//     * Second, retrieve the rows from the empty table.
+//     * Third, rollback the deletion.
+//     *
+//     * @return List<CategoryEntity> with all the rows from CategoryEntity table.
+//     */
+//    List<CategoryEntity> listAllWithEmptyRows();
 
     /**
      * Finds a category by its name.
@@ -62,12 +62,12 @@ public interface CategoryDAO {
      */
     List<CategoryEntity> listAll();
 
-    /**
-     * Returns an Optional of a CategoryEntity with the given id, including its associated products.
-     *
-     * @param id the id of the CategoryEntity to retrieve
-     * @return an Optional of a CategoryEntity with the given id, including its associated products
-     */
-    Optional<CategoryEntity> getByIdEager(Long id);
+//    /**
+//     * Returns an Optional of a CategoryEntity with the given id, including its associated products.
+//     *
+//     * @param id the id of the CategoryEntity to retrieve
+//     * @return an Optional of a CategoryEntity with the given id, including its associated products
+//     */
+//    Optional<CategoryEntity> getByIdEager(Long id);
 
 }

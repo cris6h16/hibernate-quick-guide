@@ -1,8 +1,8 @@
-package org.example.DAOs.Category;
+package org.example.DAOs.OneToManyToOne_Bidirectional.Category;
 
 import jakarta.persistence.criteria.*;
-import org.example.DAOs.Category.Exceptions.CategoryAlreadyExistsException;
-import org.example.Entities.CategoryEntity;
+import org.example.DAOs.OneToManyToOne_Bidirectional.Category.Exceptions.CategoryAlreadyExistsException;
+import org.example.Entities.OneToManyToOne_Bidirectional.CategoryEntity;
 import org.example.Util.HibernateUtil;
 import org.hibernate.LazyInitializationException;
 import org.hibernate.Session;

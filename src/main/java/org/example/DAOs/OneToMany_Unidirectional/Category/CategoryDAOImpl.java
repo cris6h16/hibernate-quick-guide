@@ -1,6 +1,6 @@
-package org.example.DAOs.Category;
+package org.example.DAOs.OneToMany_Unidirectional.Category;
 
-import org.example.Entities.CategoryEntity;
+import org.example.Entities.OneToManyToOne_Unidirectional.CategoryEntity;
 import org.example.Util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -46,31 +46,6 @@ public class CategoryDAOImpl implements CategoryDAO {
     }
 
     /**
-     * Returns an Optional of a CategoryEntity with the given id, including its associated products.
-     *
-     * @param id the id of the CategoryEntity to retrieve
-     * @return an Optional of a CategoryEntity with the given id, including its associated products
-     */
-    @Override
-    public Optional<CategoryEntity> getByIdEager(Long id) {
-        Optional<CategoryEntity> category = Optional.empty();
-
-        try (Session session = sessionFactory.openSession()) {
-            category = session
-                    .createQuery("FROM CategoryEntity ce LEFT JOIN FETCH ce.products WHERE ce.id = :id", CategoryEntity.class)
-                    .setParameter("id", id)
-                    .uniqueResultOptional();
-
-        } catch (IllegalArgumentException ie) {
-            logger.warning("Invalid id: " + id);
-        } catch (Exception e) {
-            logger.severe("Error in getByIdEager: " + e.getMessage());
-        }
-
-        return category;
-    }
-
-    /**
      * Finds a category by its ID.
      *
      * @param id the ID of the category to find
@@ -92,6 +67,7 @@ public class CategoryDAOImpl implements CategoryDAO {
         return category;
     }
 
+    //TODO: Improve the docs
     /**
      * Finds a category by its name.
      *
@@ -116,32 +92,6 @@ public class CategoryDAOImpl implements CategoryDAO {
         return category;
     }
 
-    /**
-     * <b>For testing purposes.</b>
-     * First, delete all rows from CategoryEntity table.
-     * Second, retrieve the rows from the empty table.
-     * Third, rollback the deletion.
-     *
-     * @return List<CategoryEntity> with all the rows from CategoryEntity table.
-     */
-    @Override
-    public List<CategoryEntity> listAllWithEmptyRows() {
-        List<CategoryEntity> categories = new ArrayList<>();
-
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            //PD: It deletes rows only if we commit the transaction
-            session.createMutationQuery("delete from CategoryEntity").executeUpdate();
-            categories = session.createQuery("from CategoryEntity", CategoryEntity.class).list();
-
-            session.getTransaction().rollback();
-
-        } catch (Exception e) {
-            logger.severe("Error in listAllWithEmptyRows: " + e.getMessage());
-        }
-
-        return categories;
-    }
 
     //TODO: Improve the docs
 

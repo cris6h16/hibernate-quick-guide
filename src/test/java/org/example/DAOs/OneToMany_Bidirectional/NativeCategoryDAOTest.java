@@ -1,7 +1,7 @@
-package org.example.DAOs;
+package org.example.DAOs.OneToMany_Bidirectional;
 
-import org.example.DAOs.Category.CategoryDAONative;
-import org.example.Entities.CategoryEntity;
+import org.example.DAOs.OneToManyToOne_Bidirectional.Category.CategoryDAONative;
+import org.example.Entities.OneToManyToOne_Bidirectional.CategoryEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

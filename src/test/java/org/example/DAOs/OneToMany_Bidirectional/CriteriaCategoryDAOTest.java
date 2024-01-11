@@ -1,6 +1,6 @@
-package org.example.DAOs;
+package org.example.DAOs.OneToMany_Bidirectional;
 
-import org.example.DAOs.Category.CategoryDAOCriteria;
+import org.example.DAOs.OneToManyToOne_Bidirectional.Category.CategoryDAOCriteria;
 
 
 public class CriteriaCategoryDAOTest extends CategoryDAOTest {

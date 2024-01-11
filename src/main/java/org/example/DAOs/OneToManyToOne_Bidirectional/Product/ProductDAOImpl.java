@@ -1,7 +1,7 @@
-package org.example.DAOs.Product;
+package org.example.DAOs.OneToManyToOne_Bidirectional.Product;
 
-import org.example.DAOs.Product.Exceptions.ProductAlreadyExistException;
-import org.example.Entities.ProductEntity;
+import org.example.DAOs.OneToManyToOne_Bidirectional.Product.Exceptions.ProductAlreadyExistException;
+import org.example.Entities.OneToManyToOne_Bidirectional.ProductEntity;
 import org.example.Util.HibernateUtil;
 import org.hibernate.Session;
 

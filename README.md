@@ -374,6 +374,9 @@ public class CourseEnrollmentsEntity {
 
 Hibernate don't persist `static` attributes  
 <br>
+### 4.1.1 One To Many (Unidirectional)
+
+
 
 ### 4.1.1 ManyToOne (Without cascades and Bidirectional)
 

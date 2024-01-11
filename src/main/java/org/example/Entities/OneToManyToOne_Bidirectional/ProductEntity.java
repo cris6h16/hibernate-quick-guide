@@ -1,8 +1,7 @@
-package org.example.Entities;
+package org.example.Entities.OneToManyToOne_Bidirectional;
 
 import jakarta.persistence.*;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Entity
@@ -21,7 +20,7 @@ public class ProductEntity {
 //    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "products_id_seq")
 //    @SequenceGenerator(name = "products_id_seq", sequenceName = "products_id_seq", allocationSize = 50)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private java.lang.Long id;
 
     //TODO, test what exception is thrown FOR EACH METHOD
     @Column(length = 100, nullable = false, unique = true)
@@ -51,7 +50,7 @@ public class ProductEntity {
     public ProductEntity() {
     }
 
-    public ProductEntity(Long id, String name, String description, BigDecimal price/*, CategoryEntity category*/) {
+    public ProductEntity(java.lang.Long id, String name, String description, BigDecimal price/*, CategoryEntity category*/) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -61,11 +60,11 @@ public class ProductEntity {
 
     //=============================== Getters and Setters ==================================\\
 
-    public Long getId() {
+    public java.lang.Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(java.lang.Long id) {
         this.id = id;
     }
 

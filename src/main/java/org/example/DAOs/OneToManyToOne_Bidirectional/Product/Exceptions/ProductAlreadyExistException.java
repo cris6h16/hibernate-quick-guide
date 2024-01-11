@@ -1,4 +1,4 @@
-package org.example.DAOs.Product.Exceptions;
+package org.example.DAOs.OneToManyToOne_Bidirectional.Product.Exceptions;
 
 public class ProductAlreadyExistException extends Exception{
     public ProductAlreadyExistException() {
