@@ -1,4 +1,4 @@
-package org.example.Entities.OneToOne_Bidirectional;
+package org.example.Entities.OneToOne_Unidirectional;
 
 import jakarta.persistence.*;
 
@@ -15,7 +15,7 @@ public class UserEntity {
 
     @OneToOne(
             cascade = CascadeType.ALL,
-            fetch = FetchType.EAGER,
+            fetch = FetchType.LAZY,
             orphanRemoval = true,
             optional = true,
             targetEntity = AddressEntity.class)
@@ -62,7 +62,7 @@ public class UserEntity {
 
     public void setAddress(AddressEntity addressEntity) {
         this.address = addressEntity;
-        addressEntity.setUserEntity(this);
+//        addressEntity.setUserEntity(this);
     }
 
     @Override

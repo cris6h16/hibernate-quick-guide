@@ -23,7 +23,10 @@
 <!--        TODO: document this-->
 <!--        <mapping class="org.example.Entities.OneToManyToOne_Bidirectional.CategoryEntity"/>-->
 <!--        <mapping class="org.example.Entities.OneToManyToOne_Bidirectional.ProductEntity"/>-->
-        <mapping class="org.example.Entities.OneToManyToOne_Unidirectional.CategoryEntity"/>
-        <mapping class="org.example.Entities.OneToManyToOne_Unidirectional.ProductEntity"/>
+<!--        <mapping class="org.example.Entities.OneToManyToOne_Unidirectional.CategoryEntity"/>-->
+<!--        <mapping class="org.example.Entities.OneToManyToOne_Unidirectional.ProductEntity"/>-->
+<!--        <mapping class="org.example.Entities.OneToOne_Bidirectional.UserEntity"/>-->
+<!--        <mapping class="org.example.Entities.OneToOne_Bidirectional.AddressEntity"/>-->
+
     </session-factory>
 </hibernate-configuration>
