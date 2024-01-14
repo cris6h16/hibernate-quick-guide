@@ -87,6 +87,7 @@ public class CategoryEntity {
         this.products = products;
     }
 
+
     @Override
     public String toString() {
         return "CategoryEntity{" +

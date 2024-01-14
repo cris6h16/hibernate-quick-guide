@@ -1,5 +1,6 @@
 package org.example.Util;
 
+import org.example.Entities.OneToManyToOne_Bidirectional.CategoryInterceptor;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
@@ -25,7 +26,9 @@ public class HibernateUtil {
                 // Create Metadata
                 Metadata metadata = sources.getMetadataBuilder().build();
                 // Create SessionFactory
-                sessionFactory = metadata.getSessionFactoryBuilder().build();
+                sessionFactory = metadata.getSessionFactoryBuilder()
+                        .applyInterceptor(new CategoryInterceptor())
+                        .build();
 
             } catch (Exception e) {
                 handleException(e);

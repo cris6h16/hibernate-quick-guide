@@ -15,12 +15,7 @@ public class CategoryDAONative implements CategoryDAO {
 
     private Optional<CategoryEntity> categoryEntity;
 
-    /**
-     * Deletes a CategoryEntity from the database.
-     *
-     * @param id the id of the CategoryEntity to delete
-     * @return true if the deletion was successful, false otherwise
-     */
+
     @Override
     public boolean deleteById(java.lang.Long id) {
         if (id == null) {
@@ -55,10 +50,6 @@ public class CategoryDAONative implements CategoryDAO {
     }
 //TODO: rewrite the description of this method, because jus merge the category, not its products
 
-    /**
-     * @param categoryDTO if update is manually(Hibernate Criteria) must be Eagerly
-     * @return true if category was updated
-     */
     @Override
     public boolean merge(CategoryEntity categoryDTO) {
         if (categoryDTO == null) {
@@ -111,12 +102,6 @@ public class CategoryDAONative implements CategoryDAO {
         return affectedRows > 0;
     }
 
-    /**
-     * Saves a CategoryEntity object to the database. if was saved successfully
-     * the category will have id assigned
-     *
-     * @param categoryDTO the CategoryEntity object to be saved
-     */
     @Override
     public void persist(CategoryEntity categoryDTO) {
         if (categoryDTO == null) {
@@ -200,12 +185,7 @@ public class CategoryDAONative implements CategoryDAO {
         return categoryEntities;
     }
 
-    /**
-     * Finds a category by its name.
-     *
-     * @param name the name of the category to find
-     * @return an optional containing the category if it exists, or an empty optional if no category with the given name exists
-     */
+
     @Override
     public Optional<CategoryEntity> findByName(String name) {
         if (name == null) {
@@ -236,12 +216,7 @@ public class CategoryDAONative implements CategoryDAO {
         return categoryEntity;
     }
 
-    /**
-     * Finds a category by its ID.
-     *
-     * @param id the ID of the category to find
-     * @return an optional containing the category if it exists, or an empty optional if no category with the given ID exists
-     */
+
     @Override
     public Optional<CategoryEntity> findById(java.lang.Long id) {
         if (id == null) {
@@ -266,11 +241,7 @@ public class CategoryDAONative implements CategoryDAO {
         return categoryEntity;
     }
 
-    /**
-     * Returns a list of all categories in the database.
-     *
-     * @return a list of all categories in the database
-     */
+
     @Override
     public List<CategoryEntity> listAll() {
         List<CategoryEntity> categoryEntities = new ArrayList<>();
@@ -287,12 +258,7 @@ public class CategoryDAONative implements CategoryDAO {
         return categoryEntities;
     }
 
-    /**
-     * Returns an Optional of a CategoryEntity with the given id, including its associated products.
-     *
-     * @param id the id of the CategoryEntity to retrieve
-     * @return an Optional of a CategoryEntity with the given id, including its associated products
-     */
+
     @Override
     public Optional<CategoryEntity> getByIdEager(java.lang.Long id) {
 

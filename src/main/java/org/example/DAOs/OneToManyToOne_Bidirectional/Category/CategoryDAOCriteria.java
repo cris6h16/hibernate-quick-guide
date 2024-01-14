@@ -30,12 +30,7 @@ public class CategoryDAOCriteria implements CategoryDAO {
         this.sessionFactory = HibernateUtil.getSessionFactory();
     }
 
-    /**
-     * Deletes a CategoryEntity from the database.
-     *
-     * @param id the id of the CategoryEntity to delete
-     * @return true if the deletion was successful, false otherwise
-     */
+
     @Override
     public boolean deleteById(Long id) {
         if (!isIdValid(id)) LOGGER.warning("Invalid id: " + id);
@@ -141,12 +136,6 @@ public class CategoryDAOCriteria implements CategoryDAO {
     }
 
 
-    /**
-     * Saves a CategoryEntity object to the database. if was saved successfully
-     * the category will have id assigned
-     *
-     * @param category the CategoryEntity object to be saved
-     */
     @Override
     public void persist(CategoryEntity category) {
         if (category == null) {
@@ -242,12 +231,7 @@ public class CategoryDAOCriteria implements CategoryDAO {
         return categories;
     }
 
-    /**
-     * Finds a category by its name.
-     *
-     * @param name the name of the category to find
-     * @return an optional containing the category if it exists, or an empty optional if no category with the given name exists
-     */
+
     @Override
     public Optional<CategoryEntity> findByName(String name) {
         if (name == null) {
@@ -283,12 +267,6 @@ public class CategoryDAOCriteria implements CategoryDAO {
         return entity;
     }
 
-    /**
-     * Finds a category by its ID.
-     *
-     * @param id the ID of the category to find
-     * @return an optional containing the category if it exists, or an empty optional if no category with the given ID exists
-     */
     @Override
     public Optional<CategoryEntity> findById(Long id) {
         if (!isIdValid(id)) LOGGER.warning("Invalid id: " + id);
@@ -318,11 +296,6 @@ public class CategoryDAOCriteria implements CategoryDAO {
         return entity;
     }
 
-    /**
-     * Returns a list of all categories in the database.
-     *
-     * @return a list of all categories in the database
-     */
     @Override
     public List<CategoryEntity> listAll() {
         List<CategoryEntity> categories = new ArrayList<>();
@@ -344,13 +317,6 @@ public class CategoryDAOCriteria implements CategoryDAO {
 
         return categories;
     }
-
-    /**
-     * Returns an Optional of a CategoryEntity with the given id, including its associated products.
-     *
-     * @param id the id of the CategoryEntity to retrieve
-     * @return an Optional of a CategoryEntity with the given id, including its associated products
-     */
 
     @Override
     public Optional<CategoryEntity> getByIdEager(Long id) {

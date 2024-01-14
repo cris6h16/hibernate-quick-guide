@@ -559,8 +559,16 @@ We should put the notation `@ManyToMany` in the own of the relationship, for exa
 
 private Set<RoleEntity> roles;
 ```
-**Unidirectional:** In the other side of the relationship isn't necessary set any logic about the relationship, only should have the logic of an Hibernate Entity
+**Unidirectional:** In the other side of the relationship isn't necessary set any logic about the relationship, only should have the logic of an Hibernate Entity  
 
+**Bidirectional:** We should set only the notation `@OneToMany` with `mappedBy="<attribute_name_in_other_side>"` below the Collection of the relationship
+```java
+@ManyToMany(
+        mappedBy = "roles"
+        //.......
+)
+private Set<UserEntity> users;
+```
 ----------------------------------------------------------------
 
 
@@ -649,6 +657,90 @@ Remove this instance from the session cache. Changes to the instance will not be
 **Overrides:** _`detach` in interface `EntityManager`_  
 **Params:** _`object` – the managed instance to detach_
 
+//DAOs
+## 5. Example of DAOs:
+```java
+Session session = HibernateUtil.getSessionFactory().openSession()
+``` 
+Relation: OneToMany (Bidirectional, without cascades)  
 
+**Entities:**
+- [CategoryEntity](src/main/java/org/example/Entities/OneToManyToOne_Bidirectional/CategoryEntity.java)
+- [ProductEntity](src/main/java/org/example/Entities/OneToManyToOne_Bidirectional/ProductEntity.java)
+
+### Hibernate Methods
+
+- [CategoryDAOImp](src/main/java/org/example/DAOs/OneToManyToOne_Bidirectional/Category/CategoryDAOImpl.java)
+- [CategoryDAOImplTest](src/test/java/org/example/DAOs/OneToMany_Bidirectional/CategoryDAOTest.java)
+
+### Criteria Builder
+
+- [CategoryDAOCriteria](src/main/java/org/example/DAOs/OneToManyToOne_Bidirectional/Category/CategoryDAOCriteria.java)
+- [CategoryDAOCriteriaTest](src/test/java/org/example/DAOs/OneToMany_Bidirectional/CriteriaCategoryDAOTest.java)
+
+### Native Queries
+- [CategoryDAOCriteria](src/main/java/org/example/DAOs/OneToManyToOne_Bidirectional/Category/CategoryDAONative.java)
+- [CategoryDAONativeTest](src/test/java/org/example/DAOs/OneToMany_Bidirectional/NativeCategoryDAOTest.java)
+
+## 6. Events and Interceptors
+### 6.1 Events
+In the `@Entity` class we can add the following methods:  
+> When we set this **Lifecycle callbacks** in the `@Entity` class, we are violating the `Single Responsibility Principle`, because the `@Entity` class is only for represent the table in the database, not for manage the events.
+```java
+@PrePersist
+public void prePersist() {
+    // this method is called before the entity is persisted in the database
+}
+
+@PostPersist
+public void postPersist() {
+    // this method is called after the entity is persisted in the database
+}
+
+@PreUpdate
+public void preUpdate() {
+    // this method is called before the entity is updated in the database
+}
+
+@PostUpdate
+public void postUpdate() {
+    // this method is called when the entity is updated in the database
+}
+
+@PreRemove
+public void preRemove() {
+    // this method is called before the entity is removed from the database
+}
+
+@PostRemove
+public void postRemove() {
+    // this method is called when the entity is removed from the database
+}
+
+@PostLoad
+public void postLoad() {
+    // this method is called when the entity is loaded from the database in persistence context
+}
+```
+- `@PostLoad`:
+When `@PostLoad` is Triggered:  
+
+1. Fetching an Entity: `EntityManager.find(Book.class, 1L):`  
+
+    Hibernate retrieves the Book entity with ID 1 from the database and places it in the persistence context. It then calls the @PostLoad method on the loaded entity.  
+<br>
+  
+2. Executing a Query: `Query query = em.createQuery("SELECT b FROM Book b");`:  
+      Hibernate fetches multiple Book entities from the database and puts them in the persistence context. The @PostLoad method is called for each loaded entity.  
+<br>  
+
+3. Refreshing an Entity: `em.refresh(book)`:  
+      This forces Hibernate to reload the entity from the database and overwrite any changes made in the persistence context. The @PostLoad method is called again on the refreshed entity.
+
+### 6.2 Interceptors
+We can create a class that implements the `org.hibernate.Interceptor` interface, and override the methods that we want to intercept.    
+
+Performs the same function as an event listener, in this way we don't violate the `Single Responsibility Principle`.
+```java
 
 

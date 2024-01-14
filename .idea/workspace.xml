@@ -5,8 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="33d4e801-1be6-4c5e-99fe-37449cf74e6d" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Entities/OneToManyToOne_Bidirectional/CategoryInterceptor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DAOs/OneToManyToOne_Bidirectional/Category/CategoryDAOCriteria.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/DAOs/OneToManyToOne_Bidirectional/Category/CategoryDAOCriteria.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DAOs/OneToManyToOne_Bidirectional/Category/CategoryDAOImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/DAOs/OneToManyToOne_Bidirectional/Category/CategoryDAOImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DAOs/OneToManyToOne_Bidirectional/Category/CategoryDAONative.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/DAOs/OneToManyToOne_Bidirectional/Category/CategoryDAONative.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Entities/OneToManyToOne_Bidirectional/CategoryEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Entities/OneToManyToOne_Bidirectional/CategoryEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Util/HibernateUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Util/HibernateUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/hibernate.cfg.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/hibernate.cfg.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,89 +58,90 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.Main.executor&quot;: &quot;Debug&quot;,
-    &quot;JUnit.CategoryDAOImplTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.CategoryDAOTest.DeleteByMinValue.executor&quot;: &quot;Debug&quot;,
-    &quot;JUnit.CategoryDAOTest.DeleteByValidId.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.CategoryDAOTest.UpdateValidNamesLazyProduct.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.CategoryDAOTest.deleteByNullId.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.CategoryDAOTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.CategoryDAOTest.findById.executor&quot;: &quot;Debug&quot;,
-    &quot;JUnit.CategoryDAOTest.findByIdInvalid.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.CategoryDAOTest.findByIdMaxValue.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.CategoryDAOTest.findByIdMinValue.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.CategoryDAOTest.findByIdNull.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.CategoryDAOTest.findByIdValid.executor&quot;: &quot;Debug&quot;,
-    &quot;JUnit.CategoryDAOTest.findByNonExistentName.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.CategoryDAOTest.findByValidName.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.CategoryDAOTest.getByIdEagerMaxValueId.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.CategoryDAOTest.getByIdEagerValidId.executor&quot;: &quot;Debug&quot;,
-    &quot;JUnit.CategoryDAOTest.getCategoryFromProduct.executor&quot;: &quot;Debug&quot;,
-    &quot;JUnit.CategoryDAOTest.listAllNoCategory.executor&quot;: &quot;Debug&quot;,
-    &quot;JUnit.CategoryDAOTest.saveEmptyName.executor&quot;: &quot;Debug&quot;,
-    &quot;JUnit.CategoryDAOTest.saveIdAndValidName.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.CategoryDAOTest.saveNullName.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.CategoryDAOTest.saveValidName.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.CategoryDAOTest.saveValidNameAndProducts.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.CategoryDAOTest.saveValidNameAndProductsCascadePersist.executor&quot;: &quot;Debug&quot;,
-    &quot;JUnit.CategoryDAOTest.updateProductCategory.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.CategoryDAOTest.updateValid.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.CategoryDAOTest.updateValid2.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.CategoryDAOTest.updateValidName.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.CategoryDAOTest.updateValidNameAndProductsCascadePersist.executor&quot;: &quot;Debug&quot;,
-    &quot;JUnit.CriteriaCategoryDAOTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.CriteriaCategoryDAOTest.updateValid.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.CriteriaCategoryDAOTest.updateValidLazyProducts.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.CriteriaCategoryDAOTest.updateValidNameLazyProducts.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.General.createTablesDB.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.NativeCategoryDAOTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ProductDAOImplTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ProductDAOImplTest.merge.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ProductDAOImplTest.persist.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.TestOthers.cascadeInMutationQuery.executor&quot;: &quot;Debug&quot;,
-    &quot;JUnit.TestOthers.executor&quot;: &quot;Debug&quot;,
-    &quot;JUnit.TestOthers.primary_key_columns.executor&quot;: &quot;Debug&quot;,
-    &quot;JUnit.TestOthers.test.executor&quot;: &quot;Debug&quot;,
-    &quot;JUnit.UserDAOImplTest (1).executor&quot;: &quot;Debug&quot;,
-    &quot;JUnit.UserDAOImplTest.detach.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.UserDAOImplTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.UserDAOImplTest.getUserById (1).executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.UserDAOImplTest.getUserById.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.UserDAOImplTest.getUserByIdEager.executor&quot;: &quot;Debug&quot;,
-    &quot;JUnit.UserDAOImplTest.persist.executor&quot;: &quot;Run&quot;,
-    &quot;Maven.Hibernate [clean].executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit5&quot;,
-    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
-    &quot;extract.method.default.visibility&quot;: &quot;private&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/cristian/personal/intellij/IdeaProjects/hibernate-quick-guide/src/main/java/org/example/Entities/OneToOne_JoinColumn&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.standard&quot;: &quot;&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;,
-    &quot;settings.editor.splitter.proportion&quot;: &quot;0.18576598&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Main.executor": "Debug",
+    "JUnit.CategoryDAOImplTest.executor": "Run",
+    "JUnit.CategoryDAOTest.DeleteByMinValue.executor": "Debug",
+    "JUnit.CategoryDAOTest.DeleteByValidId.executor": "Run",
+    "JUnit.CategoryDAOTest.UpdateValidNamesLazyProduct.executor": "Run",
+    "JUnit.CategoryDAOTest.deleteByNullId.executor": "Run",
+    "JUnit.CategoryDAOTest.executor": "Run",
+    "JUnit.CategoryDAOTest.findById.executor": "Debug",
+    "JUnit.CategoryDAOTest.findByIdInvalid.executor": "Run",
+    "JUnit.CategoryDAOTest.findByIdMaxValue.executor": "Run",
+    "JUnit.CategoryDAOTest.findByIdMinValue.executor": "Run",
+    "JUnit.CategoryDAOTest.findByIdNull.executor": "Run",
+    "JUnit.CategoryDAOTest.findByIdValid.executor": "Debug",
+    "JUnit.CategoryDAOTest.findByNonExistentName.executor": "Run",
+    "JUnit.CategoryDAOTest.findByValidName.executor": "Run",
+    "JUnit.CategoryDAOTest.getByIdEagerMaxValueId.executor": "Run",
+    "JUnit.CategoryDAOTest.getByIdEagerValidId.executor": "Debug",
+    "JUnit.CategoryDAOTest.getCategoryFromProduct.executor": "Debug",
+    "JUnit.CategoryDAOTest.listAllNoCategory.executor": "Debug",
+    "JUnit.CategoryDAOTest.saveEmptyName.executor": "Debug",
+    "JUnit.CategoryDAOTest.saveIdAndValidName.executor": "Debug",
+    "JUnit.CategoryDAOTest.saveNullName.executor": "Run",
+    "JUnit.CategoryDAOTest.saveValidName.executor": "Run",
+    "JUnit.CategoryDAOTest.saveValidNameAndProducts.executor": "Run",
+    "JUnit.CategoryDAOTest.saveValidNameAndProductsCascadePersist.executor": "Debug",
+    "JUnit.CategoryDAOTest.updateProductCategory.executor": "Run",
+    "JUnit.CategoryDAOTest.updateValid.executor": "Run",
+    "JUnit.CategoryDAOTest.updateValid2.executor": "Run",
+    "JUnit.CategoryDAOTest.updateValidName.executor": "Run",
+    "JUnit.CategoryDAOTest.updateValidNameAndProductsCascadePersist.executor": "Debug",
+    "JUnit.CriteriaCategoryDAOTest.executor": "Run",
+    "JUnit.CriteriaCategoryDAOTest.updateValid.executor": "Run",
+    "JUnit.CriteriaCategoryDAOTest.updateValidLazyProducts.executor": "Run",
+    "JUnit.CriteriaCategoryDAOTest.updateValidNameLazyProducts.executor": "Run",
+    "JUnit.General.createTablesDB.executor": "Run",
+    "JUnit.NativeCategoryDAOTest.executor": "Run",
+    "JUnit.ProductDAOImplTest.executor": "Run",
+    "JUnit.ProductDAOImplTest.merge.executor": "Run",
+    "JUnit.ProductDAOImplTest.persist.executor": "Run",
+    "JUnit.TestOthers.cascadeInMutationQuery.executor": "Debug",
+    "JUnit.TestOthers.executor": "Debug",
+    "JUnit.TestOthers.primary_key_columns.executor": "Debug",
+    "JUnit.TestOthers.test.executor": "Debug",
+    "JUnit.UserDAOImplTest (1).executor": "Debug",
+    "JUnit.UserDAOImplTest.detach.executor": "Run",
+    "JUnit.UserDAOImplTest.executor": "Run",
+    "JUnit.UserDAOImplTest.getUserById (1).executor": "Run",
+    "JUnit.UserDAOImplTest.getUserById.executor": "Run",
+    "JUnit.UserDAOImplTest.getUserByIdEager.executor": "Debug",
+    "JUnit.UserDAOImplTest.persist.executor": "Run",
+    "Maven.Hibernate [clean].executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
+    "extract.method.default.visibility": "private",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/home/cristian/personal/intellij/IdeaProjects/hibernate-quick-guide/src/main/java/org/example/Entities/OneToOne_JoinColumn",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.standard": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.standard": "",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.keymap",
+    "settings.editor.splitter.proportion": "0.18576598",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;postgresql&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
+      <recent name="org.example.Entities.OneToManyToOne_Bidirectional" />
       <recent name="org.example.DAOs.Product" />
       <recent name="org.example.DTOs" />
       <recent name="org.example.Entities" />
@@ -156,7 +164,38 @@
       <recent name="org.example.DAOs" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.TestOthers.cascadeInMutationQuery">
+  <component name="RunManager" selected="JUnit.CategoryDAOTest">
+    <configuration name="CategoryDAOTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Hibernate" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.DAOs.OneToMany_Bidirectional.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.DAOs.OneToMany_Bidirectional" />
+      <option name="MAIN_CLASS_NAME" value="org.example.DAOs.OneToMany_Bidirectional.CategoryDAOTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="CategoryDAOTest.saveIdAndValidName" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Hibernate" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.DAOs.OneToMany_Bidirectional.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.DAOs.OneToMany_Bidirectional" />
+      <option name="MAIN_CLASS_NAME" value="org.example.DAOs.OneToMany_Bidirectional.CategoryDAOTest" />
+      <option name="METHOD_NAME" value="saveIdAndValidName" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="TestOthers" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="Hibernate" />
       <extension name="coverage">
@@ -204,44 +243,13 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="TestOthers.test" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="Hibernate" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="org.example.DAOs.OneToOne_Others.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="org.example.DAOs.OneToOne_Others" />
-      <option name="MAIN_CLASS_NAME" value="org.example.DAOs.OneToOne_Others.TestOthers" />
-      <option name="METHOD_NAME" value="test" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="UserDAOImplTest (1)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="Hibernate" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="org.example.DAOs.OneToOne_Unidirectional.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="org.example.DAOs.OneToOne_Unidirectional" />
-      <option name="MAIN_CLASS_NAME" value="org.example.DAOs.OneToOne_Unidirectional.UserDAOImplTest" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.CategoryDAOTest" />
+        <item itemvalue="JUnit.CategoryDAOTest.saveIdAndValidName" />
         <item itemvalue="JUnit.TestOthers.cascadeInMutationQuery" />
         <item itemvalue="JUnit.TestOthers" />
         <item itemvalue="JUnit.TestOthers.primary_key_columns" />
-        <item itemvalue="JUnit.TestOthers.test" />
-        <item itemvalue="JUnit.UserDAOImplTest (1)" />
       </list>
     </recent_temporary>
   </component>
@@ -321,7 +329,7 @@
       <workItem from="1704980272959" duration="27147000" />
       <workItem from="1705092339476" duration="13114000" />
       <workItem from="1705239186262" duration="7476000" />
-      <workItem from="1705269269843" duration="721000" />
+      <workItem from="1705269269843" duration="6585000" />
     </task>
     <servers />
   </component>
@@ -395,6 +403,11 @@
           <url>file://$PROJECT_DIR$/src/test/java/org/example/DAOs/OneToOne_Others/TestOthers.java</url>
           <line>80</line>
           <option name="timeStamp" value="67" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/org/example/DAOs/OneToMany_Bidirectional/CategoryDAOTest.java</url>
+          <line>191</line>
+          <option name="timeStamp" value="69" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
