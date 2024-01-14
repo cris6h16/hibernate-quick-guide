@@ -543,6 +543,26 @@ _PD: `category1` and `product1` must be persisted in the database before do the 
 2. `category1.forEach(product -> productDAO.merge(product))`
    <br>
 ----------------------------------------------------------------
+### 4.1.1 ManyToMany
+We should put the notation `@ManyToMany` in the own of the relationship, for example if we've got 2 entities:
+`UserEntity` and `RoleEntity`, we should put the notation `@ManyToMany` in the `UserEntity`.
+```java
+@ManyToMany(
+        fetch = FetchType.EAGER,
+        targetEntity = RoleEntity.class,
+        cascade = CascadeType.PERSIST)
+
+@JoinTable(
+        name = "users_roles",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id"))
+
+private Set<RoleEntity> roles;
+```
+**Unidirectional:** In the other side of the relationship isn't necessary set any logic about the relationship, only should have the logic of an Hibernate Entity
+
+----------------------------------------------------------------
+
 
 - `cascade`: Specifies the operations that must be cascaded to the target of the association.
 - `fetch`: Specifies whether the association should be lazily loaded or must be eagerly fetched.
