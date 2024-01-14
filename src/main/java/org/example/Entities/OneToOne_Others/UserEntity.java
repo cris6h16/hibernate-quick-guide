@@ -13,9 +13,9 @@ public class UserEntity {
     private String username;
     private String password;
 
-    /*
 
-    =============  One to One by Join Table  =============
+
+    //=============  One to One by Join Table  =============
 
 
     @OneToOne(
@@ -51,7 +51,7 @@ public class UserEntity {
                     table = "users_addresses"
 //                  ................................
             )}
-    )*/
+    )
 //TODO: it doesn't work, see more about it....
 // 2. @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 //    @PrimaryKeyJoinColumn(name = "address_id")

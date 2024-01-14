@@ -470,9 +470,18 @@ in the other side of the relationship has only logic of Entities, nothing about 
 // in product entity (Many)
 //=================== One to many ||| bidirectional ===================\\
 // - Many is the owner of the relationship (have the @JoinColumn), Relationship is inverse
-@ManyToOne(/*cascade = {CascadeType.ALL},*/ fetch = FetchType.EAGER, targetEntity = CategoryEntity.class, optional = true)
+// - Must add "MANY" entity explicitly in the "ONE" entity, when "ONE" is set (this can also be done in the "ONE")
+@ManyToOne(/*cascade = {CascadeType.ALL},*/ 
+        fetch = FetchType.EAGER, 
+        targetEntity = CategoryEntity.class, 
+        optional = true)
 @JoinColumn(name = "category_id")
 private CategoryEntity category;
+
+public void setCategory(CategoryEntity category) {
+    this.category = category;
+    category.getProducts().add(this);
+}
 ```
 
 - `optional`: Defines whether the association is optional. If set to false then a non-null relationship must always
@@ -491,83 +500,14 @@ See more below...
 private List<ProductEntity> products = new ArrayList<>();
 ```
 
-- `cascade`: Specifies the operations that must be cascaded to the target of the association.
-- `fetch`: Specifies whether the association should be lazily loaded or must be eagerly fetched.
-- `mappedBy`: The field that owns the relationship. Required unless the relationship is unidirectional.
-- `orphanRemoval` with true, if an secondary Entity is removed from the collection of the principal Entity("ONE"), it
-  will be removed
-  from the database.(with `CascadeType.REMOVE` deletes the associated entities when the principal is deleted)
-- `targetEntity`: The entity class that is the target of the association. Optional only if the collection property is
-  defined using Java generics. Must be specified otherwise.
-
- CascadeType | Description                                                                         
--------------|-------------------------------------------------------------------------------------
- `ALL`       | Apply all operations (persist, remove, refresh, merge, detach) to the child entity. 
- `DETACH`    | Detach the child entity when the parent entity is detached.                         
- `MERGE`     | Merge the child entity when the parent entity is merged.                            
- `PERSIST`   | Persist the child entity when the parent entity is persisted.                       
- `REFRESH`   | Refresh the child entity when the parent entity is refreshed.                       
- `REMOVE`    | Remove the child entity when the parent entity is removed.
-e.g. `session.persist(category)`
-
-- `session.persist(<@Entity>)` persists an instance, the entity in the argument must not have an ID, then automatically sets an ID if successfully persisted, also starts to be an attached hibernate Object(Entity))     
-
-**Docs:** Make a transient instance persistent and mark it for later insertion in the database. This operation cascades to associated instances if the association is mapped with jakarta.persistence.CascadeType.PERSIST.
-  For an entity with a generated id, persist() ultimately results in generation of an identifier for the given instance. But this may happen asynchronously, when the session is flushed, depending on the identifier generation strategy.  
-Overrides: _`persist` in interface `EntityManager`_
-Params: `object` – a transient instance to be made persistent
-
-<br>
-
-- `session.merge(<@Entity>)` Copy all attributes(Fields in DB) to the row in DB that have its ID, the Entity in the argument isn't necessary be an attached Object(Entity)  
-
-**Docs:**
-Copy the state of the given object onto the persistent object with the same identifier. If there is no persistent instance currently associated with the session, it will be loaded. Return the persistent instance. If the given instance is unsaved, save a copy and return it as a newly persistent instance. The given instance does not become associated with the session. This operation cascades to associated instances if the association is mapped with jakarta.persistence.CascadeType.MERGE.  
-
-Overrides: _`merge` in interface `EntityManager`_  
-Params: _`object` – a detached instance with state to be copied_
-Returns: _an updated persistent instance_
-
-<br>
-
--`session.remove`  
-**Docs:** Mark a persistence instance associated with this session for removal from the underlying database. Ths operation cascades to associated instances if the association is mapped `jakarta.persistence.CascadeType.REMOVE`.
-### 4.1.3 Example:
-
-#### Most recommended
-
-In "Many" side:
-
-```java
-//=================== One to many ||| bidirectional ===================\\
-// - Many is the owner of the relationship (have the @JoinColumn), Relationship is inverse
-// - Must add "MANY" entity explicitly in the "ONE" entity, when "ONE" is set (this can also be done in the "ONE")
-@ManyToOne(/*cascade = {CascadeType.ALL},*/ fetch = FetchType.EAGER, targetEntity = CategoryEntity.class, optional = true)
-@JoinColumn(name = "category_id")
-private CategoryEntity category;
-
-public void setCategory(CategoryEntity category) {
-    this.category = category;
-    category.getProducts().add(this);
-}
-```
-
-In "One" side:
-
-```java
-
-@OneToMany(/*cascade = {CascadeType.ALL},*/fetch = FetchType.LAZY, mappedBy = "category", orphanRemoval = true, targetEntity = ProductEntity.class)
-private List<ProductEntity> products = new ArrayList<>();
-```
-
 Later you need cand do:  
 _PD: `category1` and `product1` must be persisted in the database before do the below_
 
 1. `product1.setCategory(category1)`
-2. `productDAO.merge(product1)`  
+2. `productDAO.merge(product1)` //in the product1 we merged because it has the field that represent the relationship `category_id`
    <br>
-
-#### You can also do inverse
+----------------------------------------------------------------
+#### You can also do inverse (Not recommended)
 
 In "One" side:
 
@@ -602,14 +542,93 @@ _PD: `category1` and `product1` must be persisted in the database before do the 
 1. `category1.addProducts(product1)`
 2. `category1.forEach(product -> productDAO.merge(product))`
    <br>
+----------------------------------------------------------------
 
-- session.merge(): If there is a persistent instance with the same identifier currently associated with the session,
-  copy the state of the given object onto the persistent instance. If there is no persistent instance currently
-  associated with the session, try to load it from the database, or create a new persistent instance. The persistent
-  instance is returned. The given instance does not become associated with the session. This operation cascades to
-  associated instances if the association is mapped with `cascade="merge"`.
+- `cascade`: Specifies the operations that must be cascaded to the target of the association.
+- `fetch`: Specifies whether the association should be lazily loaded or must be eagerly fetched.
+- `mappedBy`: The field that owns the relationship. Required unless the relationship is unidirectional.
+- `orphanRemoval` with true, if an secondary Entity is removed from the collection of the principal Entity("ONE"), it
+  will be removed
+  from the database.(with `CascadeType.REMOVE` deletes the associated entities when the principal is deleted)
+- `targetEntity`: The entity class that is the target of the association. Optional only if the collection property is
+  defined using Java generics. Must be specified otherwise.
 
-  Hibernate Methods (save, update, delete, etc.): En estas operaciones de Hibernate, se aplicará automáticamente la
-  cascada configurada (CASCADE.ALL) en las relaciones.
+ CascadeType | Description                                                                         
+-------------|-------------------------------------------------------------------------------------
+ `ALL`       | Apply all operations (persist, remove, refresh, merge, detach) to the child entity. 
+ `DETACH`    | Detach the child entity when the parent entity is detached.                         
+ `MERGE`     | Merge the child entity when the parent entity is merged.                            
+ `PERSIST`   | Persist the child entity when the parent entity is persisted.                       
+ `REFRESH`   | Refresh the child entity when the parent entity is refreshed.                       
+ `REMOVE`    | Remove the child entity when the parent entity is removed.
+e.g. `session.persist(category)`  
+e.g. `session.remove(category)`
 
-  # Criteria API y Native Queries: En estas situaciones, la cascada (CASCADE) no se aplica automáticamente. Al ejecutar consultas nativas o utilizar Criteria API, debes manejar manualmente cualquier operación de cascada necesaria.
+>Hibernate Methods (`save`, `update`, `delete`, etc.): In this Hibernate operations, the Cascade configured will be apply automatically (`CASCADE.ALL`) in the relationships.  
+`Criteria API`, `Native Queries`, `MutationQuerys`, etc.: In these cases, the `CASCADE` don't apply automatically. When we execute **NativeQuerys**, **CriteriaQuerys**(CriteriaBuilder), **MutationQuerys**, or other that aren't be the Hibernate methods, we need manage the cascade manually.
+
+<br>
+
+- `session.persist(<@Entity>)` persists an instance, the entity in the argument must not have an ID, then automatically sets an ID if successfully persisted, also starts to be an attached hibernate Object(Entity))     
+
+**Docs:** Make a transient instance persistent and mark it for later insertion in the database. This operation cascades to associated instances if the association is mapped with jakarta.persistence.CascadeType.PERSIST.
+  For an entity with a generated id, persist() ultimately results in generation of an identifier for the given instance. But this may happen asynchronously, when the session is flushed, depending on the identifier generation strategy.  
+Overrides: _`persist` in interface `EntityManager`_
+Params: `object` – a transient instance to be made persistent
+
+<br>
+
+- `session.merge(<@Entity>)` Copy all attributes(Fields in DB) to the row in DB that have its ID, the Entity in the argument isn't necessary be an attached Object(Entity)  
+
+**Docs:**
+Copy the state of the given object onto the persistent object with the same identifier. If there is no persistent instance currently associated with the session, it will be loaded. Return the persistent instance. If the given instance is unsaved, save a copy and return it as a newly persistent instance. The given instance does not become associated with the session. This operation cascades to associated instances if the association is mapped with jakarta.persistence.CascadeType.MERGE.  
+
+Overrides: _`merge` in interface `EntityManager`_  
+Params: _`object` – a detached instance with state to be copied_
+Returns: _an updated persistent instance_
+
+<br>
+
+-`session.remove`  
+**Docs:** Mark a persistence instance associated with this session for removal from the underlying database. Ths operation cascades to associated instances if the association is mapped `jakarta.persistence.CascadeType.REMOVE`.
+
+**PD:** the `Cascade.REMOVE` doesn't have effect in:
+```java
+session2.createMutationQuery("DELETE FROM UserEntity u WHERE u.id = :id")
+        .setParameter("id", user2.getId())
+        .executeUpdate(); //cascade.all only affect in session.remove
+session2.getTransaction().commit();
+```
+<br>
+
+-`session.refresh`
+1. **Object Retrieval:** You first pass an existing persistent entity object (e.g., userEntity) to the refresh() method.
+2. **Database Synchronization:** Hibernate initiates a communication with the database to retrieve the latest values for all fields of that entity.
+3. **Attribute Overwrite:** The values currently held within the object's attributes are discarded and replaced with the fresh values fetched from the database.
+4. **Unsaved Changes Discarded:** Any modifications made to the entity within the current Hibernate session, but not yet committed to the database, are lost.
+5. **Identity Preservation:** The object's identity, represented by its primary key, remains intact, ensuring it's still associated with the same database row.
+
+**Docs:**
+Reread the state of the given managed instance associated with this session from the underlying database. This may be useful:  
+ - when a database trigger alters the object state upon insert or update,
+ - after executing any HQL update or delete statement,
+ - after executing a native SQL statement, or
+ - after inserting a java.sql.Blob or java.sql.Clob.  
+
+This operation cascades to associated instances if the association is mapped with `jakarta.persistence.CascadeType.REFRESH`.  
+This operation requests LockMode.READ. To obtain a stronger lock, call refresh(Object, LockMode).  
+**Overrides:** -`refresh` in interface `EntityManager`_  
+**Params:** `object` – a persistent or detached instance
+
+<br>
+
+- `session.detach(<@Entity>)`   
+
+**Docs:**
+Remove this instance from the session cache. Changes to the instance will not be synchronized with the database. This operation cascades to associated instances if the association is mapped with `jakarta.persistence.CascadeType.DETACH`.  
+**Overrides:** _`detach` in interface `EntityManager`_  
+**Params:** _`object` – the managed instance to detach_
+
+
+
+
