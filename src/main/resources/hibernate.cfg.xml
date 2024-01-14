@@ -27,6 +27,10 @@
 <!--        <mapping class="org.example.Entities.OneToManyToOne_Unidirectional.ProductEntity"/>-->
 <!--        <mapping class="org.example.Entities.OneToOne_Bidirectional.UserEntity"/>-->
 <!--        <mapping class="org.example.Entities.OneToOne_Bidirectional.AddressEntity"/>-->
+<!--        <mapping class="org.example.Entities.OneToOne_Unidirectional.AddressEntity"/>-->
+<!--        <mapping class="org.example.Entities.OneToOne_Unidirectional.UserEntity"/>-->
+        <mapping class="org.example.Entities.OneToOne_Others.UserEntity"/>
+        <mapping class="org.example.Entities.OneToOne_Others.AddressEntity"/>
 
     </session-factory>
 </hibernate-configuration>

@@ -1,17 +1,14 @@
 package org.example.DAOs.OneToOne_Unidirectional;
 
-import org.example.DAOs.OneToOne_Unidirectional.AddressDAOImpl;
-import org.example.DAOs.OneToOne_Unidirectional.UserDAOImpl;
 import org.example.Entities.OneToOne_Unidirectional.AddressEntity;
 import org.example.Entities.OneToOne_Unidirectional.UserEntity;
-import org.hibernate.LazyInitializationException;
+import org.example.Util.HibernateUtil;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class  {
+class UserDAOImplTest {
     protected static UserDAO userDAO;
     protected static AddressDAO addressDAO;
     protected static UserEntity userEntityTest;
@@ -21,7 +18,8 @@ class  {
     static void beforeAll() {
         userDAO = new UserDAOImpl();
         addressDAO = new AddressDAOImpl();
-
+        HibernateUtil.getSessionFactory().openSession();
+        HibernateUtil.getSessionFactory().close();
         userEntityTest = new UserEntity(null, "cristiann00", "1234", null);
         userDAO.persist(userEntityTest);
 
@@ -46,7 +44,7 @@ class  {
         assertEquals(userEntityTest.getId(), userEntity.getId());
         assertEquals(userEntityTest.getUsername(), userEntity.getUsername());
         assertEquals(userEntityTest.getPassword(), userEntity.getPassword());
-        assertThrows(LazyInitializationException.class, () -> userEntityTest.getAddress().getId());
+        assertThrows(org.hibernate.LazyInitializationException.class, () -> userEntity.getAddress().getName());
     }
 
     @Test

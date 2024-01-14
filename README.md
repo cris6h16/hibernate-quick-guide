@@ -322,8 +322,9 @@ public class CourseEnrollmentsEntity {
         - `uniqueConstraints`: The unique constraints of the table.
             - `name`: The name of the constraint.
             - `columnNames`: The column names of the constraint.
-                > e.g. Imagine we have a table that represents the courses enrolled by students. A student can enroll only once in a course. (In the table just can have one combination of `student_id` and `course_id`)
-          
+              > e.g. Imagine we have a table that represents the courses enrolled by students. A student can enroll only
+              once in a course. (In the table just can have one combination of `student_id` and `course_id`)
+
                   @UniqueConstraint(
                   name = "student_course_unique",
                   columnNames = {"student_id", "course_id"})}"
@@ -374,13 +375,99 @@ public class CourseEnrollmentsEntity {
 
 Hibernate don't persist `static` attributes  
 <br>
-### 4.1.1 One To Many (Unidirectional)
 
+### 4.1.1 One TO One
 
-
-### 4.1.1 ManyToOne (Without cascades and Bidirectional)
+- `@OneToOne` & `@JoinColumn`  
+  This is the most recommended way to map the associations.  
+  `@JoinColumn` (Optional) The name of the foreign key column. The table in which it is found depends upon the context.
 
 ```java
+
+@OneToOne
+@JoinColumn(name = "address_id")
+private AddressEntity address;
+```
+
+- `@OneToOne` &  `@PrimaryKeyJoinColumn`  
+  `@PrimaryKeyJoinColumn` (Optional) The primary key column of the current table that is used as a foreign key to the
+  primary key of another table.
+
+```java
+
+@OneToOne
+@PrimaryKeyJoinColumn
+private AddressEntity address;
+```
+
+- `@OneToOne` & `@JoinTable`  
+  `@JoinTable` (Optional) The join table that holds the foreign key column(s) of the current table that references the
+  primary key of the other table.
+
+```java
+
+@OneToOne
+@JoinTable(name = "address",
+        joinColumns = @JoinColumn(name = "address_id"),
+        inverseJoinColumns = @JoinColumn(name = "id"))
+private AddressEntity address;
+```
+
+- `@OneToOne` & `@MapsId`  
+  `@MapsId` (Optional) The attribute within the composite key to which the relationship attribute corresponds.
+
+```java
+@Entity
+class Customer {
+  @EmbeddedId CustomerId id;
+  boolean preferredCustomer;
+
+  @MapsId("userId")
+  @JoinColumns({
+    @JoinColumn(name="userfirstname_fk", referencedColumnName="firstName"),
+    @JoinColumn(name="userlastname_fk", referencedColumnName="lastName")
+  })
+  @OneToOne User user;
+}
+
+@Embeddable
+class CustomerId implements Serializable {
+  UserId userId;
+  String customerNumber;
+}
+
+@Entity 
+class User {
+  @EmbeddedId UserId id;
+  Integer age;
+}
+
+@Embeddable
+class UserId implements Serializable {
+  String firstName;
+  String lastName;
+}
+```
+_https://docs.jboss.org/hibernate/annotations/3.5/reference/en/html_single/#entity-mapping-identifier_
+
+- Etc...
+
+### 4.1.1 One To Many (Unidirectional)
+```java
+@ManyToOne(
+        //cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+        fetch = FetchType.LAZY,
+        targetEntity = CategoryEntity.class,
+        optional = true)
+@JoinColumn(name = "category_id")
+private CategoryEntity category;
+```
+in the other side of the relationship has only logic of Entities, nothing about the relationship
+
+### 4.1.1 OneToMany (Without cascades and Bidirectional)
+
+```java
+// in product entity (Many)
 //=================== One to many ||| bidirectional ===================\\
 // - Many is the owner of the relationship (have the @JoinColumn), Relationship is inverse
 @ManyToOne(/*cascade = {CascadeType.ALL},*/ fetch = FetchType.EAGER, targetEntity = CategoryEntity.class, optional = true)
@@ -394,10 +481,8 @@ private CategoryEntity category;
 
 See more below...
 
-### 4.1.2 OneToMany (Without cascades and Bidirectional)
-
 ```java
-
+// in category (One)
 @OneToMany(/*cascade = {CascadeType.ALL}*/,
         fetch = FetchType.LAZY,
         mappedBy = "category",
@@ -422,10 +507,31 @@ private List<ProductEntity> products = new ArrayList<>();
  `MERGE`     | Merge the child entity when the parent entity is merged.                            
  `PERSIST`   | Persist the child entity when the parent entity is persisted.                       
  `REFRESH`   | Refresh the child entity when the parent entity is refreshed.                       
- `REMOVE`    | Remove the child entity when the parent entity is removed.                          
-
+ `REMOVE`    | Remove the child entity when the parent entity is removed.
 e.g. `session.persist(category)`
 
+- `session.persist(<@Entity>)` persists an instance, the entity in the argument must not have an ID, then automatically sets an ID if successfully persisted, also starts to be an attached hibernate Object(Entity))     
+
+**Docs:** Make a transient instance persistent and mark it for later insertion in the database. This operation cascades to associated instances if the association is mapped with jakarta.persistence.CascadeType.PERSIST.
+  For an entity with a generated id, persist() ultimately results in generation of an identifier for the given instance. But this may happen asynchronously, when the session is flushed, depending on the identifier generation strategy.  
+Overrides: _`persist` in interface `EntityManager`_
+Params: `object` – a transient instance to be made persistent
+
+<br>
+
+- `session.merge(<@Entity>)` Copy all attributes(Fields in DB) to the row in DB that have its ID, the Entity in the argument isn't necessary be an attached Object(Entity)  
+
+**Docs:**
+Copy the state of the given object onto the persistent object with the same identifier. If there is no persistent instance currently associated with the session, it will be loaded. Return the persistent instance. If the given instance is unsaved, save a copy and return it as a newly persistent instance. The given instance does not become associated with the session. This operation cascades to associated instances if the association is mapped with jakarta.persistence.CascadeType.MERGE.  
+
+Overrides: _`merge` in interface `EntityManager`_  
+Params: _`object` – a detached instance with state to be copied_
+Returns: _an updated persistent instance_
+
+<br>
+
+-`session.remove`  
+**Docs:** Mark a persistence instance associated with this session for removal from the underlying database. Ths operation cascades to associated instances if the association is mapped `jakarta.persistence.CascadeType.REMOVE`.
 ### 4.1.3 Example:
 
 #### Most recommended

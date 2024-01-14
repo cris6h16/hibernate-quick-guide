@@ -13,10 +13,11 @@ public class AddressEntity {
     private String zipcode;
     private String state;
 
+    // UNIDIRECTIONAL
     // if the relationship is unidirectional, then here shouldn't have any logic of relationship
     // -----------------------------------------------------------------------------
 
-    // bidirectional relationship
+    // BIDIRECTIONAL relationship
     @OneToOne(
             targetEntity = UserEntity.class,
             fetch = FetchType.EAGER,

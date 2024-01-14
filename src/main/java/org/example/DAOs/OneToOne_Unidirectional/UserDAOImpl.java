@@ -1,5 +1,6 @@
 package org.example.DAOs.OneToOne_Unidirectional;
 
+import org.example.DAOs.OneToOne_Unidirectional.UserDAO;
 import org.example.Entities.OneToOne_Unidirectional.UserEntity;
 import org.example.Util.HibernateUtil;
 import org.hibernate.Session;
@@ -7,8 +8,9 @@ import org.hibernate.Session;
 import java.util.Optional;
 import java.util.logging.Logger;
 
+
 public class UserDAOImpl implements UserDAO {
-    private static final Logger LOG = Logger.getLogger(UserDAOImpl.class.getName());
+    private static final Logger LOG = Logger.getLogger(org.example.DAOs.OneToOne_Bidirectional.UserDAOImpl.class.getName());
 
     @Override
     public Optional<UserEntity> getUserById(Long id) {
@@ -117,27 +119,7 @@ public class UserDAOImpl implements UserDAO {
         int affectedRows = 0;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             session.beginTransaction();
-            affectedRows = session @Override
-    public Optional<AddressEntity> getAddressByIdEager(Long id) {
-        if (id == null) {
-            logger.warning("Address id is null");
-            return Optional.empty();
-        }
-
-        Optional<AddressEntity> addressEntityOp = Optional.empty();
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            addressEntityOp = session
-                    .createQuery("FROM AddressEntity a JOIN FETCH a.userEntity WHERE a.id = :id", AddressEntity.class)
-                    .uniqueResultOptional();
-
-        } catch (Exception e) {
-            logger.severe(e.getMessage());
-            e.printStackTrace();
-        }
-
-        return addressEntityOp;
-    }
-
+            affectedRows = session
                     .createMutationQuery("DELETE FROM UserEntity ue WHERE ue.id = :id")
                     .setParameter("id", id)
                     .executeUpdate();
