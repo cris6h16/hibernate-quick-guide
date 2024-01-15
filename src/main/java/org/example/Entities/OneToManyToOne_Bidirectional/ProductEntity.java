@@ -1,6 +1,8 @@
 package org.example.Entities.OneToManyToOne_Bidirectional;
 
 import jakarta.persistence.*;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 import java.math.BigDecimal;
 

@@ -1,9 +1,15 @@
 package org.example.Entities.OneToManyToOne_Bidirectional;
 
 import jakarta.persistence.*;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
+import org.hibernate.envers.RelationTargetNotFoundAction;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.example.Entities.OneToManyToOne_Bidirectional.ProductEntity.ATTR_ID;
 
 @Entity
 @Table(name = "categories")
@@ -19,6 +25,7 @@ public class CategoryEntity {
 //    @SequenceGenerator(name = "categories_id_seq", sequenceName = "categories_id_seq", allocationSize = 50)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private java.lang.Long id;
+
 
     @Column(length = 100, nullable = false, unique = true)
     private String name;
@@ -42,6 +49,7 @@ public class CategoryEntity {
     }
     //============================================================================\\
     */
+
 
     @OneToMany(/*cascade = {CascadeType.ALL},*/fetch = FetchType.LAZY, mappedBy = "category", orphanRemoval = true, targetEntity = ProductEntity.class)
     private List<ProductEntity> products = new ArrayList<>();
@@ -86,7 +94,6 @@ public class CategoryEntity {
     public void setProductsList(List<ProductEntity> products) {
         this.products = products;
     }
-
 
     @Override
     public String toString() {

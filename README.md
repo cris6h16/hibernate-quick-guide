@@ -943,5 +943,91 @@ public class HibernateUtil {
 ```
 
 ## 7. Auditing of Entities
-Registry all the changes in the entities, if we want to know who and when change a whole entity or only his attributes(fields in DB).
+Registry all the changes in the entities, if we want to know who and when change a whole entity or only his attributes(fields in DB).  
+### 7.1 Maven Dependencies
+https://mvnrepository.com/artifact/org.hibernate.orm/hibernate-envers
+```xml
+<!-- https://mvnrepository.com/artifact/org.hibernate.orm/hibernate-envers -->
+<dependency>
+    <groupId>org.hibernate.orm</groupId>
+    <artifactId>hibernate-envers</artifactId>
+    <version>6.4.1.Final</version>
+</dependency>
+```
+[Docs](https://docs.jboss.org/hibernate/orm/current/userguide/html_single/Hibernate_User_Guide.html#envers)
+### 7.2 Auditing
+We need to add the `@Audited` annotation in the entity that we want to audit.  
+if the entity has a relationship with another entity class, we need to add the `@Audited` annotation in the other entity class too or else throw `org.hibernate.envers.boot.EnversMappingException: An audited relation from org.example.Entities.OneToManyToOne_Bidirectional.CategoryEntity.products to a not audited entity org.example.Entities.OneToManyToOne_Bidirectional.ProductEntity!  : origin(envers)`
+1. Audit the whole entity and its relationships  
+   (put the `@Audited` annotation in the entity and in the other side of the relationship also you do it)
+```java
+@Entity
+@Table(name = "categories")
+@Audited // see it
+public class CategoryEntity {
+    //...
+    @OneToMany(/*cascade = {CascadeType.ALL},*/fetch = FetchType.LAZY, mappedBy = "category", orphanRemoval = true, targetEntity = ProductEntity.class)
+    private List<ProductEntity> products = new ArrayList<>();
+    //...
+}
+```
+```java
+@Entity
+@Table(name = "products")
+@Audited //see it
+public class ProductEntity {    
+    //...
+    @ManyToOne(/*cascade = {CascadeType.ALL},*/ fetch = FetchType.EAGER, targetEntity = CategoryEntity.class, optional = true)
+    @JoinColumn(name = "category_id")
+    private CategoryEntity category;
+    //...
+}
+```
+![img_1.png](img_1.png)
+2. Audit only the entity not the relationships  
+   (put the `@Audited` annotation in the entity, and the Attribute of relationship put the `@NotAudited` annotation)
+
+```java
+import org.hibernate.envers.NotAudited;
+
+@Entity
+@Table(name = "categories")
+@Audited // see it
+public class CategoryEntity {
+    //...
+    @NotAudited
+    @OneToMany(/*cascade = {CascadeType.ALL},*/fetch = FetchType.LAZY, mappedBy = "category", orphanRemoval = true, targetEntity = ProductEntity.class)
+    private List<ProductEntity> products = new ArrayList<>();
+    //...
+}
+```
+![img_2.png](img_2.png)
+
+3. Only Audit some Attributes of the entity  
+   (put the `@Audited` annotation in the Entity Attribute that we want to audit)
+
+```java
+@Entity
+@Table(name = "categories")
+public class CategoryEntity {
+//...
+@Audited
+@Column(length = 100, nullable = false, unique = true)
+private String name;
+//...
+```
+-----------------
+All the properties into the notation `@Audited()` are optional...  
+- `targetAuditMode` means the audit mode for the attribute.
+  - `RelationTargetAuditMode.AUDITED`: The related entities will be audited.
+  - `RelationTargetAuditMode.NOT_AUDITED`: The related entities will not be audited.
+  - `RelationTargetAuditMode.IGNORE`: The related entities will be ignored.
+- `modifiedColumnName` the name of the column (similar to `@Column(name="")` annotation
+- `withModifiedFlag` if true, a boolean column will be added to the audit table to indicate if the value of the attribute has been modified or not.
+- `targetNotFoundAction` the action to take when the target entity is not found.
+  - `RelationTargetAuditMode.NOT_AUDITED`: The related entities will not be audited.
+  - `RelationTargetAuditMode.IGNORE`: The related entities will be ignored.
+  - `RelationTargetAuditMode.EXCEPTION`: An exception will be thrown.  
+
+**PD**: Some of these properties are only available in the `@Audited` annotation of the attribute of the entity, others are only available in the `@Audited` annotation of the entity class.
 

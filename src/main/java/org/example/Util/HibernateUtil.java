@@ -27,7 +27,7 @@ public class HibernateUtil {
                 Metadata metadata = sources.getMetadataBuilder().build();
                 // Create SessionFactory
                 sessionFactory = metadata.getSessionFactoryBuilder()
-                        .applyInterceptor(new CategoryInterceptor())
+//                        .applyInterceptor(new CategoryInterceptor())
                         .build();
 
             } catch (Exception e) {
