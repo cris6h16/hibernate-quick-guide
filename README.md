@@ -417,43 +417,50 @@ private AddressEntity address;
   `@MapsId` (Optional) The attribute within the composite key to which the relationship attribute corresponds.
 
 ```java
+
 @Entity
 class Customer {
-  @EmbeddedId CustomerId id;
-  boolean preferredCustomer;
+    @EmbeddedId
+    CustomerId id;
+    boolean preferredCustomer;
 
-  @MapsId("userId")
-  @JoinColumns({
-    @JoinColumn(name="userfirstname_fk", referencedColumnName="firstName"),
-    @JoinColumn(name="userlastname_fk", referencedColumnName="lastName")
-  })
-  @OneToOne User user;
+    @MapsId("userId")
+    @JoinColumns({
+            @JoinColumn(name = "userfirstname_fk", referencedColumnName = "firstName"),
+            @JoinColumn(name = "userlastname_fk", referencedColumnName = "lastName")
+    })
+    @OneToOne
+    User user;
 }
 
 @Embeddable
 class CustomerId implements Serializable {
-  UserId userId;
-  String customerNumber;
+    UserId userId;
+    String customerNumber;
 }
 
-@Entity 
+@Entity
 class User {
-  @EmbeddedId UserId id;
-  Integer age;
+    @EmbeddedId
+    UserId id;
+    Integer age;
 }
 
 @Embeddable
 class UserId implements Serializable {
-  String firstName;
-  String lastName;
+    String firstName;
+    String lastName;
 }
 ```
+
 _https://docs.jboss.org/hibernate/annotations/3.5/reference/en/html_single/#entity-mapping-identifier_
 
 - Etc...
 
 ### 4.1.1 One To Many (Unidirectional)
+
 ```java
+
 @ManyToOne(
         //cascade = {CascadeType.PERSIST, CascadeType.MERGE},
         fetch = FetchType.LAZY,
@@ -462,6 +469,7 @@ _https://docs.jboss.org/hibernate/annotations/3.5/reference/en/html_single/#enti
 @JoinColumn(name = "category_id")
 private CategoryEntity category;
 ```
+
 in the other side of the relationship has only logic of Entities, nothing about the relationship
 
 ### 4.1.1 OneToMany (Without cascades and Bidirectional)
@@ -471,9 +479,9 @@ in the other side of the relationship has only logic of Entities, nothing about 
 //=================== One to many ||| bidirectional ===================\\
 // - Many is the owner of the relationship (have the @JoinColumn), Relationship is inverse
 // - Must add "MANY" entity explicitly in the "ONE" entity, when "ONE" is set (this can also be done in the "ONE")
-@ManyToOne(/*cascade = {CascadeType.ALL},*/ 
-        fetch = FetchType.EAGER, 
-        targetEntity = CategoryEntity.class, 
+@ManyToOne(/*cascade = {CascadeType.ALL},*/
+        fetch = FetchType.EAGER,
+        targetEntity = CategoryEntity.class,
         optional = true)
 @JoinColumn(name = "category_id")
 private CategoryEntity category;
@@ -504,9 +512,12 @@ Later you need cand do:
 _PD: `category1` and `product1` must be persisted in the database before do the below_
 
 1. `product1.setCategory(category1)`
-2. `productDAO.merge(product1)` //in the product1 we merged because it has the field that represent the relationship `category_id`
+2. `productDAO.merge(product1)` //in the product1 we merged because it has the field that represent the
+   relationship `category_id`
    <br>
+
 ----------------------------------------------------------------
+
 #### You can also do inverse (Not recommended)
 
 In "One" side:
@@ -542,11 +553,16 @@ _PD: `category1` and `product1` must be persisted in the database before do the 
 1. `category1.addProducts(product1)`
 2. `category1.forEach(product -> productDAO.merge(product))`
    <br>
+
 ----------------------------------------------------------------
+
 ### 4.1.1 ManyToMany
+
 We should put the notation `@ManyToMany` in the own of the relationship, for example if we've got 2 entities:
 `UserEntity` and `RoleEntity`, we should put the notation `@ManyToMany` in the `UserEntity`.
+
 ```java
+
 @ManyToMany(
         fetch = FetchType.EAGER,
         targetEntity = RoleEntity.class,
@@ -559,18 +575,23 @@ We should put the notation `@ManyToMany` in the own of the relationship, for exa
 
 private Set<RoleEntity> roles;
 ```
-**Unidirectional:** In the other side of the relationship isn't necessary set any logic about the relationship, only should have the logic of an Hibernate Entity  
 
-**Bidirectional:** We should set only the notation `@OneToMany` with `mappedBy="<attribute_name_in_other_side>"` below the Collection of the relationship
+**Unidirectional:** In the other side of the relationship isn't necessary set any logic about the relationship, only
+should have the logic of an Hibernate Entity
+
+**Bidirectional:** We should set only the notation `@OneToMany` with `mappedBy="<attribute_name_in_other_side>"` below
+the Collection of the relationship
+
 ```java
+
 @ManyToMany(
         mappedBy = "roles"
         //.......
 )
 private Set<UserEntity> users;
 ```
-----------------------------------------------------------------
 
+----------------------------------------------------------------
 
 - `cascade`: Specifies the operations that must be cascaded to the target of the association.
 - `fetch`: Specifies whether the association should be lazily loaded or must be eagerly fetched.
@@ -588,28 +609,40 @@ private Set<UserEntity> users;
  `MERGE`     | Merge the child entity when the parent entity is merged.                            
  `PERSIST`   | Persist the child entity when the parent entity is persisted.                       
  `REFRESH`   | Refresh the child entity when the parent entity is refreshed.                       
- `REMOVE`    | Remove the child entity when the parent entity is removed.
+ `REMOVE`    | Remove the child entity when the parent entity is removed.                          
+
 e.g. `session.persist(category)`  
 e.g. `session.remove(category)`
 
->Hibernate Methods (`save`, `update`, `delete`, etc.): In this Hibernate operations, the Cascade configured will be apply automatically (`CASCADE.ALL`) in the relationships.  
-`Criteria API`, `Native Queries`, `MutationQuerys`, etc.: In these cases, the `CASCADE` don't apply automatically. When we execute **NativeQuerys**, **CriteriaQuerys**(CriteriaBuilder), **MutationQuerys**, or other that aren't be the Hibernate methods, we need manage the cascade manually.
+> Hibernate Methods (`save`, `update`, `delete`, etc.): In this Hibernate operations, the Cascade configured will be
+> apply automatically (`CASCADE.ALL`) in the relationships.  
+`Criteria API`, `Native Queries`, `MutationQuerys`, etc.: In these cases, the `CASCADE` don't apply automatically. When
+> we execute **NativeQuerys**, **CriteriaQuerys**(CriteriaBuilder), **MutationQuerys**, or other that aren't be the
+> Hibernate methods, we need manage the cascade manually.
 
 <br>
 
-- `session.persist(<@Entity>)` persists an instance, the entity in the argument must not have an ID, then automatically sets an ID if successfully persisted, also starts to be an attached hibernate Object(Entity))     
+- `session.persist(<@Entity>)` persists an instance, the entity in the argument must not have an ID, then automatically
+  sets an ID if successfully persisted, also starts to be an attached hibernate Object(Entity))
 
-**Docs:** Make a transient instance persistent and mark it for later insertion in the database. This operation cascades to associated instances if the association is mapped with jakarta.persistence.CascadeType.PERSIST.
-  For an entity with a generated id, persist() ultimately results in generation of an identifier for the given instance. But this may happen asynchronously, when the session is flushed, depending on the identifier generation strategy.  
+**Docs:** Make a transient instance persistent and mark it for later insertion in the database. This operation cascades
+to associated instances if the association is mapped with jakarta.persistence.CascadeType.PERSIST.
+For an entity with a generated id, persist() ultimately results in generation of an identifier for the given instance.
+But this may happen asynchronously, when the session is flushed, depending on the identifier generation strategy.  
 Overrides: _`persist` in interface `EntityManager`_
 Params: `object` – a transient instance to be made persistent
 
 <br>
 
-- `session.merge(<@Entity>)` Copy all attributes(Fields in DB) to the row in DB that have its ID, the Entity in the argument isn't necessary be an attached Object(Entity)  
+- `session.merge(<@Entity>)` Copy all attributes(Fields in DB) to the row in DB that have its ID, the Entity in the
+  argument isn't necessary be an attached Object(Entity)
 
 **Docs:**
-Copy the state of the given object onto the persistent object with the same identifier. If there is no persistent instance currently associated with the session, it will be loaded. Return the persistent instance. If the given instance is unsaved, save a copy and return it as a newly persistent instance. The given instance does not become associated with the session. This operation cascades to associated instances if the association is mapped with jakarta.persistence.CascadeType.MERGE.  
+Copy the state of the given object onto the persistent object with the same identifier. If there is no persistent
+instance currently associated with the session, it will be loaded. Return the persistent instance. If the given instance
+is unsaved, save a copy and return it as a newly persistent instance. The given instance does not become associated with
+the session. This operation cascades to associated instances if the association is mapped with
+jakarta.persistence.CascadeType.MERGE.
 
 Overrides: _`merge` in interface `EntityManager`_  
 Params: _`object` – a detached instance with state to be copied_
@@ -618,53 +651,77 @@ Returns: _an updated persistent instance_
 <br>
 
 -`session.remove`  
-**Docs:** Mark a persistence instance associated with this session for removal from the underlying database. Ths operation cascades to associated instances if the association is mapped `jakarta.persistence.CascadeType.REMOVE`.
+**Docs:** Mark a persistence instance associated with this session for removal from the underlying database. Ths
+operation cascades to associated instances if the association is mapped `jakarta.persistence.CascadeType.REMOVE`.
 
 **PD:** the `Cascade.REMOVE` doesn't have effect in:
+
 ```java
 session2.createMutationQuery("DELETE FROM UserEntity u WHERE u.id = :id")
-        .setParameter("id", user2.getId())
-        .executeUpdate(); //cascade.all only affect in session.remove
-session2.getTransaction().commit();
+        .
+
+setParameter("id",user2.getId())
+        .
+
+executeUpdate(); //cascade.all only affect in session.remove
+session2.
+
+getTransaction().
+
+commit();
 ```
+
 <br>
 
 -`session.refresh`
+
 1. **Object Retrieval:** You first pass an existing persistent entity object (e.g., userEntity) to the refresh() method.
-2. **Database Synchronization:** Hibernate initiates a communication with the database to retrieve the latest values for all fields of that entity.
-3. **Attribute Overwrite:** The values currently held within the object's attributes are discarded and replaced with the fresh values fetched from the database.
-4. **Unsaved Changes Discarded:** Any modifications made to the entity within the current Hibernate session, but not yet committed to the database, are lost.
-5. **Identity Preservation:** The object's identity, represented by its primary key, remains intact, ensuring it's still associated with the same database row.
+2. **Database Synchronization:** Hibernate initiates a communication with the database to retrieve the latest values for
+   all fields of that entity.
+3. **Attribute Overwrite:** The values currently held within the object's attributes are discarded and replaced with the
+   fresh values fetched from the database.
+4. **Unsaved Changes Discarded:** Any modifications made to the entity within the current Hibernate session, but not yet
+   committed to the database, are lost.
+5. **Identity Preservation:** The object's identity, represented by its primary key, remains intact, ensuring it's still
+   associated with the same database row.
 
 **Docs:**
-Reread the state of the given managed instance associated with this session from the underlying database. This may be useful:  
- - when a database trigger alters the object state upon insert or update,
- - after executing any HQL update or delete statement,
- - after executing a native SQL statement, or
- - after inserting a java.sql.Blob or java.sql.Clob.  
+Reread the state of the given managed instance associated with this session from the underlying database. This may be
+useful:
 
-This operation cascades to associated instances if the association is mapped with `jakarta.persistence.CascadeType.REFRESH`.  
+- when a database trigger alters the object state upon insert or update,
+- after executing any HQL update or delete statement,
+- after executing a native SQL statement, or
+- after inserting a java.sql.Blob or java.sql.Clob.
+
+This operation cascades to associated instances if the association is mapped
+with `jakarta.persistence.CascadeType.REFRESH`.  
 This operation requests LockMode.READ. To obtain a stronger lock, call refresh(Object, LockMode).  
 **Overrides:** -`refresh` in interface `EntityManager`_  
 **Params:** `object` – a persistent or detached instance
 
 <br>
 
-- `session.detach(<@Entity>)`   
+- `session.detach(<@Entity>)`
 
 **Docs:**
-Remove this instance from the session cache. Changes to the instance will not be synchronized with the database. This operation cascades to associated instances if the association is mapped with `jakarta.persistence.CascadeType.DETACH`.  
+Remove this instance from the session cache. Changes to the instance will not be synchronized with the database. This
+operation cascades to associated instances if the association is mapped with `jakarta.persistence.CascadeType.DETACH`.  
 **Overrides:** _`detach` in interface `EntityManager`_  
 **Params:** _`object` – the managed instance to detach_
 
 //DAOs
+
 ## 5. Example of DAOs:
+
 ```java
 Session session = HibernateUtil.getSessionFactory().openSession()
 ``` 
-Relation: OneToMany (Bidirectional, without cascades)  
+
+Relation: OneToMany (Bidirectional, without cascades)
 
 **Entities:**
+
 - [CategoryEntity](src/main/java/org/example/Entities/OneToManyToOne_Bidirectional/CategoryEntity.java)
 - [ProductEntity](src/main/java/org/example/Entities/OneToManyToOne_Bidirectional/ProductEntity.java)
 
@@ -679,14 +736,21 @@ Relation: OneToMany (Bidirectional, without cascades)
 - [CategoryDAOCriteriaTest](src/test/java/org/example/DAOs/OneToMany_Bidirectional/CriteriaCategoryDAOTest.java)
 
 ### Native Queries
+
 - [CategoryDAOCriteria](src/main/java/org/example/DAOs/OneToManyToOne_Bidirectional/Category/CategoryDAONative.java)
 - [CategoryDAONativeTest](src/test/java/org/example/DAOs/OneToMany_Bidirectional/NativeCategoryDAOTest.java)
 
 ## 6. Events and Interceptors
+
 ### 6.1 Events
-In the `@Entity` class we can add the following methods:  
-> When we set this **Lifecycle callbacks** in the `@Entity` class, we are violating the `Single Responsibility Principle`, because the `@Entity` class is only for represent the table in the database, not for manage the events.
+
+In the `@Entity` class we can add the following methods:
+> When we set this **Lifecycle callbacks** in the `@Entity` class, we are violating
+> the `Single Responsibility Principle`, because the `@Entity` class is only for represent the table in the database, not
+> for manage the events.
+
 ```java
+
 @PrePersist
 public void prePersist() {
     // this method is called before the entity is persisted in the database
@@ -722,25 +786,162 @@ public void postLoad() {
     // this method is called when the entity is loaded from the database in persistence context
 }
 ```
+
 - `@PostLoad`:
-When `@PostLoad` is Triggered:  
+  When `@PostLoad` is Triggered:
 
-1. Fetching an Entity: `EntityManager.find(Book.class, 1L):`  
+1. Fetching an Entity: `EntityManager.find(Book.class, 1L):`
 
-    Hibernate retrieves the Book entity with ID 1 from the database and places it in the persistence context. It then calls the @PostLoad method on the loaded entity.  
-<br>
-  
+   Hibernate retrieves the Book entity with ID 1 from the database and places it in the persistence context. It then
+   calls the @PostLoad method on the loaded entity.  
+   <br>
+
 2. Executing a Query: `Query query = em.createQuery("SELECT b FROM Book b");`:  
-      Hibernate fetches multiple Book entities from the database and puts them in the persistence context. The @PostLoad method is called for each loaded entity.  
-<br>  
+   Hibernate fetches multiple Book entities from the database and puts them in the persistence context. The @PostLoad
+   method is called for each loaded entity.  
+   <br>
 
 3. Refreshing an Entity: `em.refresh(book)`:  
-      This forces Hibernate to reload the entity from the database and overwrite any changes made in the persistence context. The @PostLoad method is called again on the refreshed entity.
+   This forces Hibernate to reload the entity from the database and overwrite any changes made in the persistence
+   context. The @PostLoad method is called again on the refreshed entity.
 
 ### 6.2 Interceptors
-We can create a class that implements the `org.hibernate.Interceptor` interface, and override the methods that we want to intercept.    
+
+We can create a class that implements the `org.hibernate.Interceptor` interface, and override the methods that we want
+to intercept.
 
 Performs the same function as an event listener, in this way we don't violate the `Single Responsibility Principle`.
+
+1. Implement the `org.hibernate.Interceptor` interface.
+2. Override the methods that we want to intercept.
+3. Register the interceptor in the `HibernateUtil`
+
+Each method execute just before execute the SQL query, for example if we
+do: `session.persist(<category_with_name_null>)` and in the method `persist` throw an exception, the SQL query won't be
+executed and the Interceptor `onSave` won't be executed.
+
+- **1 & 2:** Implements and Override the methods that we want to intercept:
+
+```java
+package org.example.Entities.OneToManyToOne_Bidirectional;
+
+import org.hibernate.CallbackException;
+import org.hibernate.Interceptor;
+import org.hibernate.type.Type;
+
+public class CategoryInterceptor implements Interceptor {
+    /**
+     * Called before an object is saved. The interceptor may modify the {@code state}, which will be used for
+     * the SQL {@code INSERT} and propagated to the persistent object.
+     *
+     * @param entity        The entity instance whose state is being inserted
+     * @param id            The identifier of the entity
+     * @param state         The state of the entity which will be inserted
+     * @param propertyNames The names of the entity properties.
+     * @param types         The types of the entity properties
+     * @return {@code true} if the user modified the {@code state} in any way.
+     * @throws CallbackException Thrown if the interceptor encounters any problems handling the callback.
+     */
+    @Override
+    public boolean onSave(Object entity, Object id, Object[] state, String[] propertyNames, Type[] types) throws CallbackException {
+        if (entity instanceof CategoryEntity) {
+            CategoryEntity category = (CategoryEntity) entity;
+            System.out.println(category.toString() + "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+        }
+
+        return Interceptor.super.onSave(entity, id, state, propertyNames, types);
+    }
+
+    /**
+     * Called before an object is deleted. It is not recommended that the interceptor modify the {@code state}.
+     *
+     * @param entity        The entity instance being deleted
+     * @param id            The identifier of the entity
+     * @param state         The state of the entity
+     * @param propertyNames The names of the entity properties.
+     * @param types         The types of the entity properties
+     * @throws CallbackException Thrown if the interceptor encounters any problems handling the callback.
+     */
+    @Override
+    public void onDelete(Object entity, Object id, Object[] state, String[] propertyNames, Type[] types) throws CallbackException {
+        if (entity instanceof CategoryEntity) {
+            CategoryEntity category = (CategoryEntity) entity;
+            System.out.println(category.toString() + "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+        }
+
+        Interceptor.super.onDelete(entity, id, state, propertyNames, types);
+    }
+
+    //................
+}
+```
+
+3. Register the interceptor in the `HibernateUtil`
+
 ```java
 
+public class HibernateUtil {
+    private static StandardServiceRegistry registry;
+    private static SessionFactory sessionFactory;
+
+    /**
+     * Get the Hibernate SessionFactory
+     *
+     * @return SessionFactory object
+     */
+    public static SessionFactory getSessionFactory() {
+        if (sessionFactory == null) {
+            try {
+                // Create registry
+                registry = new StandardServiceRegistryBuilder().configure().build();
+                // Create MetadataSources
+                MetadataSources sources = new MetadataSources(registry);
+                // Create Metadata
+                Metadata metadata = sources.getMetadataBuilder().build();
+                // Create SessionFactory
+                sessionFactory = metadata.getSessionFactoryBuilder()
+// ------------------- HERE WE REGISTER THE INTERCEPTOR -------------------\\
+                        .applyInterceptor(new CategoryInterceptor())
+                        .build();
+
+            } catch (Exception e) {
+                handleException(e);
+                closeRegistry();
+            }
+        }
+
+        return sessionFactory;
+    }
+
+
+    /**
+     * Shutdown the SessionFactory
+     */
+    public static void shutdown() {
+        closeRegistry();
+    }
+
+    /**
+     * Handle the exceptions during the creation of the SessionFactory.
+     *
+     * @param e exception to handle
+     */
+    private static void handleException(Exception e) {
+        e.printStackTrace();
+        // Do something with the Exception
+    }
+
+    /**
+     * Close the registry
+     */
+    private static void closeRegistry() {
+        if (registry != null) {
+            StandardServiceRegistryBuilder.destroy(registry);
+        }
+    }
+}
+```
+
+## 7. Auditing of Entities
+Registry all the changes in the entities, if we want to know who and when change a whole entity or only his attributes(fields in DB).
 

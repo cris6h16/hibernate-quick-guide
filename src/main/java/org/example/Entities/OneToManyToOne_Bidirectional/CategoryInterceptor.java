@@ -2,8 +2,6 @@ package org.example.Entities.OneToManyToOne_Bidirectional;
 
 import org.hibernate.CallbackException;
 import org.hibernate.Interceptor;
-import org.hibernate.Transaction;
-import org.hibernate.internal.EmptyInterceptor;
 import org.hibernate.type.Type;
 
 public class CategoryInterceptor implements Interceptor {
@@ -41,8 +39,13 @@ public class CategoryInterceptor implements Interceptor {
      */
     @Override
     public void onDelete(Object entity, Object id, Object[] state, String[] propertyNames, Type[] types) throws CallbackException {
+        if (entity instanceof CategoryEntity) {
+            CategoryEntity category = (CategoryEntity) entity;
+            System.out.println(category.toString() + "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+        }
+
         Interceptor.super.onDelete(entity, id, state, propertyNames, types);
     }
 
-
+    //................
 }

@@ -5,15 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="33d4e801-1be6-4c5e-99fe-37449cf74e6d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Entities/OneToManyToOne_Bidirectional/CategoryInterceptor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DAOs/OneToManyToOne_Bidirectional/Category/CategoryDAOCriteria.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/DAOs/OneToManyToOne_Bidirectional/Category/CategoryDAOCriteria.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DAOs/OneToManyToOne_Bidirectional/Category/CategoryDAOImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/DAOs/OneToManyToOne_Bidirectional/Category/CategoryDAOImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DAOs/OneToManyToOne_Bidirectional/Category/CategoryDAONative.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/DAOs/OneToManyToOne_Bidirectional/Category/CategoryDAONative.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Entities/OneToManyToOne_Bidirectional/CategoryEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Entities/OneToManyToOne_Bidirectional/CategoryEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Util/HibernateUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Util/HibernateUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/hibernate.cfg.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/hibernate.cfg.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Entities/OneToManyToOne_Bidirectional/CategoryInterceptor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Entities/OneToManyToOne_Bidirectional/CategoryInterceptor.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -329,7 +323,7 @@
       <workItem from="1704980272959" duration="27147000" />
       <workItem from="1705092339476" duration="13114000" />
       <workItem from="1705239186262" duration="7476000" />
-      <workItem from="1705269269843" duration="6585000" />
+      <workItem from="1705269269843" duration="8410000" />
     </task>
     <servers />
   </component>
