@@ -396,7 +396,7 @@ ALTER SEQUENCE tienda.products_seq
   might not be as efficient in scenarios where a large number of records are being inserted simultaneously.   
 
 Code generated using `IDENTITY`:
-```postgresql
+```sql
 -- POSTGRESQL --
     
 -- Table: tienda.products
@@ -841,17 +841,9 @@ operation cascades to associated instances if the association is mapped `jakarta
 
 ```java
 session2.createMutationQuery("DELETE FROM UserEntity u WHERE u.id = :id")
-        .
-
-setParameter("id",user2.getId())
-        .
-
-executeUpdate(); //cascade.all only affect in session.remove
-session2.
-
-getTransaction().
-
-commit();
+        .setParameter("id",user2.getId())
+        .executeUpdate(); //cascade.all only affect in session.remove
+session2.getTransaction().commit();
 ```
 
 <br>
