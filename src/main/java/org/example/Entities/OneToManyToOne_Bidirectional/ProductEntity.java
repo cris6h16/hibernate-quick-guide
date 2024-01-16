@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 
 @Entity
 @Table(name = "products")
+@NamedQuery(name = "ProductEntity.find10Cheapest", query = "SELECT p FROM ProductEntity p ORDER BY p.price ASC LIMIT 10")
 public class ProductEntity {
     public static final String ATTR_ID = "id";
     public static final String ATTR_NAME = "name";
@@ -19,12 +20,10 @@ public class ProductEntity {
     public static final String SCHEMA_NAME = "tienda";
 
     @Id
-//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "products_id_seq")
-//    @SequenceGenerator(name = "products_id_seq", sequenceName = "products_id_seq", allocationSize = 50)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "name_for_reference")
+    @SequenceGenerator(name = "name_for_reference", sequenceName = "name_of_sequence_in_db", allocationSize = 100)
     private java.lang.Long id;
 
-    //TODO, test what exception is thrown FOR EACH METHOD
     @Column(length = 100, nullable = false, unique = true)
     private String name;
 

@@ -11,8 +11,6 @@ public class ProductDAOImpl implements ProductDAO {
     public static final Logger LOGGER = Logger.getLogger(ProductDAOImpl.class.getName());
 
 
-
-
     public void save(ProductEntity product) {
         if (product == null) {
             LOGGER.warning("Product is null");
@@ -47,9 +45,9 @@ public class ProductDAOImpl implements ProductDAO {
                 session.getTransaction().rollback();
                 throw e;
             }
-        }catch (ProductAlreadyExistException pe){
+        } catch (ProductAlreadyExistException pe) {
             LOGGER.warning("Product already exist");
-        }catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.severe("Error saving product");
             e.printStackTrace();
         }

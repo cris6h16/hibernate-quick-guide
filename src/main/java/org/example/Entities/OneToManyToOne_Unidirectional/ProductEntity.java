@@ -14,7 +14,6 @@ public class ProductEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //TODO, test what exception is thrown FOR EACH METHOD
     @Column(length = 100, nullable = false, unique = true)
     private String name;
 

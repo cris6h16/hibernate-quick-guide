@@ -20,7 +20,6 @@
         <!-- DB schema will be updated if needed -->
         <property name="hibernate.hbm2ddl.auto">create</property>
 
-<!--        TODO: document this-->
         <mapping class="org.example.Entities.OneToManyToOne_Bidirectional.CategoryEntity"/>
         <mapping class="org.example.Entities.OneToManyToOne_Bidirectional.ProductEntity"/>
 <!--        <mapping class="org.example.Entities.OneToManyToOne_Unidirectional.CategoryEntity"/>-->

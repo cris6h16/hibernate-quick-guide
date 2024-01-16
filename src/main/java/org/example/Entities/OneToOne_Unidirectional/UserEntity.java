@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 @Table(name = "users")
 public class UserEntity {
     @Id
-    //TODO: GenerationType.IDENTITY vs others/.....
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(unique = true)

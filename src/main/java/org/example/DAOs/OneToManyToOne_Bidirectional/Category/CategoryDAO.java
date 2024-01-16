@@ -22,7 +22,8 @@ public interface CategoryDAO {
     boolean merge(CategoryEntity category);
 
     /**
-     * Saves a CategoryEntity object to the database. if was saved successfully
+     * Saves a CategoryEntity object to the database.
+     * if was saved successfully
      * the category will have id assigned
      *
      * @param category the CategoryEntity object to be saved
@@ -63,7 +64,7 @@ public interface CategoryDAO {
     List<CategoryEntity> listAll();
 
     /**
-     * Returns an Optional of a CategoryEntity with the given id, including its associated products.
+     * Returns an Optional of a CategoryEntity with the given id, including its associated products(Collection Initialized).
      *
      * @param id the id of the CategoryEntity to retrieve
      * @return an Optional of a CategoryEntity with the given id, including its associated products

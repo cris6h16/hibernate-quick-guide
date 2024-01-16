@@ -67,7 +67,6 @@ public class CategoryDAOImpl implements CategoryDAO {
         return category;
     }
 
-    //TODO: Improve the docs
 
     /**
      * Finds a category by its name.
@@ -94,7 +93,6 @@ public class CategoryDAOImpl implements CategoryDAO {
     }
 
 
-    //TODO: Improve the docs
 
     /**
      * Saves a CategoryEntity object to the database. if was saved successfully
@@ -138,10 +136,10 @@ public class CategoryDAOImpl implements CategoryDAO {
     }
 
     /**
-     * Update the category, saving the products not persisted and updating the existing products
+     * Updates a CategoryEntity in the database.
      *
-     * @param category if update is manually(Hibernate Criteria) must be Eagerly
-     * @return true if category was updated
+     * @param category the CategoryEntity to update
+     * @return true if the update was successful, false otherwise
      */
 
     @Override

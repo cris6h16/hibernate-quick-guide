@@ -51,6 +51,7 @@ public class CategoryEntity {
     */
 
 
+
     @OneToMany(/*cascade = {CascadeType.ALL},*/fetch = FetchType.LAZY, mappedBy = "category", orphanRemoval = true, targetEntity = ProductEntity.class)
     private List<ProductEntity> products = new ArrayList<>();
 

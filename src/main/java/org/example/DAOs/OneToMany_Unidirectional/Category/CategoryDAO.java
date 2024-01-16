@@ -14,10 +14,11 @@ public interface CategoryDAO {
      */
     boolean deleteById(Long id);
 
-    /**
+ /**
+     * Updates a CategoryEntity in the database.
      *
-     * @param category if update is manually(Hibernate Criteria) must be Eagerly
-     * @return true if category was updated
+     * @param category the CategoryEntity to update
+     * @return true if the update was successful, false otherwise
      */
     boolean merge(CategoryEntity category);
 

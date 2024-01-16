@@ -25,6 +25,11 @@ public class CategoryDAOImpl implements CategoryDAO {
         sessionFactory = HibernateUtil.getSessionFactory();
     }
 
+    /**
+     * Returns a list of all categories in the database.
+     *
+     * @return a list of all categories in the database
+     */
     @Override
     public List<CategoryEntity> listAll() {
         List<CategoryEntity> categories = new ArrayList();
@@ -40,7 +45,12 @@ public class CategoryDAOImpl implements CategoryDAO {
         return categories;
     }
 
-
+    /**
+     * Returns an Optional of a CategoryEntity with the given id, including its associated products(Collection Initialized).
+     *
+     * @param id the id of the CategoryEntity to retrieve
+     * @return an Optional of a CategoryEntity with the given id, including its associated products
+     */
     @Override
     public Optional<CategoryEntity> getByIdEager(Long id) {
         Optional<CategoryEntity> category = Optional.empty();
@@ -61,6 +71,12 @@ public class CategoryDAOImpl implements CategoryDAO {
     }
 
 
+    /**
+     * Finds a category by its ID.
+     *
+     * @param id the ID of the category to find
+     * @return an optional containing the category if it exists, or an empty optional if no category with the given ID exists
+     */
     @Override
     public Optional<CategoryEntity> findById(Long id) {
         Optional<CategoryEntity> category = Optional.empty();
@@ -77,7 +93,12 @@ public class CategoryDAOImpl implements CategoryDAO {
         return category;
     }
 
-
+    /**
+     * Finds a category by its name.
+     *
+     * @param name the name of the category to find
+     * @return an optional containing the category if it exists, or an empty optional if no category with the given name exists
+     */
     public Optional<CategoryEntity> findByName(String name) {
         Optional<CategoryEntity> category = Optional.empty();
 
@@ -123,8 +144,14 @@ public class CategoryDAOImpl implements CategoryDAO {
         return categories;
     }
 
-    //TODO: Improve the docs
 
+    /**
+     * Saves a CategoryEntity object to the database.
+     * if was saved successfully
+     * the category will have id assigned
+     *
+     * @param category the CategoryEntity object to be saved
+     */
     @Override
     public void persist(CategoryEntity category) {
 
@@ -160,7 +187,11 @@ public class CategoryDAOImpl implements CategoryDAO {
         }
     }
 
-
+    /**
+     *
+     * @param category if update is manually(Hibernate Criteria) must be Eagerly
+     * @return true if category was updated
+     */
     @Override
     public boolean merge(CategoryEntity category) {
 
@@ -197,7 +228,12 @@ public class CategoryDAOImpl implements CategoryDAO {
         return true;
     }
 
-
+    /**
+     * Deletes a CategoryEntity from the database.
+     *
+     * @param id the id of the CategoryEntity to delete
+     * @return true if the deletion was successful, false otherwise
+     */
     public boolean deleteById(Long id) {
         if (id == null) {
             logger.warning("Category id can't be null");
@@ -226,5 +262,6 @@ public class CategoryDAOImpl implements CategoryDAO {
 
         return affectedRows > 0;
     }
+
 
 }

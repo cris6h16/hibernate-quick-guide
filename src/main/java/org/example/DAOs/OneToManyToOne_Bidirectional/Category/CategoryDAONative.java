@@ -15,7 +15,12 @@ public class CategoryDAONative implements CategoryDAO {
 
     private Optional<CategoryEntity> categoryEntity;
 
-
+    /**
+     * Deletes a CategoryEntity from the database.
+     *
+     * @param id the id of the CategoryEntity to delete
+     * @return true if the deletion was successful, false otherwise
+     */
     @Override
     public boolean deleteById(java.lang.Long id) {
         if (id == null) {
@@ -48,23 +53,27 @@ public class CategoryDAONative implements CategoryDAO {
 
         return affectedRows > 0;
     }
-//TODO: rewrite the description of this method, because jus merge the category, not its products
 
+    /**
+     *
+     * @param category if update is manually(Hibernate Criteria) must be Eagerly
+     * @return true if category was updated
+     */
     @Override
-    public boolean merge(CategoryEntity categoryDTO) {
-        if (categoryDTO == null) {
+    public boolean merge(CategoryEntity category) {
+        if (category == null) {
             LOGGER.warning("Category is null");
             return false;
         }
-        if (categoryDTO.getId() == null) {
+        if (category.getId() == null) {
             LOGGER.warning("Category id is null");
             return false;
         }
-        if (categoryDTO.getName() == null) {
+        if (category.getName() == null) {
             LOGGER.warning("Category name is null");
             return false;
         }
-        if (categoryDTO.getName().isEmpty()) {
+        if (category.getName().isEmpty()) {
             LOGGER.warning("Category name is empty");
             return false;
         }
@@ -83,8 +92,8 @@ public class CategoryDAONative implements CategoryDAO {
 
                 affectedRows = session
                         .createNativeMutationQuery(sql)
-                        .setParameter("name", categoryDTO.getName())
-                        .setParameter("id", categoryDTO.getId())
+                        .setParameter("name", category.getName())
+                        .setParameter("id", category.getId())
                         .executeUpdate();
 
                 session.getTransaction().commit();
@@ -102,17 +111,24 @@ public class CategoryDAONative implements CategoryDAO {
         return affectedRows > 0;
     }
 
+    /**
+     * Saves a CategoryEntity object to the database.
+     * if was saved successfully
+     * the category will have id assigned
+     *
+     * @param category the CategoryEntity object to be saved
+     */
     @Override
-    public void persist(CategoryEntity categoryDTO) {
-        if (categoryDTO == null) {
+    public void persist(CategoryEntity category) {
+        if (category == null) {
             LOGGER.warning("Category is null");
             return;
         }
-        if (categoryDTO.getName() == null) {
+        if (category.getName() == null) {
             LOGGER.warning("Category name is null");
             return;
         }
-        if (categoryDTO.getName().isEmpty()) {
+        if (category.getName().isEmpty()) {
             LOGGER.warning("Category name is empty");
             return;
         }
@@ -127,7 +143,7 @@ public class CategoryDAONative implements CategoryDAO {
                         CategoryEntity.ATTR_NAME);
 
                 session.createNativeMutationQuery(insertSql)
-                        .setParameter("name", categoryDTO.getName())
+                        .setParameter("name", category.getName())
                         .executeUpdate();
 
                 String getNewIdSql = String.format("SELECT %s FROM %s.%s WHERE %s = :name",
@@ -136,9 +152,9 @@ public class CategoryDAONative implements CategoryDAO {
                         CategoryEntity.TABLE_NAME,
                         CategoryEntity.ATTR_NAME);
 
-                categoryDTO.setId(session
+                category.setId(session
                         .createNativeQuery(getNewIdSql, java.lang.Long.class)
-                        .setParameter("name", categoryDTO.getName())
+                        .setParameter("name", category.getName())
                         .getSingleResultOrNull());
 
                 session.getTransaction().commit();
@@ -185,7 +201,12 @@ public class CategoryDAONative implements CategoryDAO {
         return categoryEntities;
     }
 
-
+    /**
+     * Finds a category by its name.
+     *
+     * @param name the name of the category to find
+     * @return an optional containing the category if it exists, or an empty optional if no category with the given name exists
+     */
     @Override
     public Optional<CategoryEntity> findByName(String name) {
         if (name == null) {
@@ -216,7 +237,12 @@ public class CategoryDAONative implements CategoryDAO {
         return categoryEntity;
     }
 
-
+    /**
+     * Finds a category by its ID.
+     *
+     * @param id the ID of the category to find
+     * @return an optional containing the category if it exists, or an empty optional if no category with the given ID exists
+     */
     @Override
     public Optional<CategoryEntity> findById(java.lang.Long id) {
         if (id == null) {
@@ -241,7 +267,11 @@ public class CategoryDAONative implements CategoryDAO {
         return categoryEntity;
     }
 
-
+    /**
+     * Returns a list of all categories in the database.
+     *
+     * @return a list of all categories in the database
+     */
     @Override
     public List<CategoryEntity> listAll() {
         List<CategoryEntity> categoryEntities = new ArrayList<>();
@@ -258,7 +288,12 @@ public class CategoryDAONative implements CategoryDAO {
         return categoryEntities;
     }
 
-
+    /**
+     * Returns an Optional of a CategoryEntity with the given id, including its associated products(Collection Initialized).
+     *
+     * @param id the id of the CategoryEntity to retrieve
+     * @return an Optional of a CategoryEntity with the given id, including its associated products
+     */
     @Override
     public Optional<CategoryEntity> getByIdEager(java.lang.Long id) {
 
