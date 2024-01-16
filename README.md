@@ -305,6 +305,16 @@ public class CourseEnrollmentsEntity {
     @Transient
     private String attribute_not_persistent;
     // ...
+
+    @Enumerated(EnumType.STRING)
+    private EClass enumValue;
+}
+```
+```java
+public enum EClass {
+    VALUE1,
+    VALUE2,
+    VALUE3
 }
 ```
 
@@ -536,8 +546,13 @@ ALTER TABLE IF EXISTS tienda.hibernate_sequences
       digits in total, 2 of them will be decimals(after the dot).  
       <br>
 
-- `@Transient` Annotation marks the attribute as not persistent.
+- `@Transient` Annotation marks the attribute as not persistent.  
   <br>
+
+- `@Enumerated` Annotation specifies that the attribute is an enumerated type.
+    - `EnumType.STRING`: The enumerated type will be mapped to and from its corresponding name string values.
+    - `EnumType.ORDINAL`: The enumerated type will be mapped to and from its corresponding ordinal values.
+      <br>
 
 #### PD: static attributes
 
@@ -1258,3 +1273,10 @@ All the properties into the notation `@Audited()` are optional...
 **PD**: Some of these properties are only available in the `@Audited` annotation of the attribute of the entity, others
 are only available in the `@Audited` annotation of the entity class.
 
+## Extra
+### Recommendations
+1. when you create a DAO class, you should create a DAO interface first, in that interface you should put the methods
+   that you want and document each one, later implement in a class.
+2. if you've got an `@Entity` that have a lot of attributes, and you only want 2 of them, you can create a `DTO` class
+   with only the attributes that you want.
+3. 
