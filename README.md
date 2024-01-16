@@ -1278,5 +1278,61 @@ are only available in the `@Audited` annotation of the entity class.
 1. when you create a DAO class, you should create a DAO interface first, in that interface you should put the methods
    that you want and document each one, later implement in a class.
 2. if you've got an `@Entity` that have a lot of attributes, and you only want 2 of them, you can create a `DTO` class
-   with only the attributes that you want.
-3. 
+   with only the attributes that you want, **It'll improve the performance.**
+
+Example of DTO of `ProductEntity`
+```java
+public class ProductDTOBasic {
+
+    private String name;
+    private BigDecimal price;
+
+//  private String description;
+//  private CategoryEntity category;
+    private ProductDTOBasic() {
+    }
+
+    public ProductDTOBasic(String name, BigDecimal price) {
+        this.name = name;
+        this.price = price;
+    }
+}
+```
+**You can have a method that retrieve an ProductEntity and another method for retrieve only the data that you want**  
+
+In DAO of `ProductEntity`
+```java
+public List<ProductEntity> listAll() {
+    List<ProductEntity> list = new ArrayList();
+    try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        list = session.createQuery("FROM ProductEntity").list();
+    } catch (Exception e) {
+        LOGGER.severe(e.getMessage());
+        e.printStackTrace();
+    }
+
+    return list;
+}
+```
+e.g. take 0.998 secs  
+
+DAO for `ProductEntity` using `ProductDTOBasic`
+```java
+
+public List<ProductDTOBasic> listAllDTOBasic() {
+    List<ProductDTOBasic> list = new ArrayList();
+
+    try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        list = session
+                .createQuery("SELECT new org.example.Entities.DTOs.ProductDTOBasic(p.name, p.price) FROM ProductEntity p")
+                .list();
+    } catch (Exception e) {
+        LOGGER.severe(e.getMessage());
+        e.printStackTrace();
+    }
+
+    return list;
+}
+```
+e.g. take 0.211 secs  
+

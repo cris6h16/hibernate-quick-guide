@@ -1,10 +1,13 @@
 package org.example.DAOs.OneToManyToOne_Bidirectional.Product;
 
 import org.example.DAOs.OneToManyToOne_Bidirectional.Product.Exceptions.ProductAlreadyExistException;
+import org.example.Entities.DTOs.ProductDTOBasic;
 import org.example.Entities.OneToManyToOne_Bidirectional.ProductEntity;
 import org.example.Util.HibernateUtil;
 import org.hibernate.Session;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class ProductDAOImpl implements ProductDAO {
@@ -85,5 +88,32 @@ public class ProductDAOImpl implements ProductDAO {
             LOGGER.severe("Error merging product");
             e.printStackTrace();
         }
+    }
+
+    public List<ProductEntity> listAll() {
+        List<ProductEntity> list = new ArrayList();
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            list = session.createQuery("FROM ProductEntity").list();
+        } catch (Exception e) {
+            LOGGER.severe(e.getMessage());
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public List<ProductDTOBasic> listAllDTOBasic() {
+        List<ProductDTOBasic> list = new ArrayList();
+
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            list = session
+                    .createQuery("SELECT new org.example.Entities.DTOs.ProductDTOBasic(p.name, p.price) FROM ProductEntity p")
+                    .list();
+        } catch (Exception e) {
+            LOGGER.severe(e.getMessage());
+            e.printStackTrace();
+        }
+
+        return list;
     }
 }
