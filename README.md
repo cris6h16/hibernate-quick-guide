@@ -1328,3 +1328,5 @@ public List<ProductDTOBasic> listAllDTOBasic() {
 ```
 e.g. take 0.211 secs  
 
+3. Enhance the performance in massive inserts, using `Batching`  
+   https://docs.jboss.org/hibernate/core/3.3/reference/en/html/batch.html
