@@ -6,8 +6,7 @@ import org.hibernate.envers.NotAudited;
 import org.hibernate.envers.RelationTargetAuditMode;
 import org.hibernate.envers.RelationTargetNotFoundAction;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.example.Entities.OneToManyToOne_Bidirectional.ProductEntity.ATTR_ID;
 
@@ -29,6 +28,10 @@ public class CategoryEntity {
 
     @Column(length = 100, nullable = false, unique = true)
     private String name;
+
+
+
+
 
     /*
     //=================== One to many ||| bidirectional ===================\\

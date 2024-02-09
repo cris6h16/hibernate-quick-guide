@@ -1,7 +1,9 @@
 package org.example.DAOs.OneToManyToOne_Bidirectional.Category;
 
+import jakarta.transaction.Transactional;
 import org.example.Entities.OneToManyToOne_Bidirectional.CategoryEntity;
 import org.example.Util.HibernateUtil;
+import org.hibernate.LockMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
@@ -18,11 +20,12 @@ import java.util.logging.Logger;
  */
 
 public class CategoryDAOImpl implements CategoryDAO {
-    public final SessionFactory sessionFactory;
-    public final Logger logger = Logger.getLogger(CategoryDAOImpl.class.getName());
+    public final Session currentSession ;
+    public final Logger logger ;
 
     public CategoryDAOImpl() {
-        sessionFactory = HibernateUtil.getSessionFactory();
+        currentSession = HibernateUtil.getCurrentSession();
+        logger = Logger.getLogger(CategoryDAOImpl.class.getName());
     }
 
     /**
@@ -33,6 +36,7 @@ public class CategoryDAOImpl implements CategoryDAO {
     @Override
     public List<CategoryEntity> listAll() {
         List<CategoryEntity> categories = new ArrayList();
+
 
         try (Session session = sessionFactory.openSession()) {
             categories = session
@@ -215,6 +219,7 @@ public class CategoryDAOImpl implements CategoryDAO {
         try (Session session = sessionFactory.openSession()) {
             try {
                 session.beginTransaction();
+                session.lock(category, LockMode.PESSIMISTIC_WRITE);
                 session.merge(category);
                 session.getTransaction().commit();
             } catch (Exception e) {

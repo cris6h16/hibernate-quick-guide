@@ -1265,6 +1265,23 @@ All the properties into the notation `@Audited()` are optional...
 **PD**: Some of these properties are only available in the `@Audited` annotation of the attribute of the entity, others
 are only available in the `@Audited` annotation of the entity class.
 
+### 7.3 Concurrency Transactions
+Hibernate does not lock objects in memory.  
+_[official docs](https://docs.jboss.org/hibernate/core/3.3/reference/en/html/transactions.html)_  
+
+We need understand the concepts: 
+1. Transactions
+2. ACID guarantees in the database that we're using
+3. Isolation Issues
+4. Isolation levels
+5. Locking strategies
+
+in hibernate we've got the `@Version` annotation, that is used to manage the concurrency in the database.
+
+```java
+
+
+
 ## Extra
 ### Recommendations
 1. when you create a DAO class, you should create a DAO interface first, in that interface you should put the methods

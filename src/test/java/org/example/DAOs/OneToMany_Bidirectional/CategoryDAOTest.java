@@ -1,5 +1,6 @@
 package org.example.DAOs.OneToMany_Bidirectional;
 
+import com.anarsoft.vmlens.concurrent.junit.ThreadCount;
 import org.example.DAOs.OneToManyToOne_Bidirectional.Category.CategoryDAO;
 import org.example.DAOs.OneToManyToOne_Bidirectional.Category.CategoryDAOImpl;
 import org.example.DAOs.OneToManyToOne_Bidirectional.Product.ProductDAOImpl;
@@ -163,6 +164,7 @@ class CategoryDAOTest {
 
     //=============================== categoryDAO.save(CategoryEntity category) ===============================\\
     @Test
+    @ThreadCount(4)
     @DisplayName("Save category with null name")
     void saveNullName() {
         CategoryEntity category = new CategoryEntity(null, null);
@@ -179,6 +181,7 @@ class CategoryDAOTest {
     }
 
     @Test
+    @ThreadCount(4)
     @DisplayName("Save category with valid name")
     void saveValidName() {
         CategoryEntity category = new CategoryEntity(null, "Food");
@@ -273,6 +276,7 @@ class CategoryDAOTest {
     }
 
     @Test
+    @ThreadCount(10)
     @DisplayName("Update category with valid name")
     void updateValid() {
         Optional<CategoryEntity> categoryOp = categoryDAO.getByIdEager(categoryId);

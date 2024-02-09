@@ -47,6 +47,16 @@
             <artifactId>hibernate-envers</artifactId>
             <version>6.4.1.Final</version>
         </dependency>
+
+<!--        For concurrency test-->
+        <!-- https://mvnrepository.com/artifact/com.vmlens/concurrent-junit -->
+        <dependency>
+            <groupId>com.vmlens</groupId>
+            <artifactId>concurrent-junit</artifactId>
+            <version>1.0.2</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 </project>

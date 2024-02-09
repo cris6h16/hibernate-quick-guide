@@ -1,6 +1,6 @@
 package org.example.Util;
 
-import org.example.Entities.OneToManyToOne_Bidirectional.CategoryInterceptor;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
@@ -37,6 +37,17 @@ public class HibernateUtil {
         }
 
         return sessionFactory;
+    }
+
+    public static Session getCurrentSession() {
+        Session session = null;
+        try {
+            session = getSessionFactory().getCurrentSession();
+        }catch (Exception e){
+            handleException(e);
+        }
+
+        return (session == null) ? (getSessionFactory().openSession()) : session;
     }
 
 
