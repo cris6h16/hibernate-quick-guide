@@ -1279,6 +1279,126 @@ We need understand the concepts:
 in hibernate we've got the `@Version` annotation, that is used to manage the concurrency in the database.
 
 ```java
+@Entity
+@Table(name = "categories")
+@Audited
+public class CategoryEntity {
+    //...
+    @Version
+    private Long version;
+    //...
+}
+```
+
+### 7.4 Avoid the Session-per-Operation Antipattern
+The `Session-per-Operation` antipattern is a common mistake that can lead to performance and concurrency issues.
+The `Session-per-Operation` antipattern occurs when you open a new Hibernate session for each database operation. This
+can lead to performance issues because Hibernate has to manage a large number of sessions, and it can also lead to  concurrency issues because each session has its own cache and its own transaction.  
+
+Antipattern:
+```java
+public void updateCategory(CategoryEntity category) {
+    try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        session.beginTransaction();
+        session.update(category);
+        session.getTransaction().commit();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+
+public void deleteCategory(CategoryEntity category) {
+    try (Session session = HibernateUtil.getSessionFactory().openSession())
+    //...
+}
+
+public void saveCategory(CategoryEntity category) {
+    try (Session session = HibernateUtil.getSessionFactory().openSession())
+    //...
+}
+
+public CategoryEntity findById(Long id) {
+    try (Session session = HibernateUtil.getSessionFactory().openSession())
+    //...
+}
+```
+
+**Problem(Take in mind that is only a visible example):**
+```java
+@DeleteMapping("/delete/{id}")
+public void deleteCategory(@PathVariable Long id) {
+    CategoryEntity category = categoryDAO.findById(id); // Here we open a session
+    categoryDAO.deleteCategory(category);// Here we open a session again
+    //...
+}
+```
+
+### 7.5 Solution: Session-per-Request Pattern 
+**PD:** its recommended for concurrent applications... for example, in a enterprise application:
+>  The session-per-request pattern is not the only way of designing units of work. Many business processes require a whole series of interactions with the user that are interleaved with database accesses. In web and enterprise applications, it is not acceptable for a database transaction to span a user interaction. Consider the following example:  
+    - The first screen of a dialog opens. The data seen by the user has been loaded in a particular Session and database transaction. The user is free to modify the objects.  
+    - The user clicks "Save" after 5 minutes and expects their modifications to be made persistent. The user also expects that they were the only person editing this information and that no conflicting modification has occurred.   
+    From the point of view of the user, we call this unit of work a long-running conversation or application transaction. There are many ways to implement this in your application.
+    A first naive implementation might keep the Session and database transaction open during user think time, with locks held in the database to prevent concurrent modification and to guarantee isolation and atomicity. This is an anti-pattern, since lock contention would not allow the application to scale with the number of concurrent users.
+    [see more](https://docs.jboss.org/hibernate/core/3.3/reference/en/html/transactions.html)
+
+Simply we need change the way that we generate the session(instead of 
+`HibernateUtil.getSessionFactory().openSession()` we need use `HibernateUtil.getSessionFactory().getCurrentSession()`), 
+and manage the session and transaction manually(above we too manage the transaction manually, but we open a new session for each operation, and that's the problem).
+
+
+```java
+public void updateCategory(CategoryEntity category) {
+    Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+    session.beginTransaction();
+    session.update(category);
+    session.getTransaction().commit();
+}
+
+public void deleteCategory(CategoryEntity category) {
+    Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+    session.beginTransaction();
+    session.delete(category);
+    session.getTransaction().commit();
+}
+
+public void saveCategory(CategoryEntity category) {
+    Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+    session.beginTransaction();
+    session.save(category);
+    session.getTransaction().commit();
+}
+
+public CategoryEntity findById(Long id) {
+    Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+    CategoryEntity category = session.get(CategoryEntity.class, id);
+    return category;
+}
+```
+
+**See the difference**:
+
+```java
+@DeleteMapping("/delete/{id}")
+public void deleteCategory(@PathVariable Long id) {
+    // Here we open a session1
+    Session session1 = this.sessionFactory.OpenSession(); 
+    
+    CategoryEntity category = categoryDAO.findById(id); // Here we use session1
+    categoryDAO.deleteCategory(category); // Here we use the session1 again
+    //...
+    
+    // Here we close the session1
+    session1.close();
+}
+```
+
+**PD:** The `Session-per-Request` pattern is the recommended way to use Hibernate. It is more efficient and it avoids
+concurrency issues.  
+
+Take in mind that are other ways to manage the concurrency, you should see in docs of Hibernate Concurrency.
+
+
 
 
 

@@ -20,11 +20,11 @@ import java.util.logging.Logger;
  */
 
 public class CategoryDAOImpl implements CategoryDAO {
-    public final Session currentSession ;
+    public final SessionFactory sessionFactory;
     public final Logger logger ;
 
     public CategoryDAOImpl() {
-        currentSession = HibernateUtil.getCurrentSession();
+        sessionFactory = HibernateUtil.getSessionFactory();
         logger = Logger.getLogger(CategoryDAOImpl.class.getName());
     }
 
