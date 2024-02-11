@@ -115,9 +115,26 @@ class CategoryDAOTest {
     //=============================== categoryDAO.listAll() ===============================\\
     @Test
     @DisplayName("List all categories when multiple categories exist")
+    @com.anarsoft.vmlens.concurrent.junit.ThreadCount(3)
     void listAllMultipleCategories() {
         List<CategoryEntity> categories = categoryDAO.listAll();
         assertFalse(categories.isEmpty(), "List of categories should not be empty");
+
+    }
+
+    @Test
+    @DisplayName("List all PAGINATION")
+    void listAllPagination() {
+        int resPerPage = 3;
+
+        int pages = categoryDAO.countPages(resPerPage);
+        for (int page = 1; page <= pages; page++) {
+            System.out.println("\nPage: " + page + " of " + pages);
+            List<CategoryEntity> categories = categoryDAO.listPagination(page, resPerPage);
+            categories.forEach(category -> System.out.println(category));
+            assertFalse(categories.isEmpty(), "List of categories should not be empty");
+        }
+
     }
 
     //=============================== categoryDAO.listAllWithEmptyRows() ===============================\\
@@ -475,7 +492,6 @@ class CategoryDAOTest {
 
 
     }
-
 
 
 }

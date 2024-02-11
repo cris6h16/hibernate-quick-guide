@@ -1,5 +1,6 @@
 package org.example.DAOs.OneToManyToOne_Bidirectional.Category;
 
+import jakarta.persistence.LockModeType;
 import jakarta.transaction.Transactional;
 import org.example.Entities.OneToManyToOne_Bidirectional.CategoryEntity;
 import org.example.Util.HibernateUtil;
@@ -8,8 +9,10 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.logging.Logger;
 
 /**
@@ -21,7 +24,7 @@ import java.util.logging.Logger;
 
 public class CategoryDAOImpl implements CategoryDAO {
     public final SessionFactory sessionFactory;
-    public final Logger logger ;
+    public final Logger logger;
 
     public CategoryDAOImpl() {
         sessionFactory = HibernateUtil.getSessionFactory();
@@ -39,9 +42,21 @@ public class CategoryDAOImpl implements CategoryDAO {
 
 
         try (Session session = sessionFactory.openSession()) {
-            categories = session
-                    .createQuery("from CategoryEntity", CategoryEntity.class)
-                    .list();
+            try {
+                session.beginTransaction();
+                categories = session
+                        .createQuery("from CategoryEntity", CategoryEntity.class)
+                        .setLockMode(LockModeType.PESSIMISTIC_READ)
+                        .list();
+
+                session.getTransaction().commit();
+
+            } catch (Exception e) {
+                session.getTransaction().rollback();
+                throw e;
+            }
+
+            categories.forEach(System.out::println);
 
         } catch (Exception he) {
             logger.severe("Error in listAll: " + he.getMessage());
@@ -192,7 +207,6 @@ public class CategoryDAOImpl implements CategoryDAO {
     }
 
     /**
-     *
      * @param category if update is manually(Hibernate Criteria) must be Eagerly
      * @return true if category was updated
      */
@@ -266,6 +280,51 @@ public class CategoryDAOImpl implements CategoryDAO {
         }
 
         return affectedRows > 0;
+    }
+
+    // Number of rows in the table
+    @Override
+    public int count() {
+        int count = 0;
+
+        try (Session session = sessionFactory.openSession()) {
+            count = session
+                    .createQuery("SELECT COUNT(*) FROM CategoryEntity", int.class)
+                    .uniqueResult();
+
+        } catch (Exception e) {
+            logger.severe("Error in count: " + e.getMessage());
+            throw e;
+        }
+
+        return count;
+    }
+
+    @Override
+    public int countPages(int resultsPerPage) {
+        int totalCategories = this.count();
+        for (int i = totalCategories; i % 3 == 0; i++) totalCategories++;
+
+        return (totalCategories / resultsPerPage);
+    }
+
+    //PAGINATION
+    public List<CategoryEntity> listPagination(int pageNum, int resultsPerPage) {
+        List<CategoryEntity> categories = new ArrayList<>();
+
+        try (Session session = sessionFactory.openSession()) {
+            categories = session
+                    .createQuery("from CategoryEntity", CategoryEntity.class)
+                    .setFirstResult(pageNum * resultsPerPage)
+                    .setMaxResults(resultsPerPage)
+                    .list();
+
+        } catch (Exception e) {
+            logger.severe("Error in listAll: " + e.getMessage());
+            throw e;
+        }
+
+        return categories;
     }
 
 

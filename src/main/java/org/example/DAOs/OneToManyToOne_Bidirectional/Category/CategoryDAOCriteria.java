@@ -374,6 +374,21 @@ public class CategoryDAOCriteria implements CategoryDAO {
         return category;
     }
 
+    @Override
+    public int count() {
+        return 0;
+    }
+
+    @Override
+    public int countPages(int resultsPerPage) {
+        return 0;
+    }
+
+    @Override
+    public List<CategoryEntity> listPagination(int pageNum, int resultsPerPage) {
+        return null;
+    }
+
     private boolean isIdValid(Long id) {
         return id != null && id > 0;
     }

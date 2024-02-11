@@ -71,4 +71,11 @@ public interface CategoryDAO {
      */
     Optional<CategoryEntity> getByIdEager(Long id);
 
+    // ---------------------- Pagination ------------------------\\
+    int count();
+    int countPages(int resultsPerPage);
+
+    List<CategoryEntity> listPagination(int pageNum, int resultsPerPage);
+
+
 }

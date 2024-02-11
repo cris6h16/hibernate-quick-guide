@@ -328,4 +328,19 @@ public class CategoryDAONative implements CategoryDAO {
 
         return finalCategoryEntity;
     }
+
+    @Override
+    public int count() {
+        return 0;
+    }
+
+    @Override
+    public int countPages(int resultsPerPage) {
+        return 0;
+    }
+
+    @Override
+    public List<CategoryEntity> listPagination(int pageNum, int resultsPerPage) {
+        return null;
+    }
 }
